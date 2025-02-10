@@ -30,10 +30,8 @@ Small businesses rely on pop-up shops for growth but face numerous challenges:
 
 ## Tech Stack
 - Frontend: React.js, TypeScript, Tailwind CSS
-- Backend: Node.js, Express.js
-- Database: MongoDB
+- Backend, Datebase, and Deloyment: Firebase
 - Web Scraping: Puppeteer, Cheerio.js
-- Deployment: Railway (Frontend), AWS (Backend)
 - APIs: Eventbrite, Eventeny (and more public APIs)
 
 ## Getting Started
