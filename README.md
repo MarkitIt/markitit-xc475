@@ -1,4 +1,4 @@
-# Markitit
+# MarkitIt
 
 ## Introduction
 
@@ -38,7 +38,7 @@ Small businesses rely on pop-up shops for growth but face numerous challenges:
 ### Prerequisites
 Before you begin, ensure you have the following installed:
 - Node.js (v16+)
-- MongoDB
+- Firebase
 - Git
 
 ### Installation
