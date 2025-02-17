@@ -15,9 +15,9 @@ export default function Home() {
         />
         <ol>
           <li>
-            Get started by editing <code>src/app/page.tsx</code>.
+            Welcome to MarkitIt!.
           </li>
-          <li>Save and see your changes instantly.</li>
+          <li>From xc475</li>
         </ol>
 
         <div className={styles.ctas}>
