@@ -1,0 +1,89 @@
+/* Ensure all styles are inside a class */
+.container {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+  }
+  
+  .content {
+    display: flex;
+    width: 900px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .formSection {
+    width: 50%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  /* ✅ Fix: Scope `h1` inside `.formSection` */
+  .formSection h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;  
+  }
+  
+  .inputGroup {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+  
+  .inputGroup label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #444;  /* Slightly darker grey */
+  }
+  
+  .inputGroup input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  /* ✅ Fix: Scope `button` inside `.formSection` */
+  .formSection button {
+    margin-top: 15px;
+    padding: 12px;
+    border: none;
+    background: black;
+    color: white;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .formSection button:hover {
+    background: #333;
+  }
+  
+  .link {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  
+  .link a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .imageSection {
+    width: 50%;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  
