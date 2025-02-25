@@ -281,12 +281,12 @@ const BusinessProfile = () => {
             />    
 
             <div className="">Description</div>
-            <input
+            <textarea
               className="w-[70%] h-40 bg-gray-300 mb-8 text-left align-top p-2"
               value={description}
-              onChange={handleDescriptionChange}
+              onChange={(e) => setDescription(e.target.value)}
               required
-            />    
+            />     
 
             <div className="">Facebook link</div>
             <input
