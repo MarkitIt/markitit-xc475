@@ -33,6 +33,20 @@ Small businesses rely on pop-up shops for growth but face numerous challenges:
 
 ## Tech Stack
 
+### Frontend
+- Next.js (React Framework) – Provides server-side rendering and static generation.
+- Tailwind CSS – Used for styling and responsive design.
+### Backend
+- Firebase Firestore – NoSQL database for storing event listings, applications, and vendor data.
+- Firebase Authentication – Manages user sign-ins with Google OAuth and email/password.
+- Firebase Cloud Functions – Handles automated application submissions and API integrations.
+### Event Aggregation & Payments
+- Eventbrite API & Web Scraping – Fetches pop-up events.
+- Stripe – Manages vendor payments and application fees.
+### Hosting & Deployment
+- Frontend: Vercel (optimized for Next.js)
+- Backend: Firebase Cloud Functions
+
 - Frontend: React.js, TypeScript, Tailwind CSS
 - Backend, Datebase, and Deloyment: Firebase
 - Web Scraping: Puppeteer, Cheerio.js
@@ -44,55 +58,59 @@ Small businesses rely on pop-up shops for growth but face numerous challenges:
 
 Before you begin, ensure you have the following installed:
 
-- Node.js (v16+)
-- Firebase
-- Git
+- Node.js (v16+) – Required for running the frontend and backend.
+- Firebase CLI – Used for authentication, database, and cloud functions.
+- Git – Version control system for managing the repository.
+- Vercel CLI – Used for deploying the frontend.
+
 
 ### Installation
 
 #### Clone the repository:
 
 ```
-git clone https://github.com/raheeqi/markitit.git
+git clone https://github.com/MarkitIt/markitit-xc475.git
 cd markitit
 ```
 
 #### Install dependencies for the backend and frontend:
 
 ```
-cd backend
-npm install
-cd ../frontend
 npm install
 ```
 
-#### Start the backend server:
-
-```
-cd backend
-npm run dev
-```
-
-#### Start the frontend application:
-
-```
-cd ../frontend
-npm run dev
-```
 
 Access the application in your browser at http://localhost:3000.
 
 #### Environment Variables
 
-Create a .env file in the backend directory and add the following:
+Create a .env file in the root directory and add the following:
 
 ```
-MONGO_URI=your_mongo_db_connection_string
-EVENTBRITE_API_KEY=your_eventbrite_api_key
+NEXT_PUBLIC_FIREBASE_API_KEY= 
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_DATABASE_URL=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 ```
 
-Create a .env file in the frontend directory and add the following:
+#### Run the development server
 
 ```
-REACT_APP_BACKEND_URL=http://localhost:5000
+npm run dev
 ```
+
+## Contributing
+- Clone the repository
+- Create a feature branch (git checkout -b feature-name)
+- Commit changes (git commit -m "Add feature")
+- Push to branch [category]/[short-description]-[your-initials]
+-   Examples:
+-     feature/add-login-ar
+-     bugfix/fix-chart-rendering-js
+-     chore/update-readme-js
+- Open a Pull Request
+-   PR's must have 2 reviewers to merge
