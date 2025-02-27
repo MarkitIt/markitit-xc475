@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import { useRouter } from 'next/router';
+import { useState } from "react";
 import Header from '../header';
 
 const BusinessAdjective = () => {
