@@ -1,0 +1,100 @@
+/* General header styles */
+.header {
+    background-color: white;
+    padding: 15px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Sections for left, center, right */
+  .leftSection {
+    display: flex;
+    align-items: center;
+    gap: 40px; /* Equal spacing */
+    flex: 1;
+  }
+  
+  .rightSection {
+    display: flex;
+    align-items: center;
+    gap: 40px; /* Equal spacing */
+    flex: 1;
+    justify-content: flex-end;
+  }
+  
+  /* Centered brand */
+  .brand {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    color: black; /* Ensuring black text */
+  }
+  
+  /* Navigation links */
+  .navLinks {
+    display: flex;
+    gap: 40px; /* Ensures even spacing */
+  }
+  
+  .navLinks a {
+    text-decoration: none;
+    color: black; /* Black text */
+    font-weight: 500;
+  }
+  
+  /* Hamburger menu */
+  .hamburger {
+    font-size: 24px;
+    cursor: pointer;
+    color: black; /* Black text */
+  }
+  
+  /* Profile dropdown */
+  .profile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: black; /* Black text */
+    font-weight: bold;
+  }
+  
+  .profile span {
+    margin-left: 8px;
+    color: black; /* Black text */
+  }
+  
+  /* Dropdown menu */
+  .dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+    flex-direction: column;
+    width: 200px;
+  }
+  
+  .profile:hover .dropdown {
+    display: flex;
+  }
+  
+  .dropdown a {
+    text-decoration: none;
+    color: black; /* Black text */
+    padding: 8px 12px;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .dropdown a:hover {
+    background: #f2f2f2;
+  }
+  

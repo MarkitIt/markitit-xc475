@@ -40,4 +40,4 @@ export const logoutUser = async () => {
   } catch (error) {
     throw error;
   }
-};
+
