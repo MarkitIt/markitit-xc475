@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Login Page</title>
+</head>
+<body class="bg-gray-100">
+    <header class="flex items-center justify-between p-4 border-b">
+        <div class="flex items-center gap-4">
+            <button class="text-2xl">&#9776;</button>
+            <span>Ipsum</span>
+            <span>Ipsum</span>
+        </div>
+        <h1 class="text-3xl font-bold">Markitit</h1>
+        <div class="flex items-center gap-4">
+            <span>Ipsum</span>
+            <button class="text-xl">&#128269;</button>
+            <div class="flex items-center gap-2">
+                <span class="text-xl">&#128100;</span>
+                <span>Profile &#9662;</span>
+            </div>
+        </div>
+    </header>
+    <main class="flex justify-center items-center h-screen p-8">
+        <div class="bg-white p-8 rounded-lg shadow-lg flex w-3/4">
+            <div class="w-1/2">
+                <h2 class="text-2xl font-bold mb-6">Log in</h2>
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700">Email Address</label>
+                        <input type="email" class="w-full p-2 border rounded bg-gray-200" disabled>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Password</label>
+                        <input type="password" class="w-full p-2 border rounded bg-gray-200" disabled>
+                    </div>
+                    <p class="text-sm">Don't have an account? <a href="#" class="text-blue-600">Sign up here.</a></p>
+                </form>
+            </div>
+            <div class="w-1/2 flex justify-center items-center">
+                <div class="w-64 h-64 bg-gray-300 relative">
+                    <div class="absolute inset-0 flex justify-center items-center">
+                        <div class="w-16 h-16 bg-gray-400 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
