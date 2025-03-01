@@ -7,6 +7,11 @@ import requests
 from bs4 import BeautifulSoup
 from firebase_admin import credentials, firestore
 
+# TODO:
+# 1 more layer of scraping needed to get event host name and description
+# need more scraper or api
+# for scraper need 1 for each website becuase of setup?? double check
+
 
 # initialize admin and db with admin
 # using client SDK cuz recommended for scraper and "backend" like stuff
