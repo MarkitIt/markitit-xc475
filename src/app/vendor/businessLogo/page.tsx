@@ -2,11 +2,12 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from "react";
+import { useBusinessLogoContext } from '../../../context/BusinessLogoContext';
 import '../../tailwind.css';
 
 const UploadImagesPage = () => {
     const router = useRouter();
-    const [images, setImages] = useState<File[]>([]);
+    const { images, setImages } = useBusinessLogoContext();
 
     const handleNextStepClick = () => {
         router.push('/vendor/businessPastPopup');

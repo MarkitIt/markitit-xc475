@@ -2,6 +2,7 @@
 
 import { collection, getDocs } from "firebase/firestore";
 import { useRouter } from 'next/navigation';
+import { useBusinessProfileContext } from '../../../context/BusinessProfileContext';
 import React, { useEffect, useState } from "react";
 import { db } from "../../../lib/firebase";
 import '../../tailwind.css';
@@ -16,24 +17,26 @@ interface Profile {
 const BusinessProfile = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [businessName, setBusinessName] = useState("");
-  const [legalBusinessName, setLegalBusinessName] = useState("");
-  const [contactLegalName, setContactLegalName] = useState("");
-  const [contactPreferredName, setContactPreferredName] = useState("");
-  const [country, setCountryName] = useState("");
-  const [streetAddress, setStreetAddress] = useState("");
-  const [aptSuite, setAptSuite] = useState("");
-  const [city, setCity] = useState("");
-  const [stateProvince, setStateProvince] = useState("");
-  const [zipPostalCode, setZipPostalCode] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [website, setWebsite] = useState("");
-  const [numberOfEmployees, setNumberOfEmployees] = useState("");
-  const [description, setDescription] = useState("");
-  const [facebookLink, setFacebookLink] = useState("");
-  const [twitterHandle, setTwitterHandle] = useState("");
-  const [instagramHandle, setInstagramHandle] = useState("");
+  const {
+    businessName, setBusinessName,
+    legalBusinessName, setLegalBusinessName,
+    contactLegalName, setContactLegalName,
+    contactPreferredName, setContactPreferredName,
+    country, setCountryName,
+    streetAddress, setStreetAddress,
+    aptSuite, setAptSuite,
+    city, setCity,
+    stateProvince, setStateProvince,
+    zipPostalCode, setZipPostalCode,
+    email, setEmail,
+    phone, setPhone,
+    website, setWebsite,
+    numberOfEmployees, setNumberOfEmployees,
+    description, setDescription,
+    facebookLink, setFacebookLink,
+    twitterHandle, setTwitterHandle,
+    instagramHandle, setInstagramHandle
+  } = useBusinessProfileContext();
 
   const router = useRouter();
 

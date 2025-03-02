@@ -2,28 +2,30 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from "react";
+import { useBusinessPastPopupContext } from '../../../context/BusinessPastPopupContext';
 import '../../tailwind.css';
 
 const BusinessPastPopup = () => {
   const router = useRouter();
-  const [selectedPopups, setSelectedPopups] = useState<string[]>([]);
+  const {selectedPastPopups, setSelectedPastPopups} : { selectedPastPopups: string[], setSelectedPastPopups: React.Dispatch<React.SetStateAction<string[]>> } = useBusinessPastPopupContext();
+  //const { selectedAdjectives, setSelectedAdjectives }: { selectedAdjectives: string[], setSelectedAdjectives: React.Dispatch<React.SetStateAction<string[]>> } = useBusinessAdjectiveContext();
 
   const handleNextStepClick = () => {
     router.push('/vendor/businessFinished');
     // This is where you would save the data to the database
   };
 
-  const popups = [
+  const pastPopups = [
     "Innovative Insights Expo","Reliable Solutions Showcase","Efficient Tech Symposium","Creative Minds Workshop",
     "Professional Growth Summit","Dynamic Innovations Fair","Friendly Networking Hub","Trustworthy Trends Conference",
     "Experienced Leaders Forum","Passionate Pioneers Meetup","Dedicated Developers Day","Skilled Strategists Seminar"
   ];
 
-  const handlePopupClick = (popup: string) => {
-    setSelectedPopups(prevSelected =>
-      prevSelected.includes(popup)
-        ? prevSelected.filter(item => item !== popup)
-        : [...prevSelected, popup]
+  const handlePastPopupClick = (pastPopup: string) => {
+    setSelectedPastPopups(prevSelected =>
+      prevSelected.includes(pastPopup)
+        ? prevSelected.filter(item => item !== pastPopup)
+        : [...prevSelected, pastPopup]
     );
   };
 
@@ -39,13 +41,13 @@ const BusinessPastPopup = () => {
           <h1 className="text-5xl font-bold mb-8">Which of these pop-ups have you attended in the past?</h1>
           {/* List for all adjective */}
           <div className="grid grid-cols-4 gap-4">
-            {popups.map((popup, index) => (
+            {pastPopups.map((pastPopup, index) => (
               <button
                 key={index}
-                className={`h-12 flex items-center justify-center hover:bg-gray-400 ${selectedPopups.includes(popup) ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
-                onClick={() => handlePopupClick(popup)}
+                className={`h-12 flex items-center justify-center hover:bg-gray-400 ${selectedPastPopups.includes(pastPopup) ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+                onClick={() => handlePastPopupClick(pastPopup)}
               >
-                {popup}
+                {pastPopup}
               </button>
             ))}
           </div>

@@ -2,12 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from "react";
+import { useBusinessAdjectiveContext } from '../../../context/BusinessAdjectiveContext';
 import '../../tailwind.css';
 
 
 const BusinessAdjective = () => {
   const router = useRouter();
-  const [selectedAdjectives, setSelectedAdjectives] = useState<string[]>([]);
+  const { selectedAdjectives, setSelectedAdjectives }: { selectedAdjectives: string[], setSelectedAdjectives: React.Dispatch<React.SetStateAction<string[]>> } = useBusinessAdjectiveContext();
 
   const handleNextStepClick = () => {
     router.push('/vendor/businessLogo');
@@ -19,9 +20,9 @@ const BusinessAdjective = () => {
   ];
 
   const handleAdjectiveClick = (adjective: string) => {
-    setSelectedAdjectives(prevSelected =>
+    setSelectedAdjectives((prevSelected: string[]) =>
       prevSelected.includes(adjective)
-        ? prevSelected.filter(item => item !== adjective)
+        ? prevSelected.filter((item: string) => item !== adjective)
         : [...prevSelected, adjective]
     );
   };
