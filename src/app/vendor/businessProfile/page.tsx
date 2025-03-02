@@ -1,9 +1,10 @@
+"use client";
+
 import { collection, getDocs } from "firebase/firestore";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from "react";
-import { db } from "../../lib/firebase";
-import Header from '../header';
-import '../tailwind.css';
+import { db } from "../../../lib/firebase";
+import '../../tailwind.css';
 
 // Define the type for the profile data
 interface Profile {
@@ -144,7 +145,7 @@ const BusinessProfile = () => {
 
   const handleNextStepClick = () => {
     if (businessName && contactLegalName && country && streetAddress && city && stateProvince && zipPostalCode && email && phone) {
-      router.push('/vendor/BusinessAdjective');
+      router.push('/vendor/businessAdjective');
       // This is where you would save the data to the database
 
     } else {
@@ -154,15 +155,19 @@ const BusinessProfile = () => {
 
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-
+    <div className="min-h-screen bg-white text-black">
       <main className="p-16 flex space-x-16">
-        <div className="w-[40%] h-[450px] bg-gray-300"></div>
-        <div className="w-[60%]">
+
+        {/* Large Placeholder Image */}
+        <div className="w-[50%] h-[450px] bg-gray-300"></div>
+
+        {/* Profile */}
+        <div className="w-[50%]">
           <h2 className="text-md text-gray-500">Step 01/05</h2>
           <h1 className="text-5xl font-bold mb-8">Create Business Profile</h1>
+          {/* All the fillable box form */}
           <div className="text-xl">
+            
             <div className="">Business name<span className="text-red-500">*</span></div>
             <input
               className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
@@ -313,6 +318,8 @@ const BusinessProfile = () => {
             />   
 
           </div>
+
+          {/* Next step click */}
           <div className="flex space-x-6 mt-8">
             <div className="w-36 h-14 bg-gray-300 flex items-center justify-center">Help</div>
             <div
