@@ -75,7 +75,7 @@ const BusinessFinished = () => {
               disabled
             />
 
-            <div className="">Contact legal name<span className="text-red-500">*</span></div>
+            <div className="">Contact legal name</div>
             <input
               className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
               placeholder={contactLegalName}
@@ -89,14 +89,14 @@ const BusinessFinished = () => {
               disabled
             />
 
-            <div className="">Country/region<span className="text-red-500">*</span></div>
+            <div className="">Country/region</div>
             <input
               className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
               placeholder={country}
               disabled
             />
 
-            <div className="">Street address<span className="text-red-500">*</span></div>
+            <div className="">Street address</div>
             <input
               className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
               placeholder={streetAddress}
@@ -110,35 +110,35 @@ const BusinessFinished = () => {
               disabled
             />  
 
-            <div className="">City<span className="text-red-500">*</span></div>
+            <div className="">City</div>
             <input
               className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
               placeholder={city}
               disabled
             />
 
-            <div className="">State/province<span className="text-red-500">*</span></div>
+            <div className="">State/province</div>
             <input
               className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
               placeholder={stateProvince}
               disabled
             />
 
-            <div className="">Zip/postal code<span className="text-red-500">*</span></div>
+            <div className="">Zip/postal code</div>
             <input
               className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
               placeholder={zipPostalCode}
               disabled
             />
 
-            <div className="">Email<span className="text-red-500">*</span></div>
+            <div className="">Email</div>
             <input
               className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
               placeholder={email}
               disabled
             />    
 
-            <div className="">Phone<span className="text-red-500">*</span></div>
+            <div className="">Phone</div>
             <input
               className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
               placeholder={phone}
