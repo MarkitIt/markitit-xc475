@@ -1,4 +1,9 @@
+
 // Firebase Config
+
+import { initializeApp } from "firebase/app";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApp, getApps } from 'firebase/app';
