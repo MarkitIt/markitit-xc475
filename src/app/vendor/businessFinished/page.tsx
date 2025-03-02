@@ -36,8 +36,10 @@ const BusinessFinished = () => {
   
 
   const handleNextStepClick = () => {
-    router.push('/');
     // This is where you would save the data to the database
+
+    router.push('/');
+    
   };
 
   const popups = [
@@ -58,34 +60,146 @@ const BusinessFinished = () => {
           <h2 className="text-md text-gray-500">Step 05/05</h2>
           <h1 className="text-5xl font-bold mb-8">Final review</h1>
 
-          <h1 className="text-5xl font-bold mb-8">Review Business Name:</h1>
-          <p className="text-lg">Business Name: {businessName}</p>
-          <p className="text-lg">Legal Business Name: {legalBusinessName}</p>
-          <p className="text-lg">Contact Legal Name: {contactLegalName}</p>
-          <p className="text-lg">Contact Preferred Name: {contactPreferredName}</p>
-          <p className="text-lg">Country: {country}</p>
-          <p className="text-lg">Street Address: {streetAddress}</p>
-          <p className="text-lg">Apt/Suite: {aptSuite}</p>
-          <p className="text-lg">City: {city}</p>
-          <p className="text-lg">State/Province: {stateProvince}</p>
-          <p className="text-lg">Zip/Postal Code: {zipPostalCode}</p>
-          <p className="text-lg">Email: {email}</p>
-          <p className="text-lg">Phone: {phone}</p>
-          <p className="text-lg">Website: {website}</p>
-          <p className="text-lg">Number of Employees: {numberOfEmployees}</p>
-          <p className="text-lg">Description: {description}</p>
-          <p className="text-lg">Facebook Link: {facebookLink}</p>
-          <p className="text-lg">Twitter Handle: {twitterHandle}</p>
-          <p className="text-lg">Instagram Handle: {instagramHandle}</p>
+          <h1 className="text-3xl font-bold mb-8 mt-2">Profile</h1>
+          <div className="">Business name</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={businessName}
+              disabled
+            />
 
-          <h1 className="text-5xl font-bold mb-8">Review Selected Adjectives:</h1>
-          <ul>
+            <div className="">Legal business name</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={legalBusinessName}
+              disabled
+            />
+
+            <div className="">Contact legal name<span className="text-red-500">*</span></div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={contactLegalName}
+              disabled
+            />
+
+            <div className="">Contact preferred name</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={contactPreferredName}
+              disabled
+            />
+
+            <div className="">Country/region<span className="text-red-500">*</span></div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={country}
+              disabled
+            />
+
+            <div className="">Street address<span className="text-red-500">*</span></div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={streetAddress}
+              disabled
+            />
+
+            <div className="">Apt, suite. (optional)</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={aptSuite}
+              disabled
+            />  
+
+            <div className="">City<span className="text-red-500">*</span></div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={city}
+              disabled
+            />
+
+            <div className="">State/province<span className="text-red-500">*</span></div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={stateProvince}
+              disabled
+            />
+
+            <div className="">Zip/postal code<span className="text-red-500">*</span></div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={zipPostalCode}
+              disabled
+            />
+
+            <div className="">Email<span className="text-red-500">*</span></div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={email}
+              disabled
+            />    
+
+            <div className="">Phone<span className="text-red-500">*</span></div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={phone}
+              disabled
+            />    
+
+            <div className="">Website</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={website}
+              disabled
+            />    
+
+            <div className="">Number of employees</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={numberOfEmployees}
+              disabled
+            />    
+
+            <div className="">Description</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={description}
+              disabled
+            />   
+
+            <div className="">Facebook link</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={facebookLink}
+              disabled
+            />   
+
+            <div className="">Twitter "X" handle</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={twitterHandle}
+              disabled
+            />   
+
+            <div className="">Instagram handle</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              placeholder={instagramHandle}
+              disabled
+            />   
+
+          <h1 className="text-3xl font-bold mb-8 mt-2">Adjectives</h1>
+          <div className="grid grid-cols-4 gap-4">
             {selectedAdjectives.map((adjective, index) => (
-              <li key={index} className="text-lg">{adjective}</li>
+              <button
+                key={index}
+                className={`h-12 flex items-center justify-center pointer-events-none ${selectedAdjectives.includes(adjective) ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+              >
+                {adjective}
+              </button>
             ))}
-          </ul>
+          </div>
 
-          <h1 className="text-5xl font-bold mb-8">Uploaded Images:</h1>
+          <h1 className="text-3xl font-bold mb-8 mt-2">Uploaded Images</h1>
           <div className="grid grid-cols-3 gap-4">
             {images.map((image, index) => (
               <div key={index} className="w-full h-32 bg-gray-200 flex items-center justify-center">
@@ -94,12 +208,18 @@ const BusinessFinished = () => {
             ))}
           </div>
 
-          <h1 className="text-5xl font-bold mb-8">Past Popups:</h1>
-          <ul>
-            {selectedPastPopups.map((popup, index) => (
-              <li key={index} className="text-lg">{popup}</li>
+
+          <h1 className="text-3xl font-bold mb-8 mt-2">Past Popups</h1>
+          <div className="grid grid-cols-4 gap-4">
+            {selectedPastPopups.map((pastPopup, index) => (
+              <button
+                key={index}
+                className={`h-12 flex items-center justify-center pointer-events-none ${selectedPastPopups.includes(pastPopup) ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+              >
+                {pastPopup}
+              </button>
             ))}
-          </ul>
+          </div>
 
           {/* Complete click */}
           <div className="flex space-x-6 mt-8">

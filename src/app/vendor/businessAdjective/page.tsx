@@ -12,7 +12,7 @@ const BusinessAdjective = () => {
 
   const handleNextStepClick = () => {
     router.push('/vendor/businessLogo');
-    // This is where you would save the data to the database
+
   };
 
   const adjectives = [

@@ -12,7 +12,6 @@ const BusinessPastPopup = () => {
 
   const handleNextStepClick = () => {
     router.push('/vendor/businessFinished');
-    // This is where you would save the data to the database
   };
 
   const pastPopups = [

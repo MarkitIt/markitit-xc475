@@ -149,7 +149,6 @@ const BusinessProfile = () => {
   const handleNextStepClick = () => {
     if (businessName && contactLegalName && country && streetAddress && city && stateProvince && zipPostalCode && email && phone) {
       router.push('/vendor/businessAdjective');
-      // This is where you would save the data to the database
 
     } else {
       alert("Please fill in all required fields.");

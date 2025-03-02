@@ -11,7 +11,7 @@ const UploadImagesPage = () => {
 
     const handleNextStepClick = () => {
         router.push('/vendor/businessPastPopup');
-        // This is where you would save the data to the database
+
     };
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
