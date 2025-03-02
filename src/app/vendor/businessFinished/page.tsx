@@ -65,7 +65,7 @@ const BusinessFinished = () => {
 
     try {
       // Save the data to Firestore
-      const docRef = await addDoc(collection(db, 'vendor'), data);
+      const docRef = await addDoc(collection(db, 'vendorProfile'), data);
       console.log('Document written with ID: ', docRef.id);
 
       // Redirect to the home page after successful submission
