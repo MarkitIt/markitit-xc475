@@ -6,6 +6,8 @@ import { useBusinessProfileContext } from '../../../context/BusinessProfileConte
 import { useBusinessAdjectiveContext } from '../../../context/BusinessAdjectiveContext';
 import { useBusinessLogoContext } from '../../../context/BusinessLogoContext';
 import { useBusinessPastPopupContext } from '../../../context/BusinessPastPopupContext';
+import { db } from '../../../lib/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 import '../../tailwind.css';
 
 const BusinessFinished = () => {
@@ -35,18 +37,43 @@ const BusinessFinished = () => {
   const { selectedPastPopups } = useBusinessPastPopupContext();
   
 
-  const handleNextStepClick = () => {
-    // This is where you would save the data to the database
+  const handleNextStepClick = async () => {
+    // Prepare the data to be sent to the backend
+    const data = {
+      businessName,
+      legalBusinessName,
+      contactLegalName,
+      contactPreferredName,
+      country,
+      streetAddress,
+      aptSuite,
+      city,
+      stateProvince,
+      zipPostalCode,
+      email,
+      phone,
+      website,
+      numberOfEmployees,
+      description,
+      facebookLink,
+      twitterHandle,
+      instagramHandle,
+      selectedAdjectives,
+      selectedPastPopups,
+      images: images.map(image => image.name) // Assuming you will handle image uploads separately
+    };
 
-    router.push('/');
-    
+    try {
+      // Save the data to Firestore
+      const docRef = await addDoc(collection(db, 'businessData'), data);
+      console.log('Document written with ID: ', docRef.id);
+
+      // Redirect to the home page after successful submission
+      router.push('/');
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
   };
-
-  const popups = [
-    "Innovative Insights Expo","Reliable Solutions Showcase","Efficient Tech Symposium","Creative Minds Workshop",
-    "Professional Growth Summit","Dynamic Innovations Fair","Friendly Networking Hub","Trustworthy Trends Conference",
-    "Experienced Leaders Forum","Passionate Pioneers Meetup","Dedicated Developers Day","Skilled Strategists Seminar"
-  ];
 
 
   return (
