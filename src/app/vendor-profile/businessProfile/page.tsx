@@ -148,7 +148,7 @@ const BusinessProfile = () => {
 
   const handleNextStepClick = () => {
     if (businessName && contactLegalName && country && streetAddress && city && stateProvince && zipPostalCode && email && phone) {
-      router.push('/vendor/businessAdjective');
+      router.push('/vendor-profile/businessAdjective');
 
     } else {
       alert("Please fill in all required fields.");

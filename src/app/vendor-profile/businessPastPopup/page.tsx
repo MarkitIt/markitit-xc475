@@ -11,7 +11,7 @@ const BusinessPastPopup = () => {
   //const { selectedAdjectives, setSelectedAdjectives }: { selectedAdjectives: string[], setSelectedAdjectives: React.Dispatch<React.SetStateAction<string[]>> } = useBusinessAdjectiveContext();
 
   const handleNextStepClick = () => {
-    router.push('/vendor/businessFinished');
+    router.push('/vendor-profile/businessFinished');
   };
 
   const pastPopups = [

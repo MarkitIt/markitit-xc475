@@ -10,7 +10,7 @@ const UploadImagesPage = () => {
     const { images, setImages } = useBusinessLogoContext();
 
     const handleNextStepClick = () => {
-        router.push('/vendor/businessPastPopup');
+        router.push('/vendor-profile/businessPastPopup');
 
     };
 
