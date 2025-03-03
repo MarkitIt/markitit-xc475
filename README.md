@@ -107,21 +107,21 @@ npm run dev
 ```
 /src
   /pages
-    /api         # API routes
-    /profile     # User profile-related pages
-      /applications.tsx  # Applications page
-      /login.tsx         # Login/Signup page
-      /settings.tsx      # Settings page
-      /vendor-profile
-        /index.tsx       # Vendor profile main page
-        /questionnaires.tsx  # Vendor questionnaires
-        /review.tsx          # Vendor review page
-    /community
-      /dms.tsx       # Direct messages
-      /groups.tsx    # Groups page
-    /notifications.tsx  # Notifications page
-    /index.tsx      # Home page
-    /event.tsx      # Event details page
+    /app         # API routes
+      /profile     # User profile-related pages
+        /applications.tsx  # Applications page
+        /login.tsx         # Login/Signup page
+        /settings.tsx      # Settings page
+        /vendor-profile
+          /index.tsx       # Vendor profile main page
+          /questionnaires.tsx  # Vendor questionnaires
+          /review.tsx          # Vendor review page
+      /community
+        /dms.tsx       # Direct messages
+        /groups.tsx    # Groups page
+      /notifications.tsx  # Notifications page
+      /index.tsx      # Home page
+      /event.tsx      # Event details page
 ```
 ## Contributing
 - Clone the repository
