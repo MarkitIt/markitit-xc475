@@ -1,9 +1,11 @@
+"use client";
+
 import { collection, getDocs } from "firebase/firestore";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
+import { useBusinessProfileContext } from '../../../context/BusinessProfileContext';
 import React, { useEffect, useState } from "react";
-import { db } from "../../lib/firebase";
-import Header from '../header';
-import '../tailwind.css';
+import { db } from "../../../lib/firebase";
+import '../../tailwind.css';
 
 // Define the type for the profile data
 interface Profile {
@@ -15,24 +17,26 @@ interface Profile {
 const BusinessProfile = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [businessName, setBusinessName] = useState("");
-  const [legalBusinessName, setLegalBusinessName] = useState("");
-  const [contactLegalName, setContactLegalName] = useState("");
-  const [contactPreferredName, setContactPreferredName] = useState("");
-  const [country, setCountryName] = useState("");
-  const [streetAddress, setStreetAddress] = useState("");
-  const [aptSuite, setAptSuite] = useState("");
-  const [city, setCity] = useState("");
-  const [stateProvince, setStateProvince] = useState("");
-  const [zipPostalCode, setZipPostalCode] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [website, setWebsite] = useState("");
-  const [numberOfEmployees, setNumberOfEmployees] = useState("");
-  const [description, setDescription] = useState("");
-  const [facebookLink, setFacebookLink] = useState("");
-  const [twitterHandle, setTwitterHandle] = useState("");
-  const [instagramHandle, setInstagramHandle] = useState("");
+  const {
+    businessName, setBusinessName,
+    legalBusinessName, setLegalBusinessName,
+    contactLegalName, setContactLegalName,
+    contactPreferredName, setContactPreferredName,
+    country, setCountryName,
+    streetAddress, setStreetAddress,
+    aptSuite, setAptSuite,
+    city, setCity,
+    stateProvince, setStateProvince,
+    zipPostalCode, setZipPostalCode,
+    email, setEmail,
+    phone, setPhone,
+    website, setWebsite,
+    numberOfEmployees, setNumberOfEmployees,
+    description, setDescription,
+    facebookLink, setFacebookLink,
+    twitterHandle, setTwitterHandle,
+    instagramHandle, setInstagramHandle
+  } = useBusinessProfileContext();
 
   const router = useRouter();
 
@@ -144,8 +148,7 @@ const BusinessProfile = () => {
 
   const handleNextStepClick = () => {
     if (businessName && contactLegalName && country && streetAddress && city && stateProvince && zipPostalCode && email && phone) {
-      router.push('/vendor/BusinessAdjective');
-      // This is where you would save the data to the database
+      router.push('/vendor/businessAdjective');
 
     } else {
       alert("Please fill in all required fields.");
@@ -154,15 +157,19 @@ const BusinessProfile = () => {
 
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-
+    <div className="min-h-screen bg-white text-black">
       <main className="p-16 flex space-x-16">
-        <div className="w-[40%] h-[450px] bg-gray-300"></div>
-        <div className="w-[60%]">
+
+        {/* Large Placeholder Image */}
+        <div className="w-[50%] h-[450px] bg-gray-300"></div>
+
+        {/* Profile */}
+        <div className="w-[50%]">
           <h2 className="text-md text-gray-500">Step 01/05</h2>
           <h1 className="text-5xl font-bold mb-8">Create Business Profile</h1>
+          {/* All the fillable box form */}
           <div className="text-xl">
+            
             <div className="">Business name<span className="text-red-500">*</span></div>
             <input
               className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
@@ -313,6 +320,8 @@ const BusinessProfile = () => {
             />   
 
           </div>
+
+          {/* Next step click */}
           <div className="flex space-x-6 mt-8">
             <div className="w-36 h-14 bg-gray-300 flex items-center justify-center">Help</div>
             <div
