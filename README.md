@@ -102,7 +102,27 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 ```
 npm run dev
 ```
+#### Pages Directory 
 
+```
+/src
+  /pages
+    /api         # API routes
+    /profile     # User profile-related pages
+      /applications.tsx  # Applications page
+      /login.tsx         # Login/Signup page
+      /settings.tsx      # Settings page
+      /vendor-profile
+        /index.tsx       # Vendor profile main page
+        /questionnaires.tsx  # Vendor questionnaires
+        /review.tsx          # Vendor review page
+    /community
+      /dms.tsx       # Direct messages
+      /groups.tsx    # Groups page
+    /notifications.tsx  # Notifications page
+    /index.tsx      # Home page
+    /event.tsx      # Event details page
+```
 ## Contributing
 - Clone the repository
 - Create a feature branch (git checkout -b feature-name)
