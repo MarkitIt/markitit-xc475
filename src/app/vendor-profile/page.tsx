@@ -2,10 +2,10 @@
 
 import { collection, getDocs } from "firebase/firestore";
 import { useRouter } from 'next/navigation';
-import { useBusinessProfileContext } from '../../../context/BusinessProfileContext';
 import React, { useEffect, useState } from "react";
-import { db } from "../../../lib/firebase";
-import '../../tailwind.css';
+import { useBusinessProfileContext } from '../../context/BusinessProfileContext';
+import { db } from "../../lib/firebase";
+import '../tailwind.css';
 
 // Define the type for the profile data
 interface Profile {
@@ -148,7 +148,7 @@ const BusinessProfile = () => {
 
   const handleNextStepClick = () => {
     if (businessName && contactLegalName && country && streetAddress && city && stateProvince && zipPostalCode && email && phone) {
-      router.push('/vendor/businessAdjective');
+      router.push('/vendor-profile/businessAdjective');
 
     } else {
       alert("Please fill in all required fields.");

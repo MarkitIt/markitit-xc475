@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useState } from "react";
 import { useBusinessAdjectiveContext } from '../../../context/BusinessAdjectiveContext';
 import '../../tailwind.css';
 
@@ -11,7 +10,7 @@ const BusinessAdjective = () => {
   const { selectedAdjectives, setSelectedAdjectives }: { selectedAdjectives: string[], setSelectedAdjectives: React.Dispatch<React.SetStateAction<string[]>> } = useBusinessAdjectiveContext();
 
   const handleNextStepClick = () => {
-    router.push('/vendor/businessLogo');
+    router.push('/vendor-profile/businessLogo');
 
   };
 
