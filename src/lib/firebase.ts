@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, collection, getDocs, query, where } from "firebase/firestore";
 
 
 const firebaseConfig = {
@@ -44,5 +44,48 @@ export const logoutUser = async () => {
     await signOut(auth);
   } catch (error) {
     throw error;
+  }
+};
+
+// Firestore functions
+export const getEvents = async () => {
+  try {
+    const eventsRef = collection(db, 'events');
+    const snapshot = await getDocs(eventsRef);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    return [];
+  }
+};
+
+export const searchEvents = async (city?: string, date?: string, keywords?: string) => {
+  try {
+    let eventsRef = collection(db, 'events');
+    let constraints = [];
+
+    if (city) {
+      constraints.push(where('location', '==', city));
+    }
+    if (date) {
+      constraints.push(where('date', '==', date));
+    }
+    if (keywords) {
+      constraints.push(where('title', '>=', keywords));
+    }
+
+    const q = constraints.length > 0 ? query(eventsRef, ...constraints) : eventsRef;
+    const snapshot = await getDocs(q);
+    
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Error searching events:', error);
+    return [];
   }
 };
