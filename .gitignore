@@ -18,6 +18,9 @@ hosting/.cache
 /.firebase/
 /emulator-ui/
 
+#Firebase credential
+firebase-service-account.json
+
 # Logs
 *.log
 npm-debug.log*
