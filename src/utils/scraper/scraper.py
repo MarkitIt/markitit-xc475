@@ -134,7 +134,9 @@ def scrape_eventbrite():
 
             event_main_container = soup.find(
                 "ul",
-                {"class": lambda x: x and "SearchResultPanelContentEventCardList" in x},
+                {
+                    "class": "SearchResultPanelContentEventCardList-module__eventList___2wk-D"
+                },
             )
 
             if not event_main_container:
@@ -153,7 +155,21 @@ def scrape_eventbrite():
 
                     label = event_link.get("aria-label", "")
 
-                    name = label.replace("View ", "")
+                    # eventbrite add this infront
+                    # name = label.replace("View ", "")
+                    name = label
+
+                    # for checking pop up
+                    lower_name = name.lower()
+
+                    if (
+                        "pop up" not in lower_name
+                        and "pop-up" not in lower_name
+                        and "popup" not in lower_name
+                    ):
+                        # uncomment if want to see skipped events
+                        # print(f"Skipping event: '{name}' - not a pop-up event")
+                        continue
 
                     location_elem = event_link.get("data-event-location", "")
                     if location_elem and "," in location_elem:
