@@ -108,23 +108,147 @@ def scrape_eventeny():
 # <span class="size-14 flex flex-wrap inline overflow-hidden" style="font-weight: 700; color: #7E7E7E; height: 20px;">
 # <span class="size-14 flex flex-wrap inline overflow-hidden" style="font-weight: 700; color: #7E7E7E; height: 20px;">
 
+
+def scrape_eventbrite():
+    # scraping as if using chrome
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3"
+    }
+
+    events = []
+
+    try:
+        print("Scraping Eventbrite")
+
+        # set num page to scrape
+        for page in range(1, 6):
+            print("Scraping eventbrite page:", page)
+
+            response = requests.get(
+                f"https://www.eventbrite.com/d/ny--new-york/pop-up/?page={page}",
+                headers=headers,
+                timeout=13,
+            )
+
+            soup = BeautifulSoup(response.content, "html.parser")
+
+            event_main_container = soup.find(
+                "ul",
+                {"class": lambda x: x and "SearchResultPanelContentEventCardList" in x},
+            )
+
+            if not event_main_container:
+                print("cant find main container for page", page)
+                continue
+
+            event_cards = event_main_container.find_all("li")
+
+            for card in event_cards:
+                try:
+                    event_link = card.find("a", {"class": "event-card-link"})
+
+                    if not event_link:
+                        print("cant find event link")
+                        continue
+
+                    label = event_link.get("aria-label", "")
+
+                    name = label.replace("View ", "")
+
+                    location_elem = event_link.get("data-event-location", "")
+                    if location_elem and "," in location_elem:
+                        city, state = location_elem.split(",")
+                        location = {"city": city.strip(), "state": state.strip()}
+                    else:
+                        location = {"city": "New York", "state": "NY"}
+
+                    date_elem = card.find(
+                        "p",
+                        {
+                            "class": "Typography_root__487rx #585163 Typography_body-md__487rx event-card__clamp-line--one Typography_align-match-parent__487rx"
+                        },
+                    )
+                    date = date_elem.text.strip() if date_elem else ""
+
+                    venue_elem = card.select_one(
+                        "p.Typography_root__487rx.Typography_body-md__487rx:not(:has(time))"
+                    )
+                    venue = venue_elem.text.strip() if venue_elem else ""
+
+                    price_elem = card.find(
+                        "p",
+                        {
+                            "class": "Typography_root__487rx #3a3247 Typography_body-md-bold__487rx Typography_align-match-parent__487rx"
+                        },
+                    )
+                    price = price_elem.text.strip() if price_elem else ""
+
+                    event_id = event_link.get("data-event-id", "")
+                    event_url = event_link.get("href", "")
+
+                    event = {
+                        "name": name,
+                        # TODO: next level scrape
+                        "description": "",
+                        "location": location,
+                        "venue": venue,
+                        # Hardcoded vendor ID
+                        "vendor_id": "Eventbrite",
+                        "category": ["pop up"],
+                        "date": date,
+                        "price": price,
+                        "event_id": event_id,
+                        "url": event_url,
+                    }
+
+                    events.append(event)
+
+                except Exception as e:
+                    print(f"Error processing card: {e}")
+
+            # incase eventbrite flag
+            time.sleep(random.uniform(1, 3))
+
+        return events
+
+    except Exception as e:
+        print(f"Error scraping Eventbrite: {e}")
+        return []
+
+
 if __name__ == "__main__":
-    events = scrape_eventeny()
-    # print first item only
-    print(events[0])
+    # events = scrape_eventeny()
+    # # print first item only
+    # print(events[0])
 
-    if events:
-        try:
-            events_table = db.collection("events")
-            batch = db.batch()
+    # if events:
+    #     try:
+    #         events_table = db.collection("events")
+    #         batch = db.batch()
 
-            for event in events:
-                event_ref = events_table.document()
-                batch.set(event_ref, event)
+    #         for event in events:
+    #             event_ref = events_table.document()
+    #             batch.set(event_ref, event)
 
-            batch.commit()
-            print("event added to db")
-        except Exception as e:
-            print("Error: ", e)
-    else:
-        print("No events found, check scrape_eventeny didnt return anything")
+    #         batch.commit()
+    #         print("event added to db")
+    #     except Exception as e:
+    #         print("Error: ", e)
+    # else:
+    #     print("No events found, check scrape_eventeny didnt return anything")
+
+    eventbrite_events = scrape_eventbrite()
+
+    # Print the total number of events found
+    print(f"\nTotal Eventbrite events found: {len(eventbrite_events)}")
+
+    # Print the first 15 events or all if less than 15
+    print("\nFirst 15 Eventbrite events:")
+    for i, event in enumerate(eventbrite_events[:15]):
+        print(f"\nEvent {i+1}:")
+        print(f"Name: {event['name']}")
+        print(f"Location: {event['location']['city']}, {event['location']['state']}")
+        print(f"Venue: {event['venue']}")
+        print(f"Date: {event['date']}")
+        print(f"Price: {event['price']}")
+        print(f"URL: {event['url']}")
