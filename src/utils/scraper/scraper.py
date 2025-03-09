@@ -6,6 +6,10 @@ import firebase_admin
 import requests
 from bs4 import BeautifulSoup
 from firebase_admin import credentials, firestore
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 # TODO:
 # 1 more layer of scraping needed to get event host name and description
@@ -232,6 +236,105 @@ def scrape_eventbrite():
         return []
 
 
+"""
+Using selenium to scrape Zapp cuz of PHP
+cant query need to query with selenium
+"""
+
+
+def scrape_zapp():
+    events = []
+
+    try:
+        print("Scraping Zapp")
+
+        # setup chrome for selenium
+        # May need to download chromedriver if u dont have
+        options = Options()
+        options.add_argument("--headless")
+        driver = webdriver.Chrome(options=options)
+
+        driver.get("https://www.zapplication.org/participating-events.php")
+        time.sleep(3)
+
+        # search pop up
+        search_box = driver.find_element(By.ID, "keywords")
+        search_box.clear()
+        search_box.send_keys("pop up")
+        search_box.send_keys(Keys.RETURN)
+        time.sleep(3)
+
+        event_cards = driver.find_elements(
+            By.CSS_SELECTOR, "div[data-v-6ccc3a2c].card.mb-3"
+        )
+
+        for card in event_cards:
+            try:
+                name = card.find_element(
+                    By.CSS_SELECTOR, "a.font-weight-bold.text"
+                ).text.strip()
+
+                # date_container = card.find_element(
+                #     By.CSS_SELECTOR, "div:has(span.subtext:contains('Event Dates:'))"
+                # )
+                # date = date_container.find_element(
+                #     By.CSS_SELECTOR, "span.font-weight-bold"
+                # ).text.strip()
+                date_div = card.find_element(
+                    By.XPATH, ".//div[contains(., 'Event Dates:')]"
+                )
+                date = date_div.find_element(
+                    By.CSS_SELECTOR, "span.font-weight-bold"
+                ).text.strip()
+
+                location_column = card.find_element(
+                    By.CSS_SELECTOR, ".col-md.text-left.text-md-right.pr-2"
+                )
+                location_text = location_column.find_elements(By.TAG_NAME, "div")[
+                    0
+                ].text.strip()
+
+                if "," in location_text:
+                    city, state = location_text.split(",")
+                    location = {"city": city.strip(), "state": state.strip()}
+                else:
+                    location = {"city": location_text, "state": ""}
+
+                try:
+                    fee_div = card.find_element(
+                        By.XPATH, ".//div[contains(., 'Fee (Jury fee):')]"
+                    )
+                    price = fee_div.find_element(
+                        By.CSS_SELECTOR, "span.font-weight-bold"
+                    ).text.strip()
+                except Exception as e:
+                    print(f"Fee error: {e}")
+                    price = ""
+
+                # same TODO as other
+                event = {
+                    "name": name,
+                    "description": "",
+                    "location": location,
+                    "vendor_id": "Zapplication",
+                    "category": ["pop up"],
+                    "date": date,
+                    "price": price,
+                }
+
+                events.append(event)
+
+            except Exception as e:
+                print(f"Error processing card: {e}")
+
+        driver.quit()
+        return events
+
+    except Exception as e:
+        print(f"Error scraping Zapp: {e}")
+        return []
+
+
 if __name__ == "__main__":
     # events = scrape_eventeny()
     # # print first item only
@@ -253,18 +356,27 @@ if __name__ == "__main__":
     # else:
     #     print("No events found, check scrape_eventeny didnt return anything")
 
-    eventbrite_events = scrape_eventbrite()
+    # TEST EVENTBRITE SCRAPER
+    # eventbrite_events = scrape_eventbrite()
 
-    # Print the total number of events found
-    print(f"\nTotal Eventbrite events found: {len(eventbrite_events)}")
+    # # Print the total number of events found
+    # print(f"\nTotal Eventbrite events found: {len(eventbrite_events)}")
 
-    # Print the first 15 events or all if less than 15
-    print("\nFirst 15 Eventbrite events:")
-    for i, event in enumerate(eventbrite_events[:15]):
-        print(f"\nEvent {i+1}:")
-        print(f"Name: {event['name']}")
+    # # Print the first 15 events or all if less than 15
+    # print("\nFirst 15 Eventbrite events:")
+    # for i, event in enumerate(eventbrite_events[:15]):
+    #     print(f"\nEvent {i+1}:")
+    #     print(f"Name: {event['name']}")
+    #     print(f"Location: {event['location']['city']}, {event['location']['state']}")
+    #     print(f"Venue: {event['venue']}")
+    #     print(f"Date: {event['date']}")
+    #     print(f"Price: {event['price']}")
+    #     print(f"URL: {event['url']}")
+
+    # TEST ZAPP
+    zapp_events = scrape_zapp()
+    for event in zapp_events[:10]:
+        print(f"\nName: {event['name']}")
         print(f"Location: {event['location']['city']}, {event['location']['state']}")
-        print(f"Venue: {event['venue']}")
         print(f"Date: {event['date']}")
-        print(f"Price: {event['price']}")
-        print(f"URL: {event['url']}")
+        print(f"Price: {event.get('price', 'N/A')}")
