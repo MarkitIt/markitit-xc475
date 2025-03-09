@@ -239,11 +239,14 @@ def scrape_eventbrite():
 """
 Using selenium to scrape Zapp cuz of PHP
 cant query need to query with selenium
+using xquery and selectors
 """
 
 
 def scrape_zapp():
     events = []
+    # for id and first layer info
+    basic_event_info = []
 
     try:
         print("Scraping Zapp")
@@ -270,68 +273,130 @@ def scrape_zapp():
 
         for card in event_cards:
             try:
-                name = card.find_element(
+                name_element = card.find_element(
                     By.CSS_SELECTOR, "a.font-weight-bold.text"
-                ).text.strip()
-
-                # date_container = card.find_element(
-                #     By.CSS_SELECTOR, "div:has(span.subtext:contains('Event Dates:'))"
-                # )
-                # date = date_container.find_element(
-                #     By.CSS_SELECTOR, "span.font-weight-bold"
-                # ).text.strip()
-                date_div = card.find_element(
-                    By.XPATH, ".//div[contains(., 'Event Dates:')]"
                 )
-                date = date_div.find_element(
-                    By.CSS_SELECTOR, "span.font-weight-bold"
-                ).text.strip()
+                name = name_element.text.strip()
 
-                location_column = card.find_element(
-                    By.CSS_SELECTOR, ".col-md.text-left.text-md-right.pr-2"
-                )
-                location_text = location_column.find_elements(By.TAG_NAME, "div")[
-                    0
-                ].text.strip()
+                event_link = name_element.get_attribute("href")
+                event_id = event_link.split("ID=")[1] if "ID=" in event_link else None
 
-                if "," in location_text:
-                    city, state = location_text.split(",")
-                    location = {"city": city.strip(), "state": state.strip()}
-                else:
-                    location = {"city": location_text, "state": ""}
+                if not event_id:
+                    print(f"no ID for: {name}, skipped")
+                    continue
 
                 try:
-                    fee_div = card.find_element(
-                        By.XPATH, ".//div[contains(., 'Fee (Jury fee):')]"
+                    date_div = card.find_element(
+                        By.XPATH, ".//div[contains(., 'Event Dates:')]"
                     )
-                    price = fee_div.find_element(
+                    date = date_div.find_element(
                         By.CSS_SELECTOR, "span.font-weight-bold"
                     ).text.strip()
                 except Exception as e:
-                    print(f"Fee error: {e}")
-                    price = ""
+                    print(f"Error getting date for {name}: {e}")
+                    date = ""
 
-                # same TODO as other
+                try:
+                    location_column = card.find_element(
+                        By.CSS_SELECTOR, ".col-md.text-left.text-md-right.pr-2"
+                    )
+                    location_text = location_column.find_elements(By.TAG_NAME, "div")[
+                        0
+                    ].text.strip()
+
+                    if "," in location_text:
+                        city, state = location_text.split(",")
+                        location = {"city": city.strip(), "state": state.strip()}
+                    else:
+                        location = {"city": location_text, "state": ""}
+                except Exception as e:
+                    print(f"Error getting location for {name}: {e}")
+                    location = {"city": "", "state": ""}
+
+                # basic info from outside cards
+                basic_event_info.append(
+                    {
+                        "name": name,
+                        "date": date,
+                        "location": location,
+                        "event_id": event_id,
+                    }
+                )
+            except Exception as e:
+                print(f"Error in first pass for event card: {e}")
+
+        # second loop go into link for description and more info
+        # have a lot of info like process, fee breakdown ect if needed
+        for basic_info in basic_event_info:
+            try:
+                event_id = basic_info["event_id"]
+                driver.get(f"https://www.zapplication.org/event-info.php?ID={event_id}")
+                time.sleep(2)
+
+                description = ""
+                try:
+                    event_info_section = driver.find_element(
+                        By.XPATH, "//h2[@id='event-info']/following-sibling::div[1]"
+                    )
+                    description = event_info_section.text.strip()
+                except:
+                    # another place inside link for description (alt)
+                    try:
+                        event_info_section = driver.find_element(
+                            By.CSS_SELECTOR, "div.my-4 div"
+                        )
+                        description = event_info_section.text.strip()
+                    except:
+                        print(f"Couldn't find description for: {basic_info['name']}")
+
+                price = ""
+                try:
+                    fee_section = driver.find_element(
+                        By.XPATH,
+                        "//span[contains(., 'Fee:')]/following-sibling::text()[1]",
+                    )
+                    price = fee_section.strip()
+                except:
+                    try:
+                        fee_section = driver.find_element(
+                            By.XPATH,
+                            "//span[contains(@class, 'font-weight-bold')][contains(., 'Fee:')]",
+                        )
+                        price = fee_section.find_element(
+                            By.XPATH, "following-sibling::text()[1]"
+                        ).strip()
+                    except:
+                        try:
+                            fee_section = driver.find_element(
+                                By.CSS_SELECTOR,
+                                ".col-md-4 span.font-weight-bold:contains('Fee:')",
+                            )
+                            price = fee_section.parent.text.replace("Fee:", "").strip()
+                        except:
+                            print(f"Couldn't find fee for: {basic_info['name']}")
+
                 event = {
-                    "name": name,
-                    "description": "",
-                    "location": location,
+                    "name": basic_info["name"],
+                    "description": description,
+                    "location": basic_info["location"],
                     "vendor_id": "Zapplication",
                     "category": ["pop up"],
-                    "date": date,
+                    "date": basic_info["date"],
                     "price": price,
+                    "event_id": event_id,
                 }
 
                 events.append(event)
 
             except Exception as e:
-                print(f"Error processing card: {e}")
+                print(e)
 
         driver.quit()
         return events
 
     except Exception as e:
-        print(f"Error scraping Zapp: {e}")
+        print(f"Error scraping Zapp {e}")
+        driver.quit()
         return []
 
 
