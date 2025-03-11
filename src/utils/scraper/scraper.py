@@ -400,36 +400,60 @@ def scrape_zapp():
         return []
 
 
+# need event id for duplicate
+def make_event_id(event):
+    return f"{event['name']}-{event['vendor_id']}-{event['location']['city']}-{event['date']}"
+
+
 if __name__ == "__main__":
     all_events = []
 
     # Get and append events from sources
     eventeny_events = scrape_eventeny()
-    all_events.append(eventeny_events)
+    all_events.extend(eventeny_events)
     eventbrite_events = scrape_eventbrite()
-    all_events.append(eventbrite_events)
+    all_events.extend(eventbrite_events)
     zapp_events = scrape_zapp()
-    all_events.append(zapp_events)
+    all_events.extend(zapp_events)
 
     if all_events:
         try:
             events_table = db.collection("events")
             batch = db.batch()
 
-            for event in all_events:
-                event_ref = events_table.document()
-                batch.set(event_ref, event)
+            new_events = 0
+            duplicate_count = 0
 
-            batch.commit()
-            print("all events added to db")
+            for event in all_events:
+                # make unique id and check if there duplicate
+                event_unique_id = make_event_id(event)
+                event["event_unique_id"] = event_unique_id
+
+                matching_events = events_table.where(
+                    "event_unique_id", "==", event_unique_id
+                ).get()
+
+                if not matching_events:
+                    event_ref = events_table.document()
+                    batch.set(event_ref, event)
+                    new_events += 1
+                else:
+                    duplicate_count += 1
+
+            if new_events > 0:
+                batch.commit()
+                print(f"Added {new_events} new events")
+            else:
+                print("no new event")
+
+            print(f"{duplicate_count} duplicate events")
+
         except Exception as e:
             print("error adding events to db", e)
     else:
         print("no events found")
 
     # print first item only
-    print(events[0])
-
     # TEST EVENTBRITE SCRAPER
     # eventbrite_events = scrape_eventbrite()
 
