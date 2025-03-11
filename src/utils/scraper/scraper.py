@@ -401,25 +401,34 @@ def scrape_zapp():
 
 
 if __name__ == "__main__":
-    # events = scrape_eventeny()
-    # # print first item only
-    # print(events[0])
+    all_events = []
 
-    # if events:
-    #     try:
-    #         events_table = db.collection("events")
-    #         batch = db.batch()
+    # Get and append events from sources
+    eventeny_events = scrape_eventeny()
+    all_events.append(eventeny_events)
+    eventbrite_events = scrape_eventbrite()
+    all_events.append(eventbrite_events)
+    zapp_events = scrape_zapp()
+    all_events.append(zapp_events)
 
-    #         for event in events:
-    #             event_ref = events_table.document()
-    #             batch.set(event_ref, event)
+    if all_events:
+        try:
+            events_table = db.collection("events")
+            batch = db.batch()
 
-    #         batch.commit()
-    #         print("event added to db")
-    #     except Exception as e:
-    #         print("Error: ", e)
-    # else:
-    #     print("No events found, check scrape_eventeny didnt return anything")
+            for event in all_events:
+                event_ref = events_table.document()
+                batch.set(event_ref, event)
+
+            batch.commit()
+            print("all events added to db")
+        except Exception as e:
+            print("error adding events to db", e)
+    else:
+        print("no events found")
+
+    # print first item only
+    print(events[0])
 
     # TEST EVENTBRITE SCRAPER
     # eventbrite_events = scrape_eventbrite()
@@ -439,9 +448,9 @@ if __name__ == "__main__":
     #     print(f"URL: {event['url']}")
 
     # TEST ZAPP
-    zapp_events = scrape_zapp()
-    for event in zapp_events[:10]:
-        print(f"\nName: {event['name']}")
-        print(f"Location: {event['location']['city']}, {event['location']['state']}")
-        print(f"Date: {event['date']}")
-        print(f"Price: {event.get('price', 'N/A')}")
+    # zapp_events = scrape_zapp()
+    # for event in zapp_events[:10]:
+    #     print(f"\nName: {event['name']}")
+    #     print(f"Location: {event['location']['city']}, {event['location']['state']}")
+    #     print(f"Date: {event['date']}")
+    #     print(f"Price: {event.get('price', 'N/A')}")
