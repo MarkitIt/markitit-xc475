@@ -1,19 +1,21 @@
 "use client";
 
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { useBusinessProfileContext } from '../../../context/BusinessProfileContext';
+import { useEffect, useState } from 'react';
 import { useBusinessAdjectiveContext } from '../../../context/BusinessAdjectiveContext';
 import { useBusinessLogoContext } from '../../../context/BusinessLogoContext';
 import { useBusinessPastPopupContext } from '../../../context/BusinessPastPopupContext';
-import { db, auth } from '../../../lib/firebase';
-import { collection, addDoc } from 'firebase/firestore';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { useBusinessProfileContext } from '../../../context/BusinessProfileContext';
+import { useUserContext } from '../../../context/UserContext';
+import { auth, db } from '../../../lib/firebase';
 import '../../tailwind.css';
 
 const BusinessFinished = () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const { reloadHeader } = useUserContext();
   const {
     businessName,
     legalBusinessName,
@@ -55,8 +57,13 @@ const BusinessFinished = () => {
 
   const handleNextStepClick = async () => {
     // Prepare the data to be sent to the backend
+    if (!user) {
+      console.error('User is not authenticated');
+      return;
+    }
+
     const data = {
-      uid:user.uid,
+      uid: user.uid,
       businessName,
       legalBusinessName,
       contactLegalName,
@@ -84,6 +91,9 @@ const BusinessFinished = () => {
       // Save the data to Firestore
       const docRef = await addDoc(collection(db, 'vendorProfile'), data);
       console.log('Document written with ID: ', docRef.id);
+
+      // Reload the header to reflect the latest data
+      reloadHeader();
 
       // Redirect to the home page after successful submission
       router.push('/');

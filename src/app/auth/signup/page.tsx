@@ -5,6 +5,7 @@ import { signUpUser } from "@/lib/firebase"; // Ensure this path is correct
 import styles from "./page.module.css";
 import { useRouter } from "next/navigation";
 
+
 export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

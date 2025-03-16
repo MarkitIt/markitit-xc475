@@ -3,25 +3,22 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 import Link from "next/link";
-import { auth } from "../lib/firebase";
+import { auth, db } from "../lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { useUserContext } from '../context/UserContext';
+import { signOut } from "firebase/auth";
 
-const Header = () => {
+const Header: React.FC = () => {
+  const { user, vendorProfile } = useUserContext();
 
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, []);
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
 
   return (
     <header className={styles.header}>
@@ -43,14 +40,24 @@ const Header = () => {
         <div className={styles.profile}>
           <span>Profile ▼</span>
           <div className={styles.dropdown}>
-            {user ? (
-              <>
-                
-                <Link href="/auth/login">Login/Sign Up</Link>
-                <Link href="/vendor-profile">Create a Vendor Profile</Link>
-                <Link href="/applications">My Applications</Link>
-                <Link href="/settings">Settings</Link>
-              </>
+            {user ? (   
+              vendorProfile ? (
+                <>
+                  <Link href="/auth/login">Login/Sign Up</Link>
+                  <Link href="/vendor-dashboard">Vendor Dashboard</Link>
+                  <Link href="/applications">My Applications</Link>
+                  <Link href="/settings">Settings</Link>
+                  <button onClick={handleLogout}>Logout</button>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/login">Login/Sign Up</Link>
+                  <Link href="/vendor-profile">Create a Vendor Profile</Link>
+                  <Link href="/applications">My Applications</Link>
+                  <Link href="/settings">Settings</Link>
+                  <button onClick={handleLogout}>Logout</button>
+                </>
+              )
             ) : (
               <>
                 <Link href="/auth/login">Login/Sign Up</Link>

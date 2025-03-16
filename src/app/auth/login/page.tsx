@@ -4,18 +4,21 @@ import { useState } from "react";
 import { loginUser } from "@/lib/firebase"; // Ensure this path is correct
 import styles from "./page.module.css";
 import { useRouter } from "next/navigation";
+import { useUserContext } from '../../../context/UserContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const { reloadHeader } = useUserContext();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await loginUser(email, password);
       alert("User logged in successfully!");
+      reloadHeader(); // Reload user context to update the header
       router.push("/"); // Redirect to home page after login
     } catch (error) {
       setError((error as Error).message);
