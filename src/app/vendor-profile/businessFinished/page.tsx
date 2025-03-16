@@ -1,17 +1,19 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useBusinessProfileContext } from '../../../context/BusinessProfileContext';
 import { useBusinessAdjectiveContext } from '../../../context/BusinessAdjectiveContext';
 import { useBusinessLogoContext } from '../../../context/BusinessLogoContext';
 import { useBusinessPastPopupContext } from '../../../context/BusinessPastPopupContext';
-import { db } from '../../../lib/firebase';
+import { db, auth } from '../../../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { onAuthStateChanged, User } from 'firebase/auth';
 import '../../tailwind.css';
 
 const BusinessFinished = () => {
   const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
   const {
     businessName,
     legalBusinessName,
@@ -36,10 +38,25 @@ const BusinessFinished = () => {
   const { images } = useBusinessLogoContext();
   const { selectedPastPopups } = useBusinessPastPopupContext();
   
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+
 
   const handleNextStepClick = async () => {
     // Prepare the data to be sent to the backend
     const data = {
+      uid:user.uid,
       businessName,
       legalBusinessName,
       contactLegalName,
