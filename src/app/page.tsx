@@ -8,6 +8,8 @@ import { EventCard } from '@/components/EventCard';
 import Image from "next/image";
 import styles from "./page.module.css";
 import './tailwind.css';
+import "leaflet/dist/leaflet.css";
+import { useUserContext } from '@/context/UserContext';
 
 interface Event {
   id: string;
@@ -21,25 +23,48 @@ interface Event {
 }
 
 export default function Home() {
+  const { user, vendorProfile } = useUserContext();
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 12;
+  const [rankedEvents, setRankedEvents] = useState<Event[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      const eventsCollection = collection(db, 'events');
-      const eventSnapshot = await getDocs(eventsCollection);
-      const eventList = eventSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as Event));
-      setEvents(eventList);
-      setFilteredEvents(eventList);
+    const fetchAndRankEvents = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch base events
+        const eventsSnapshot = await getDocs(collection(db, 'events'));
+        const eventList = eventsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as Event));
+        setEvents(eventList);
+        setFilteredEvents(eventList);
+
+        // Rank events if user has vendor profile
+        if (user && vendorProfile) {
+          const response = await fetch("/api/rankEvents", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ vendorId: user.uid }),
+          });
+          const data = await response.json();
+          if (data.success) {
+            setRankedEvents(data.rankedEvents);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching events:"/*, error*/);
+      }
+      setIsLoading(false);
     };
 
-    fetchEvents();
-  }, []);
+    fetchAndRankEvents();
+  }, [user, vendorProfile]);
+
 
   const handleSearch = (city: string, startDate: string, endDate: string, keywords: string) => {
     let filtered = [...events];
@@ -95,17 +120,29 @@ export default function Home() {
           <li>From xc475</li>
         </ol>
 
+        {!user && (
+          <div className="text-center p-4 bg-yellow-100 text-yellow-800">
+            Events are not ranked. Please log in to see personalized recommendations.
+          </div>
+        )}
+        
+        {user && !vendorProfile && (
+          <div className="text-center p-4 bg-yellow-100 text-yellow-800">
+            Events are not ranked as vendor profile not found. Create a profile to see personalized recommendations.
+          </div>
+        )}
 
         <SearchBar onSearch={handleSearch} />
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          {currentEvents.length > 0 ? (
-            currentEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))
-          ) : (
-            <p>No events found matching your search criteria.</p>
-          )}
+          {currentEvents.map((event) => (
+            <EventCard 
+              key={event.id} 
+              event={event}
+              rank={rankedEvents.findIndex(e => e.id === event.id) + 1}
+              showRank={!!user && !!vendorProfile}
+            />
+          ))}
         </div>
 
         {/* Pagination */}
@@ -122,6 +159,17 @@ export default function Home() {
             </button>
           ))}
         </div>
+
+        <h2>Ranked Events</h2>
+        <ul>
+          {rankedEvents && rankedEvents.length > 0 ? (
+            rankedEvents.map(event => (
+              <li key={event.id}>{event.name}</li>
+            ))
+          ) : (
+            <p>No ranked events found.</p>
+          )}
+        </ul>
       </main>
       <footer className={styles.footer}>
         <a

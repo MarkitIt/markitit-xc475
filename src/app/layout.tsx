@@ -6,6 +6,10 @@ import { BusinessProfileProvider } from '../context/BusinessProfileContext';
 import { BusinessAdjectiveProvider } from '../context/BusinessAdjectiveContext';
 import { BusinessPastPopupProvider } from '../context/BusinessPastPopupContext';
 import { BusinessLogoProvider } from '../context/BusinessLogoContext';
+import { BusinessBudgetProvider } from "@/context/BusinessBudgetContext";
+import { BusinessCustomerProvider } from "@/context/BusinessCustomerContext";
+import { BusinessScheduleProvider } from "@/context/BusinessScheduleContext";
+import { BusinessLocationProvider } from "@/context/BusinessLocationContext";
 import { UserProvider } from '../context/UserContext';
 
 const geistSans = Geist({
@@ -30,9 +34,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <UserProvider>
         <Header />
         <main>
-          <BusinessProfileProvider><BusinessAdjectiveProvider><BusinessLogoProvider><BusinessPastPopupProvider>
-                {children}
-          </BusinessPastPopupProvider></BusinessLogoProvider></BusinessAdjectiveProvider></BusinessProfileProvider>
+          <BusinessProfileProvider>
+            <BusinessAdjectiveProvider>
+              <BusinessLogoProvider>
+                <BusinessPastPopupProvider>
+                  <BusinessBudgetProvider>
+                    <BusinessCustomerProvider>
+                      <BusinessScheduleProvider>
+                        <BusinessLocationProvider>
+                          {children}
+                        </BusinessLocationProvider>
+                      </BusinessScheduleProvider>
+                    </BusinessCustomerProvider>
+                  </BusinessBudgetProvider>
+                </BusinessPastPopupProvider>
+              </BusinessLogoProvider>
+            </BusinessAdjectiveProvider>
+          </BusinessProfileProvider>
         </main>
         </UserProvider>
       </body>

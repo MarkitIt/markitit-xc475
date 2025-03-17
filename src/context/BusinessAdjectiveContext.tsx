@@ -1,20 +1,22 @@
 "use client"
 
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface BusinessAdjectiveContextProps {
   selectedAdjectives: string[];
   setSelectedAdjectives: React.Dispatch<React.SetStateAction<string[]>>;
+  vendorType: string | null;
+  setVendorType: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const BusinessAdjectiveContext = createContext<BusinessAdjectiveContextProps | undefined>(undefined);
 
 export const BusinessAdjectiveProvider = ({ children }: { children: ReactNode }) => {
   const [selectedAdjectives, setSelectedAdjectives] = useState<string[]>([]);
+  const [vendorType, setVendorType] = useState<string | null>(null);
 
   return (
-    <BusinessAdjectiveContext.Provider value={{ selectedAdjectives, setSelectedAdjectives }}>
+    <BusinessAdjectiveContext.Provider value={{ selectedAdjectives, setSelectedAdjectives, vendorType, setVendorType }}>
       {children}
     </BusinessAdjectiveContext.Provider>
   );

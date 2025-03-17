@@ -11,12 +11,19 @@ interface EventProps {
       state: string;
     };
   };
+  rank?: number;
+  showRank?: boolean;
 }
 
-export function EventCard({ event }: EventProps) {
+export function EventCard({ event, rank, showRank }: EventProps) {
   return (
     <Link href={`/event-profile/${event.id}`}>
-      <div className="rounded-lg overflow-hidden shadow-md bg-white">
+      <div className="rounded-lg overflow-hidden shadow-md bg-white relative">
+        {showRank && rank && rank <= 20 && (
+          <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center">
+            #{rank}
+          </div>
+        )}
         <div className="h-48 bg-gray-200">
           {event.image && (
             <img
