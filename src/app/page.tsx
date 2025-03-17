@@ -27,6 +27,8 @@ export default function Home() {
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 12;
+  const [rankedEvents, setRankedEvents] = useState<Event[]>([]);
+  const [vendorId, setVendorId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -43,23 +45,35 @@ export default function Home() {
     fetchEvents();
   }, []);
 
-
-  const rankEvents = async (vendorId: number) => {
+  const rankEvents = async (vendorId: string) => {
     try {
-      const response = await fetch("https://us-central1-markitit-b2436.cloudfunctions.net/rankEventsForVendor", {
+      const response = await fetch("/api/rankEvents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vendorId }),
       });
   
       const data = await response.json();
-      console.log("Recommended Events:", data.rankedEvents);
+      if (data && Array.isArray(data.rankedEvents)) {
+        setRankedEvents(data.rankedEvents);
+      } else {
+        console.error("Ranked events data is not in expected format:", data);
+      }
     } catch (error) {
       console.error("Error fetching ranked events:", error);
     }
   };
 
-  
+  const handleLogin = (userVendorId: string) => {
+    setVendorId(userVendorId);
+    rankEvents(userVendorId);
+  };
+
+  useEffect(() => {
+    const simulatedVendorId = "exampleVendorId";
+    handleLogin(simulatedVendorId);
+  }, []);
+
   const handleSearch = (city: string, startDate: string, endDate: string, keywords: string) => {
     let filtered = [...events];
 
@@ -166,6 +180,17 @@ export default function Home() {
             </button>
           ))}
         </div>
+
+        <h2>Ranked Events</h2>
+        <ul>
+          {rankedEvents && rankedEvents.length > 0 ? (
+            rankedEvents.map(event => (
+              <li key={event.id}>{event.name}</li>
+            ))
+          ) : (
+            <p>No ranked events found.</p>
+          )}
+        </ul>
       </main>
       <footer className={styles.footer}>
         <a

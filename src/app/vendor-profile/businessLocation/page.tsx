@@ -118,7 +118,7 @@ const LocationPreferences = () => {
           {/* Dynamic Travel Radius Circle */}
           <Circle
             center={[location.lat, location.lng]}
-            radius={radiusInMeters} // Ensure radius is correctly passed
+            radius={radiusInMeters} // Convert miles to meters
             pathOptions={{ color: "blue", fillOpacity: 0.2 }}
           />
         </MapContainer>

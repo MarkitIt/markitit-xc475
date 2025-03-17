@@ -122,29 +122,6 @@ const BusinessProfile = () => {
     setPhone(e.target.value);
   };
 
-  // const handleWebsiteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setWebsite(e.target.value);
-  // };
-
-  // const handleNumberOfEmployeesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setNumberOfEmployees(e.target.value);
-  // };
-
-  // const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setDescription(e.target.value);
-  // };
-
-  // const handleFacebookLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setFacebookLink(e.target.value);
-  // };
-
-  // const handleTwitterHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setTwitterHandle(e.target.value);
-  // };
-
-  // const handleInstagramHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setInstagramHandle(e.target.value);
-  // };
 
   const handleNextStepClick = () => {
     if (businessName && contactLegalName && country && streetAddress && city && stateProvince && zipPostalCode && email && phone) {
