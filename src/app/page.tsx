@@ -57,7 +57,7 @@ export default function Home() {
           }
         }
       } catch (error) {
-        console.error("Error fetching events:", error);
+        console.error("Error fetching events:"/*, error*/);
       }
       setIsLoading(false);
     };
