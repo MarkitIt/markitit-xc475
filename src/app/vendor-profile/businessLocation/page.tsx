@@ -2,7 +2,25 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
+import dynamic from 'next/dynamic';
+
+// Dynamic import of MapContainer to avoid SSR issues
+const MapContainer = dynamic(
+  () => import('react-leaflet').then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import('react-leaflet').then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import('react-leaflet').then((mod) => mod.Marker),
+  { ssr: false }
+);
+const Circle = dynamic(
+  () => import('react-leaflet').then((mod) => mod.Circle),
+  { ssr: false }
+);
 
 const LocationPreferences = () => {
   const router = useRouter();
@@ -100,7 +118,7 @@ const LocationPreferences = () => {
           {/* Dynamic Travel Radius Circle */}
           <Circle
             center={[location.lat, location.lng]}
-            radius={radiusInMeters} // Convert miles to meters
+            radius={radiusInMeters} // Ensure radius is correctly passed
             pathOptions={{ color: "blue", fillOpacity: 0.2 }}
           />
         </MapContainer>

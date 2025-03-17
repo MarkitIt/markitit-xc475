@@ -1,11 +1,10 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase"; // Import Firestore setup
 import { collection, getDocs, doc, getDoc, setDoc } from "firebase/firestore";
 
-// Function to calculate event score (implement your logic here)
+// Function to calculate event score (simplified for now)
 const calculateEventScore = (vendor: any, event: any): number => {
   let score = 0;
-
   if (vendor.eventPreference.includes(event.type)) score += 30;
   const distance = Math.random() * 100; // Replace with actual distance calculation
   if (distance <= vendor.travelRadius) score += 20;
@@ -14,27 +13,25 @@ const calculateEventScore = (vendor: any, event: any): number => {
   if (vendor.demographic.some((demo: string) => event.demographics.includes(demo))) score += 10;
   if (vendor.selectedPastPopups.some((pastEvent: string) => event.name === pastEvent)) score += 5;
   if (vendor.schedule.preferredDays.some((day: string) => event.days.includes(day))) score += 5;
-
   return score;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
-
+// Next.js App Router API Route
+export async function POST(req: Request) {
   try {
-    const { vendorId } = req.body;
-    if (!vendorId) return res.status(400).json({ error: "Vendor ID is required" });
+    const { vendorId } = await req.json();
+    if (!vendorId) return NextResponse.json({ error: "Vendor ID is required" }, { status: 400 });
 
     // Fetch vendor profile
     const vendorDoc = await getDoc(doc(db, "vendors", vendorId));
-    if (!vendorDoc.exists()) return res.status(404).json({ error: "Vendor not found" });
+    if (!vendorDoc.exists()) return NextResponse.json({ error: "Vendor not found" }, { status: 404 });
     const vendor = vendorDoc.data();
 
     // Fetch all events
     const eventsSnapshot = await getDocs(collection(db, "events"));
     const events = eventsSnapshot.docs.map((doc) => doc.data());
 
-    // Score each event
+    // Score events
     const rankedEvents = events
       .map((event) => ({ ...event, score: calculateEventScore(vendor, event) }))
       .sort((a, b) => b.score - a.score);
@@ -44,9 +41,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       recommendations: rankedEvents.slice(0, 20),
     });
 
-    return res.status(200).json({ success: true, rankedEvents });
+    return NextResponse.json({ success: true, rankedEvents });
   } catch (error) {
     console.error("Error ranking events:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
