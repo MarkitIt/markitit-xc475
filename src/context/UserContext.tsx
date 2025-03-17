@@ -8,36 +8,40 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 interface UserContextProps {
   user: User | null;
   vendorProfile: any | null;
-  reloadHeader: () => void;
+  getVendorProfile: () => void;
 }
 
 const UserContext = createContext<UserContextProps>({
   user: null,
   vendorProfile: null,
-  reloadHeader: () => {},
+  getVendorProfile: () => {},
 });
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [vendorProfile, setVendorProfile] = useState<any | null>(null);
 
-  const reloadHeader = async () => {
+  const getVendorProfile = () => {
     if (user) {
       const vendorProfileCollection = collection(db, 'vendorProfile');
       const q = query(vendorProfileCollection, where('uid', '==', user.uid));
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        const vendorProfileData = querySnapshot.docs[0].data();
-        setVendorProfile(vendorProfileData);
-      }
+      getDocs(q).then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          const vendorProfileData = querySnapshot.docs[0].data();
+          setVendorProfile(vendorProfileData);
+        }
+      }).catch((error) => {
+        console.error("Error getting vendor profile: ", error);
+      });
     }
+    console.log(user)
   };
-
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        reloadHeader();
+        getVendorProfile();
       } else {
         setUser(null);
         setVendorProfile(null);
@@ -49,7 +53,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, vendorProfile, reloadHeader }}>
+    <UserContext.Provider value={{ user, vendorProfile, getVendorProfile }}>
       {children}
     </UserContext.Provider>
   );

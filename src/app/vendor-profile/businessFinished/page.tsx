@@ -15,7 +15,7 @@ import '../../tailwind.css';
 const BusinessFinished = () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const { reloadHeader } = useUserContext();
+  const { getVendorProfile } = useUserContext();
   const {
     businessName,
     legalBusinessName,
@@ -93,7 +93,7 @@ const BusinessFinished = () => {
       console.log('Document written with ID: ', docRef.id);
 
       // Reload the header to reflect the latest data
-      reloadHeader();
+      getVendorProfile();
 
       // Redirect to the home page after successful submission
       router.push('/');

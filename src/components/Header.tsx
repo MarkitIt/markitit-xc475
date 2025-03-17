@@ -11,8 +11,14 @@ import { signOut } from "firebase/auth";
 import './tailwind.css';
 
 const Header: React.FC = () => {
-  const { user, vendorProfile } = useUserContext();
+  const { user, vendorProfile,getVendorProfile } = useUserContext();
 
+  useEffect(() => {
+    if (user) {
+      getVendorProfile();
+    }
+  }, [user]);
+  
   const handleLogout = async () => {
     try {
       await signOut(auth);
