@@ -1,8 +1,61 @@
-import React from "react";
+'use client';
+
+import React, { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 import Link from "next/link";
+import { auth, db } from "../lib/firebase";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { useUserContext } from '../context/UserContext';
+import { signOut } from "firebase/auth";
+import './tailwind.css';
 
-const Header = () => {
+const Header: React.FC = () => {
+  const { user, vendorProfile, getVendorProfile } = useUserContext();
+
+  useEffect(() => {
+    if (user) {
+      getVendorProfile();
+    }
+  }, [user, getVendorProfile]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
+
+  const renderProfileOptions = () => {
+    if (!user) {
+      return (
+        <>
+          <Link href="/auth/login">Login/Sign Up</Link>
+        </>
+      );
+    }
+
+    if (vendorProfile) {
+      return (
+        <>
+          <Link href="/vendor-dashboard">Vendor Dashboard</Link>
+          <Link href="/applications">My Applications</Link>
+          <Link href="/settings">Settings</Link>
+          <Link href="/" onClick={handleLogout}>Logout</Link>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Link href="/vendor-profile">Create a Vendor Profile</Link>
+        <Link href="/settings">Settings</Link>
+        <Link href="/" onClick={handleLogout}>Logout</Link>
+      </>
+    );
+  };
+
   return (
     <header className={styles.header}>
       {/* Left Section: Hamburger + Home + Community */}
@@ -23,10 +76,7 @@ const Header = () => {
         <div className={styles.profile}>
           <span>Profile ▼</span>
           <div className={styles.dropdown}>
-            <Link href="/auth/login">Login/Sign Up</Link>
-            <Link href="/vendor-profile">Create a Vendor Profile</Link>
-            <Link href="/applications">My Applications</Link>
-            <Link href="/settings">Settings</Link>
+            {renderProfileOptions()}
           </div>
         </div>
       </div>

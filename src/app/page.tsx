@@ -9,8 +9,8 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import './tailwind.css';
 import "leaflet/dist/leaflet.css";
+import { useUserContext } from '@/context/UserContext';
 
- 
 interface Event {
   id: string;
   name: string;
@@ -23,56 +23,48 @@ interface Event {
 }
 
 export default function Home() {
+  const { user, vendorProfile } = useUserContext();
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 12;
   const [rankedEvents, setRankedEvents] = useState<Event[]>([]);
-  const [vendorId, setVendorId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      const eventsCollection = collection(db, 'events');
-      const eventSnapshot = await getDocs(eventsCollection);
-      const eventList = eventSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as Event));
-      setEvents(eventList);
-      setFilteredEvents(eventList);
+    const fetchAndRankEvents = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch base events
+        const eventsSnapshot = await getDocs(collection(db, 'events'));
+        const eventList = eventsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as Event));
+        setEvents(eventList);
+        setFilteredEvents(eventList);
+
+        // Rank events if user has vendor profile
+        if (user && vendorProfile) {
+          const response = await fetch("/api/rankEvents", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ vendorId: user.uid }),
+          });
+          const data = await response.json();
+          if (data.success) {
+            setRankedEvents(data.rankedEvents);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+      setIsLoading(false);
     };
 
-    fetchEvents();
-  }, []);
+    fetchAndRankEvents();
+  }, [user, vendorProfile]);
 
-  const rankEvents = async (vendorId: string) => {
-    try {
-      const response = await fetch("/api/rankEvents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vendorId }),
-      });
-  
-      const data = await response.json();
-      if (data && Array.isArray(data.rankedEvents)) {
-        setRankedEvents(data.rankedEvents);
-      } else {
-        console.error("Ranked events data is not in expected format:", data);
-      }
-    } catch (error) {
-      console.error("Error fetching ranked events:", error);
-    }
-  };
-
-  const handleLogin = (userVendorId: string) => {
-    setVendorId(userVendorId);
-    rankEvents(userVendorId);
-  };
-
-  useEffect(() => {
-    const simulatedVendorId = "exampleVendorId";
-    handleLogin(simulatedVendorId);
-  }, []);
 
   const handleSearch = (city: string, startDate: string, endDate: string, keywords: string) => {
     let filtered = [...events];
@@ -128,42 +120,29 @@ export default function Home() {
           <li>From xc475</li>
         </ol>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
+        {!user && (
+          <div className="text-center p-4 bg-yellow-100 text-yellow-800">
+            Events are not ranked. Please log in to see personalized recommendations.
+          </div>
+        )}
+        
+        {user && !vendorProfile && (
+          <div className="text-center p-4 bg-yellow-100 text-yellow-800">
+            Events are not ranked as vendor profile not found. Create a profile to see personalized recommendations.
+          </div>
+        )}
 
         <SearchBar onSearch={handleSearch} />
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          {currentEvents.length > 0 ? (
-            currentEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))
-          ) : (
-            <p>No events found matching your search criteria.</p>
-          )}
+          {currentEvents.map((event) => (
+            <EventCard 
+              key={event.id} 
+              event={event}
+              rank={rankedEvents.findIndex(e => e.id === event.id) + 1}
+              showRank={!!user && !!vendorProfile}
+            />
+          ))}
         </div>
 
         {/* Pagination */}

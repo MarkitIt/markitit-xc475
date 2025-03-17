@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase"; // Import Firestore setup
-import { collection, getDocs, doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 // Function to calculate event score (simplified for now)
 const calculateEventScore = (vendor: any, event: any): number => {
@@ -20,26 +20,34 @@ const calculateEventScore = (vendor: any, event: any): number => {
 export async function POST(req: Request) {
   try {
     const { vendorId } = await req.json();
-    if (!vendorId) return NextResponse.json({ error: "Vendor ID is required" }, { status: 400 });
+    if (!vendorId) {
+      return NextResponse.json({ error: "Vendor ID is required" }, { status: 400 });
+    }
 
     // Fetch vendor profile
-    const vendorDoc = await getDoc(doc(db, "vendors", vendorId));
-    if (!vendorDoc.exists()) return NextResponse.json({ error: "Vendor not found" }, { status: 404 });
-    const vendor = vendorDoc.data();
+    const vendorProfileRef = collection(db, "vendorProfile");
+    const q = query(vendorProfileRef, where("uid", "==", vendorId));
+    const vendorSnapshot = await getDocs(q);
+    
+    if (vendorSnapshot.empty) {
+      return NextResponse.json({ error: "Vendor not found" }, { status: 404 });
+    }
+    const vendor = vendorSnapshot.docs[0].data();
 
     // Fetch all events
     const eventsSnapshot = await getDocs(collection(db, "events"));
-    const events = eventsSnapshot.docs.map((doc) => doc.data());
+    const events = eventsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
 
-    // Score events
+    // Score and rank events
     const rankedEvents = events
-      .map((event) => ({ ...event, score: calculateEventScore(vendor, event) }))
+      .map(event => ({
+        ...event,
+        score: calculateEventScore(vendor, event)
+      }))
       .sort((a, b) => b.score - a.score);
-
-    // Store ranked events in Firestore
-    await setDoc(doc(db, "vendor_recommendations", vendorId), {
-      recommendations: rankedEvents.slice(0, 20),
-    });
 
     return NextResponse.json({ success: true, rankedEvents });
   } catch (error) {
