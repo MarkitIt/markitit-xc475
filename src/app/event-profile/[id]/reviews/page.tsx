@@ -59,7 +59,7 @@ export default function EventReviewPage() {
           <h2 className="text-2xl font-semibold">{event.name}</h2>
           <div className="flex space-x-1 text-black">
             {[...Array(5)].map((_, i) => (
-              <FontAwesomeIcon icon={faStar} />
+              <FontAwesomeIcon key={i} icon={faStar} />
             ))}
           </div>
         </div>

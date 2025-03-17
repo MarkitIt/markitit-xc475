@@ -8,6 +8,7 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { useUserContext } from '../context/UserContext';
 import { signOut } from "firebase/auth";
+import './tailwind.css';
 
 const Header: React.FC = () => {
   const { user, vendorProfile } = useUserContext();
@@ -47,7 +48,7 @@ const Header: React.FC = () => {
                   <Link href="/vendor-dashboard">Vendor Dashboard</Link>
                   <Link href="/applications">My Applications</Link>
                   <Link href="/settings">Settings</Link>
-                  <button onClick={handleLogout}>Logout</button>
+                  <Link href="/" onClick={handleLogout}>Logout</Link>
                 </>
               ) : (
                 <>
@@ -55,7 +56,7 @@ const Header: React.FC = () => {
                   <Link href="/vendor-profile">Create a Vendor Profile</Link>
                   <Link href="/applications">My Applications</Link>
                   <Link href="/settings">Settings</Link>
-                  <button onClick={handleLogout}>Logout</button>
+                  <Link href="/" onClick={handleLogout}>Logout</Link>
                 </>
               )
             ) : (
