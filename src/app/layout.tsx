@@ -6,6 +6,7 @@ import { BusinessProfileProvider } from '../context/BusinessProfileContext';
 import { BusinessAdjectiveProvider } from '../context/BusinessAdjectiveContext';
 import { BusinessPastPopupProvider } from '../context/BusinessPastPopupContext';
 import { BusinessLogoProvider } from '../context/BusinessLogoContext';
+import { UserProvider } from '../context/UserContext';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,13 +27,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        <UserProvider>
         <Header />
         <main>
           <BusinessProfileProvider><BusinessAdjectiveProvider><BusinessLogoProvider><BusinessPastPopupProvider>
                 {children}
           </BusinessPastPopupProvider></BusinessLogoProvider></BusinessAdjectiveProvider></BusinessProfileProvider>
         </main>
+        </UserProvider>
       </body>
     </html>
   );
 }
+
+
+

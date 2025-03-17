@@ -1,17 +1,21 @@
 "use client";
 
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useBusinessProfileContext } from '../../../context/BusinessProfileContext';
+import { useEffect, useState } from 'react';
 import { useBusinessAdjectiveContext } from '../../../context/BusinessAdjectiveContext';
 import { useBusinessLogoContext } from '../../../context/BusinessLogoContext';
 import { useBusinessPastPopupContext } from '../../../context/BusinessPastPopupContext';
-import { db } from '../../../lib/firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { useBusinessProfileContext } from '../../../context/BusinessProfileContext';
+import { useUserContext } from '../../../context/UserContext';
+import { auth, db } from '../../../lib/firebase';
 import '../../tailwind.css';
 
 const BusinessFinished = () => {
   const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const { getVendorProfile } = useUserContext();
   const {
     businessName,
     legalBusinessName,
@@ -36,10 +40,30 @@ const BusinessFinished = () => {
   const { images } = useBusinessLogoContext();
   const { selectedPastPopups } = useBusinessPastPopupContext();
   
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+
 
   const handleNextStepClick = async () => {
     // Prepare the data to be sent to the backend
+    if (!user) {
+      console.error('User is not authenticated');
+      return;
+    }
+
     const data = {
+      uid: user.uid,
       businessName,
       legalBusinessName,
       contactLegalName,
@@ -67,6 +91,9 @@ const BusinessFinished = () => {
       // Save the data to Firestore
       const docRef = await addDoc(collection(db, 'vendorProfile'), data);
       console.log('Document written with ID: ', docRef.id);
+
+      // Reload the header to reflect the latest data
+      getVendorProfile();
 
       // Redirect to the home page after successful submission
       router.push('/');
