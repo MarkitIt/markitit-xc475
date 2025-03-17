@@ -51,7 +51,7 @@ export default function EventProfilePage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-6">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-white p-6">
       {/* Market Info */}
       <div className="flex items-center gap-4 w-full max-w-2xl">
         <div className="w-16 h-16 bg-gray-300 rounded"></div>
