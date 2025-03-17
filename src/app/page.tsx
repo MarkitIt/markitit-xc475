@@ -8,7 +8,9 @@ import { EventCard } from '@/components/EventCard';
 import Image from "next/image";
 import styles from "./page.module.css";
 import './tailwind.css';
+import "leaflet/dist/leaflet.css";
 
+ 
 interface Event {
   id: string;
   name: string;
@@ -41,6 +43,23 @@ export default function Home() {
     fetchEvents();
   }, []);
 
+
+  const rankEvents = async (vendorId: number) => {
+    try {
+      const response = await fetch("https://us-central1-markitit-b2436.cloudfunctions.net/rankEventsForVendor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ vendorId }),
+      });
+  
+      const data = await response.json();
+      console.log("Recommended Events:", data.rankedEvents);
+    } catch (error) {
+      console.error("Error fetching ranked events:", error);
+    }
+  };
+
+  
   const handleSearch = (city: string, startDate: string, endDate: string, keywords: string) => {
     let filtered = [...events];
 

@@ -9,6 +9,10 @@ import { useBusinessPastPopupContext } from '../../../context/BusinessPastPopupC
 import { db } from '../../../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import '../../tailwind.css';
+import { useBusinessBudgetContext } from '@/context/BusinessBudgetContext';
+import { useBusinessLocationContext } from '@/context/BusinessLocationContext';
+import { useBusinessScheduleContext } from '@/context/BusinessScheduleContext';
+import { useBusinessCustomerContext } from '@/context/BusinessCustomerContext';
 
 const BusinessFinished = () => {
   const router = useRouter();
@@ -35,6 +39,12 @@ const BusinessFinished = () => {
   const { selectedAdjectives } = useBusinessAdjectiveContext();
   const { images } = useBusinessLogoContext();
   const { selectedPastPopups } = useBusinessPastPopupContext();
+  const { maxApplicationFee, maxVendorFee, totalCostEstimate }= useBusinessBudgetContext();
+  const { location, manualLocation, radius, travelPreference} = useBusinessLocationContext();
+  const { preferredDays, eveningMarketPreference} = useBusinessScheduleContext();
+  const { idealCustomer, eventPreference, demographic} = useBusinessCustomerContext();
+
+
   
 
   const handleNextStepClick = async () => {
@@ -60,7 +70,35 @@ const BusinessFinished = () => {
       instagramHandle,
       selectedAdjectives,
       selectedPastPopups,
-      images: images.map(image => image.name) // Assuming you will handle image uploads separately
+      images: images.map(image => image.name), // Assuming you will handle image uploads separately
+      
+      // Budget data
+      budget: {
+        maxApplicationFee,
+        maxVendorFee,
+        totalCostEstimate
+      },
+      
+      // Location data
+      locationPreferences: {
+        coordinates: location,
+        manualLocation,
+        travelRadius: radius,
+        travelPreference
+      },
+      
+      // Schedule data
+      schedule: {
+        preferredDays,
+        eveningMarketPreference
+      },
+
+      // Customers data
+      customers: {
+        idealCustomer,
+        eventPreference,
+        demographic
+      }
     };
 
     try {
@@ -246,6 +284,74 @@ const BusinessFinished = () => {
                 {pastPopup}
               </button>
             ))}
+          </div>
+
+          {/* Budget Section */}
+          <h1 className="text-3xl font-bold mb-8 mt-2">Budget Preferences</h1>
+          <div className="mb-8">
+            <div className="">Maximum Application Fee</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-4 text-left align-top p-2"
+              value={`$${maxApplicationFee}`}
+              disabled
+            />
+            <div className="">Maximum Vendor Fee</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-4 text-left align-top p-2"
+              value={`$${maxVendorFee}`}
+              disabled
+            />
+            <div className="">Total Cost Estimate</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              value={`$${totalCostEstimate}`}
+              disabled
+            />
+          </div>
+
+          {/* Location Section */}
+          <h1 className="text-3xl font-bold mb-8 mt-2">Location Preferences</h1>
+          <div className="mb-8">
+            <div className="">Location</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-4 text-left align-top p-2"
+              value={manualLocation || `${location.lat}, ${location.lng}`}
+              disabled
+            />
+            <div className="">Travel Radius</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-4 text-left align-top p-2"
+              value={`${radius} miles`}
+              disabled
+            />
+            <div className="">Travel Preference</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              value={travelPreference}
+              disabled
+            />
+          </div>
+
+          {/* Schedule Section */}
+          <h1 className="text-3xl font-bold mb-8 mt-2">Schedule Preferences</h1>
+          <div className="mb-8">
+            <div className="">Preferred Days</div>
+            <div className="grid grid-cols-4 gap-4 mb-4">
+              {preferredDays.map((day, index) => (
+                <div
+                  key={index}
+                  className="h-12 flex items-center justify-center bg-blue-500 text-white rounded"
+                >
+                  {day}
+                </div>
+              ))}
+            </div>
+            <div className="">Evening Market Preference</div>
+            <input
+              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              value={eveningMarketPreference}
+              disabled
+            />
           </div>
 
           {/* Complete click */}
