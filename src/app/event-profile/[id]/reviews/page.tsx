@@ -3,8 +3,8 @@
 import { useRouter , useParams} from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../lib/firebase';
-import '../../tailwind.css';
+import { db } from '../../../../lib/firebase';
+import '../../../tailwind.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 
@@ -20,7 +20,7 @@ interface Event {
   description: string;
 }
 
-export default function EventProfilePage() {
+export default function EventReviewPage() {
   const router = useRouter();
   const params = useParams(); 
   const id = params.id as string// Get the id from the URL
@@ -46,8 +46,8 @@ export default function EventProfilePage() {
     return <div>Loading...</div>;
   }
 
-  const handleReviewsClick = () => {
-    router.push(`/event-profile/${id}/reviews`);
+  const handleEventsClick = () => {
+    router.push(`/event-profile/${id}`);
   };
 
   return (
@@ -71,8 +71,8 @@ export default function EventProfilePage() {
 
       {/* Tabs */}
       <div className="flex space-x-6 mt-6 border-b text-gray-600 w-full max-w-2xl">
-        <button className="pb-2 border-b-2 border-black font-semibold cursor-pointer">Event</button>
-        <button className="pb-2 cursor-pointer" onClick={handleReviewsClick}>Reviews</button>
+        <button className="pb-2 cursor-pointer" onClick={handleEventsClick}>Event</button>
+        <button className="pb-2 border-b-2 border-black font-semibold cursor-pointer">Reviews</button>
         <button className="pb-2 cursor-pointer">Lorem</button>
       </div>
 
