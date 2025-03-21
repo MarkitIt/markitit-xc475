@@ -1,85 +1,44 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from "react";
-import styles from "./Header.module.css";
+import React from "react";
 import Link from "next/link";
-import { auth, db } from "../lib/firebase";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { useUserContext } from '../context/UserContext';
-import { signOut } from "firebase/auth";
-import './tailwind.css';
+import "./tailwind.css";
 
 const Header: React.FC = () => {
-  const { user, vendorProfile, getVendorProfile } = useUserContext();
-
-  useEffect(() => {
-    if (user) {
-      getVendorProfile();
-    }
-  }, [user, getVendorProfile]);
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error("Error signing out: ", error);
-    }
-  };
-
-  const renderProfileOptions = () => {
-    if (!user) {
-      return (
-        <>
-          <Link href="/auth/login">Login/Sign Up</Link>
-        </>
-      );
-    }
-
-    if (vendorProfile) {
-      return (
-        <>
-          <Link href="/vendor-dashboard">Vendor Dashboard</Link>
-          <Link href="/applications">My Applications</Link>
-          <Link href="/settings">Settings</Link>
-          <Link href="/" onClick={handleLogout}>Logout</Link>
-        </>
-      );
-    }
-
-    return (
-      <>
-        <Link href="/vendor-profile">Create a Vendor Profile</Link>
-        <Link href="/settings">Settings</Link>
-        <Link href="/" onClick={handleLogout}>Logout</Link>
-      </>
-    );
-  };
-
   return (
-    <header className={styles.header}>
-      {/* Left Section: Hamburger + Home + Community */}
-      <div className={styles.leftSection}>
-        <div className={styles.hamburger}>☰</div> {/* Hamburger Icon */}
-        <nav className={styles.navLinks}>
-          <Link href="/">Home</Link>
-          <Link href="/community">Community</Link>
-        </nav>
-      </div>
+    <header className="flex justify-between items-center px-10 py-4 border-b border-black w-full bg-white">
+      {/* Left Section: Logo */}
+      <Link href="/" className="w-[160px] h-[40px]">
+      <img src="/images/logo.png" alt="Markitit Logo" className="h-10 w-auto" />
+      </Link>
 
-      {/* Centered Brand Name */}
-      <div className={styles.brand}>Markitit</div>
-
-      {/* Right Section: Notifications + Profile (Dropdown) */}
-      <div className={styles.rightSection}>
-        <Link href="/notifications">Notifications</Link>
-        <div className={styles.profile}>
-          <span>Profile ▼</span>
-          <div className={styles.dropdown}>
-            {renderProfileOptions()}
-          </div>
-        </div>
-      </div>
+      {/* Right Section: Navigation Buttons */}
+      <nav className="flex space-x-4">
+        <Link
+          href="/"
+          className="w-[70px] h-[40px] flex items-center justify-center text-black text-lg font-normal font-['Manrope'] border border-black rounded-[14px] hover:bg-gray-100 transition"
+        >
+          Home
+        </Link>
+        <Link
+          href="/community"
+          className="w-[110px] h-[40px] flex items-center justify-center text-black text-lg font-normal font-['Manrope'] border border-black rounded-[14px] hover:bg-gray-100 transition"
+        >
+          Community
+        </Link>
+        <Link
+          href="/notifications"
+          className="w-[125px] h-[40px] flex items-center justify-center text-black text-lg font-normal font-['Manrope'] border border-black rounded-[14px] hover:bg-gray-100 transition"
+        >
+          Notifications
+        </Link>
+        <Link
+          href="/auth/login"
+          className="w-[140px] h-[40px] flex items-center justify-center text-black text-lg font-normal font-['Manrope'] border border-black rounded-[14px] hover:bg-gray-100 transition"
+        >
+          Signup/ Log in
+        </Link>
+      </nav>
     </header>
   );
 };
