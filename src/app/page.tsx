@@ -75,12 +75,19 @@ export default function Home() {
       );
     }
 
-    if (startDate && endDate) {
+    if (startDate) {
       filtered = filtered.filter(event => {
         const eventDate = new Date(event.date);
         const start = new Date(startDate);
+        return eventDate >= start;
+      });
+    }
+
+    if (endDate) {
+      filtered = filtered.filter(event => {
+        const eventDate = new Date(event.date);
         const end = new Date(endDate);
-        return eventDate >= start && eventDate <= end;
+        return eventDate <= end;
       });
     }
 
