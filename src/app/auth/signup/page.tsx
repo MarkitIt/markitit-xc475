@@ -1,12 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { signUpUser } from "@/lib/firebase"; 
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function SignupPage() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,9 +19,19 @@ export default function SignupPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signUpUser(email, password);
-      alert("User signed up successfully!");
-      router.push("/auth/login"); // Redirect to login page after signup
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Store user details in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        firstName,
+        lastName,
+        email,
+        uid: user.uid,
+      });
+
+      alert("Account created successfully!");
+      router.push("/auth/login"); // Redirect to login page
     } catch (error) {
       setError((error as Error).message);
     }
@@ -27,7 +41,7 @@ export default function SignupPage() {
     <div className="w-screen h-screen flex">
       {/* Left Section - Welcome Message */}
       <div className="w-[40%] h-full bg-[#1f555c] flex items-center justify-center">
-        <h1 className="text-white text-3xl font-bold">Welcome to Markitit!</h1>
+        <h1 className="text-white text-5xl font-bold">Join us!</h1>
       </div>
 
       {/* Right Section - Signup Form */}
@@ -36,16 +50,16 @@ export default function SignupPage() {
 
         {/* Login Redirect */}
         <p className="mt-2 text-sm text-black">
-          Already have an account?{" "}
+          Create a Markitit account. Already have one?{" "}
           <Link href="/auth/login" className="text-[#f15152] font-bold">
-            Log in here.
+            Log in.
           </Link>
         </p>
 
         {/* Email Field */}
         <div className="mt-6 w-[404px]">
           <label className="block text-xl font-normal text-black tracking-wide">Email Address</label>
-          <input 
+          <input
             type="email"
             className="w-full h-[47px] mt-1 px-4 border border-black rounded-[10px]"
             value={email}
@@ -57,8 +71,8 @@ export default function SignupPage() {
 
         {/* Password Field */}
         <div className="mt-6 w-[404px]">
-          <label className="block text-xl font-normal text-black tracking-wide">Create a Password</label>
-          <input 
+          <label className="block text-xl font-normal text-black tracking-wide">Password</label>
+          <input
             type="password"
             className="w-full h-[47px] mt-1 px-4 border border-black rounded-[10px]"
             value={password}
@@ -68,9 +82,35 @@ export default function SignupPage() {
           />
         </div>
 
+        {/* First & Last Name Fields */}
+        <div className="mt-6 flex gap-4 w-[404px]">
+          <div className="w-[50%]">
+            <label className="block text-xl font-normal text-black tracking-wide">First Name</label>
+            <input
+              type="text"
+              className="w-full h-[47px] mt-1 px-4 border border-black rounded-[10px]"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="First Name"
+              required
+            />
+          </div>
+          <div className="w-[50%]">
+            <label className="block text-xl font-normal text-black tracking-wide">Last Name</label>
+            <input
+              type="text"
+              className="w-full h-[47px] mt-1 px-4 border border-black rounded-[10px]"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Last Name"
+              required
+            />
+          </div>
+        </div>
+
         {/* Signup Button */}
-        <button 
-          onClick={handleSignUp} 
+        <button
+          onClick={handleSignUp}
           className="mt-6 w-[404px] h-[47px] bg-[#f15152] text-white text-xl font-bold rounded-[10px] hover:bg-[#d43f40]"
         >
           SIGN UP
