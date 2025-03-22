@@ -2,6 +2,10 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+interface Location {
+  city: string;
+  state: string;
+}
 
 interface ApplicationProfileContextProps {
   category: string[];
@@ -14,14 +18,16 @@ interface ApplicationProfileContextProps {
   setEventId: (id: string) => void;
   event_unique_id: string;
   setEventUniqueId: (uniqueId: string) => void;
-  location: string;
-  setLocation: (location: string) => void;
+  location: Location;
+  setLocation: (location: Location) => void;
   name: string;
   setName: (name: string) => void;
   price: string;
   setPrice: (price: string) => void;
+  venue: string;
+  setVenue: (vendorId: string) => void;
   vendor_id: string;
-  setVendorId: (vendorId: string) => void;
+  setVendor_id: (vendorId: string) => void;
 }
 
 const ApplicationProfileContext = createContext<ApplicationProfileContextProps | undefined>(undefined);
@@ -32,10 +38,11 @@ export const ApplicationProfileProvider = ({ children }: { children: ReactNode }
   const [description, setDescription] = useState<string>("");
   const [event_id, setEventId] = useState<string>("");
   const [event_unique_id, setEventUniqueId] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
+  const [location, setLocation] = useState<Location>({ city: "", state: "" });
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<string>("");
-  const [vendor_id, setVendorId] = useState<string>("");
+  const [venue, setVenue] = useState<string>("");
+  const [vendor_id, setVendor_id] = useState<string>("");
 
   return (
     <ApplicationProfileContext.Provider value={{
@@ -47,7 +54,8 @@ export const ApplicationProfileProvider = ({ children }: { children: ReactNode }
       location, setLocation,
       name, setName,
       price, setPrice,
-      vendor_id, setVendorId
+      venue, setVenue,
+      vendor_id, setVendor_id
     }}>
       {children}
     </ApplicationProfileContext.Provider>

@@ -1,42 +1,63 @@
 "use client";
 
+import { Autocomplete, LoadScript } from "@react-google-maps/api";
+import { addDoc, collection } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useApplicationProfileContext } from "../../context/ApplicationProfileContext";
-import { LoadScript, Autocomplete } from "@react-google-maps/api";
+import { db } from "../../lib/firebase";
 import "../tailwind.css";
 
 const ApplicationProfile = () => {
+  const router = useRouter();
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const [isApiLoaded, setIsApiLoaded] = useState(false); // Track API loading state
   const {
     category, setCategory,
     date, setDate,
     description, setDescription,
+    event_unique_id, setEventUniqueId,
     location, setLocation,
     name, setName,
     price, setPrice,
-    vendor_id, setVendorId,
+    venue, setVenue,
+    vendor_id, setVendor_id,
   } = useApplicationProfileContext();
 
-  const router = useRouter();
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const [isApiLoaded, setIsApiLoaded] = useState(false); // Track API loading state
+  
 
-  const handleNextStepClick = () => {
+  const handleNextStepClick  = async () =>{
     if (!isApiLoaded) {
       alert("Please wait for the API to load.");
       return;
     }
 
-    if (
-      name &&
-      location &&
-      date &&
-      description &&
-      category.length > 0
+    const generatedVendorId = "Markits"; // Default vendor ID
+    const generatedEventUniqueId = `${name}-${generatedVendorId}-${location.city}-${date}`;
+
+    setVendor_id(generatedVendorId);
+    setEventUniqueId(generatedEventUniqueId);
+
+    const data = {
+        category,
+        date,
+        description,
+        event_unique_id: generatedEventUniqueId,
+        location, // Includes city and state
+        name,
+        price,
+        venue,
+        vendor_id: generatedVendorId,
+    };
+
+    if (name && location.city && location.state &&
+      date && description  && category.length > 0
     ) {
+      const docRef = await addDoc(collection(db, "events"), data);
+      console.log('Document written with ID: ', docRef.id);
       router.push("/");
     } else {
-      alert("Please fill in all required fields.");
+      alert("Please fill in all required fields");
     }
   };
 
@@ -44,9 +65,30 @@ const ApplicationProfile = () => {
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace();
   
-      if (place && place.formatted_address) {
-        // Directly store the formatted address
-        setLocation(place.formatted_address);
+      // Debugging: Log the place object to inspect its structure
+      console.log("Selected Place:", place);
+  
+      if (place && place.address_components) {
+        // Extract city and state from address components
+        const city = place.address_components.find((component) =>
+          component.types.includes("locality")
+        )?.long_name;
+  
+        const state = place.address_components.find((component) =>
+          component.types.includes("administrative_area_level_1")
+        )?.short_name;
+  
+        // Debugging: Log extracted city and state
+        console.log("Extracted City:", city);
+        console.log("Extracted State:", state);
+  
+        if (city && state) {
+          setLocation({ city, state }); // Update location with city and state
+        } else {
+          alert("Please select a valid location with both city and state.");
+        }
+      } else {
+        alert("No address components found. Please select a valid location.");
       }
     }
   };
@@ -68,7 +110,9 @@ const ApplicationProfile = () => {
             <h1 className="text-5xl font-bold mb-8">Create Event Profile</h1>
             {/* All the fillable box form */}
             <div className="text-xl">
-              <div className="">Event Name<span className="text-red-500">*</span></div>
+              <div className="">
+                Event Name<span className="text-red-500">*</span>
+              </div>
               <input
                 className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
                 value={name}
@@ -76,18 +120,22 @@ const ApplicationProfile = () => {
                 required
               />
 
-              <div className="">City and State<span className="text-red-500">*</span></div>
+              <div className="">
+                City and State<span className="text-red-500">*</span>
+              </div>
               <Autocomplete
                 onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
                 onPlaceChanged={handlePlaceChanged}
-                >
+              >
                 <input
-                    className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-                    placeholder="Enter address"
+                  className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+                  placeholder="Enter city and state"
                 />
-            </Autocomplete>
+              </Autocomplete>
 
-              <div className="">Date<span className="text-red-500">*</span></div>
+              <div className="">
+                Date<span className="text-red-500">*</span>
+              </div>
               <input
                 type="date"
                 className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
@@ -96,7 +144,9 @@ const ApplicationProfile = () => {
                 required
               />
 
-              <div className="">Description<span className="text-red-500">*</span></div>
+              <div className="">
+                Description<span className="text-red-500">*</span>
+              </div>
               <textarea
                 className="w-[70%] h-40 bg-gray-300 mb-8 text-left align-top p-2"
                 value={description}
@@ -104,7 +154,9 @@ const ApplicationProfile = () => {
                 required
               />
 
-              <div className="">Category<span className="text-red-500">*</span></div>
+              <div className="">
+                Category<span className="text-red-500">*</span>
+              </div>
               <input
                 className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
                 value={category.join(", ")}
@@ -121,11 +173,11 @@ const ApplicationProfile = () => {
                 onChange={(e) => setPrice(e.target.value)}
               />
 
-              <div className="">Vendor ID</div>
+              <div className="">Venue</div>
               <input
                 className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-                value={vendor_id}
-                onChange={(e) => setVendorId(e.target.value)}
+                value={venue}
+                onChange={(e) => setVenue(e.target.value)}
               />
             </div>
 
