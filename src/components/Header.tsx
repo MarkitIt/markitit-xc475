@@ -1,23 +1,25 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
-import styles from "./Header.module.css";
-import Link from "next/link";
-import { auth, db } from "../lib/firebase";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { useUserContext } from '../context/UserContext';
 import { signOut } from "firebase/auth";
+import Link from "next/link";
+import React, { useEffect } from "react";
+import { useHostContext } from '../context/HostContext';
+import { useUserContext } from '../context/UserContext';
+import { auth } from "../lib/firebase";
+import styles from "./Header.module.css";
 import './tailwind.css';
+import { get } from "http";
 
 const Header: React.FC = () => {
   const { user, vendorProfile, getVendorProfile } = useUserContext();
+  const { hostProfile, setHostProfile } = useHostContext();
 
+  
   useEffect(() => {
     if (user) {
       getVendorProfile();
     }
-  }, [user, getVendorProfile]);
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -25,6 +27,13 @@ const Header: React.FC = () => {
     } catch (error) {
       console.error("Error signing out: ", error);
     }
+  };
+
+  const updateHostTrue = () => {
+    setHostProfile(true); // Set the user as a host
+  };
+  const updateHostFalse = () => {
+    setHostProfile(false); // Set the user as a host
   };
 
   const renderProfileOptions = () => {
@@ -36,24 +45,50 @@ const Header: React.FC = () => {
       );
     }
 
-    if (vendorProfile) {
+    
+    if (hostProfile){
+      if (vendorProfile){
+        return (
+          <>
+            <Link href="/" onClick={updateHostFalse}>Become a vendor</Link>
+            <Link href="/vendor-dashboard">Vendor Dashboard</Link>
+            <Link href="/applications">My Applications</Link>
+            <Link href="/settings">Settings</Link>
+            <Link href="/" onClick={handleLogout}>Logout</Link>
+          </>
+        );
+      }
       return (
         <>
-          <Link href="/vendor-dashboard">Vendor Dashboard</Link>
-          <Link href="/applications">My Applications</Link>
+          <Link href="/" onClick={updateHostFalse}>Become a vendor</Link>
+          <Link href="/vendor-profile">Create a Vendor Profile</Link>
           <Link href="/settings">Settings</Link>
           <Link href="/" onClick={handleLogout}>Logout</Link>
         </>
-      );
+      )
     }
 
-    return (
-      <>
-        <Link href="/vendor-profile">Create a Vendor Profile</Link>
-        <Link href="/settings">Settings</Link>
-        <Link href="/" onClick={handleLogout}>Logout</Link>
-      </>
-    );
+    if (!hostProfile) {
+      if (vendorProfile){
+        return (
+          <>
+            <Link href="/" onClick={updateHostTrue}>Become a host</Link>
+            <Link href="/vendor-dashboard">Vendor Dashboard</Link>
+            <Link href="/settings">Settings</Link>
+            <Link href="/" onClick={handleLogout}>Logout</Link>
+          </>
+        );
+      }
+      return (
+        <>
+          <Link href="/" onClick={updateHostTrue}>Become a host</Link>
+          <Link href="/vendor-profile">Create a Vendor Profile</Link>
+          <Link href="/settings">Settings</Link>
+          <Link href="/" onClick={handleLogout}>Logout</Link>
+        </>
+      )
+    }
+
   };
 
   return (

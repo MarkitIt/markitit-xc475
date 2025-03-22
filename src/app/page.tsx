@@ -6,10 +6,12 @@ import { collection, getDocs } from 'firebase/firestore';
 import { SearchBar } from '@/components/SearchBar';
 import { EventCard } from '@/components/EventCard';
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
 import styles from "./page.module.css";
 import './tailwind.css';
 import "leaflet/dist/leaflet.css";
 import { useUserContext } from '@/context/UserContext';
+import { useHostContext } from '@/context/HostContext';
 
 interface Event {
   id: string;
@@ -23,13 +25,16 @@ interface Event {
 }
 
 export default function Home() {
+  const router = useRouter();
   const { user, vendorProfile } = useUserContext();
+  const { hostProfile, setHostProfile } = useHostContext();
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 12;
   const [rankedEvents, setRankedEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false); // New state for redirection
 
   useEffect(() => {
     const fetchAndRankEvents = async () => {

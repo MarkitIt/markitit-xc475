@@ -11,6 +11,7 @@ import { BusinessCustomerProvider } from "@/context/BusinessCustomerContext";
 import { BusinessScheduleProvider } from "@/context/BusinessScheduleContext";
 import { BusinessLocationProvider } from "@/context/BusinessLocationContext";
 import { UserProvider } from '../context/UserContext';
+import { HostProvider } from '../context/HostContext';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <UserProvider>
+        <UserProvider><HostProvider>
         <Header />
         <main>
           <BusinessProfileProvider>
@@ -52,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </BusinessAdjectiveProvider>
           </BusinessProfileProvider>
         </main>
-        </UserProvider>
+        </HostProvider></UserProvider>
       </body>
     </html>
   );
