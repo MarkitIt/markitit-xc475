@@ -18,6 +18,7 @@ const Header: React.FC = () => {
   useEffect(() => {
     if (user) {
       getVendorProfile();
+      getHostProfile();
     }
   }, [user]);
 
@@ -52,7 +53,7 @@ const Header: React.FC = () => {
           <>
             <Link href="/" onClick={updateHostFalse}>Become a vendor</Link>
             <Link href="/vendor-dashboard">Vendor Dashboard</Link>
-            <Link href="/applications">My Applications</Link>
+            <Link href="/application">My Applications</Link>
             <Link href="/settings">Settings</Link>
             <Link href="/" onClick={handleLogout}>Logout</Link>
           </>

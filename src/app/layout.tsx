@@ -12,6 +12,7 @@ import { BusinessScheduleProvider } from "@/context/BusinessScheduleContext";
 import { BusinessLocationProvider } from "@/context/BusinessLocationContext";
 import { UserProvider } from '../context/UserContext';
 import { HostProvider } from '../context/HostContext';
+import { ApplicationProfileProvider } from '../context/ApplicationProfileContext'; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <UserProvider><HostProvider>
         <Header />
         <main>
+          <ApplicationProfileProvider>
           <BusinessProfileProvider>
             <BusinessAdjectiveProvider>
               <BusinessLogoProvider>
@@ -52,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </BusinessLogoProvider>
             </BusinessAdjectiveProvider>
           </BusinessProfileProvider>
+          </ApplicationProfileProvider>
         </main>
         </HostProvider></UserProvider>
       </body>
