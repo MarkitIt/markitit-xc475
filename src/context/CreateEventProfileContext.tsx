@@ -8,6 +8,8 @@ interface Location {
 }
 
 interface ApplicationProfileContextProps {
+  uid: string[];
+  setUid: (uid: string[]) => void;
   category: string[];
   setCategory: (category: string[]) => void;
   date: string;
@@ -33,6 +35,7 @@ interface ApplicationProfileContextProps {
 const ApplicationProfileContext = createContext<ApplicationProfileContextProps | undefined>(undefined);
 
 export const ApplicationProfileProvider = ({ children }: { children: ReactNode }) => {
+  const [uid, setUid] = useState<string[]>([]);
   const [category, setCategory] = useState<string[]>([]);
   const [date, setDate] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -46,6 +49,7 @@ export const ApplicationProfileProvider = ({ children }: { children: ReactNode }
 
   return (
     <ApplicationProfileContext.Provider value={{
+      uid, setUid,
       category, setCategory,
       date, setDate,
       description, setDescription,

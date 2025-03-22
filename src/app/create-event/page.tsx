@@ -1,21 +1,22 @@
 "use client";
 
 
-import { onAuthStateChanged, User } from 'firebase/auth';
 import { Autocomplete, LoadScript } from "@react-google-maps/api";
+import { onAuthStateChanged, User } from 'firebase/auth';
 import { addDoc, collection } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useEffect,useRef, useState } from "react";
-import { useApplicationProfileContext } from "../../context/ApplicationProfileContext";
-import { auth,db } from "../../lib/firebase";
+import { useEffect, useRef, useState } from "react";
+import { useApplicationProfileContext } from "../../context/CreateEventProfileContext";
+import { auth, db } from "../../lib/firebase";
 import "../tailwind.css";
 
-const ApplicationProfile = () => {
+const CreateEventProfile = () => {
   const router = useRouter();
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isApiLoaded, setIsApiLoaded] = useState(false); // Track API loading state
   const {
+    uid, setUid,
     category, setCategory,
     date, setDate,
     description, setDescription,
@@ -56,6 +57,7 @@ const ApplicationProfile = () => {
 
     setVendor_id(generatedVendorId);
     setEventUniqueId(generatedEventUniqueId);
+    setUid([user.uid]);
 
     const data = {
         uid: user.uid,
@@ -220,4 +222,4 @@ const ApplicationProfile = () => {
   );
 };
 
-export default ApplicationProfile;
+export default CreateEventProfile;

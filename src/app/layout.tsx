@@ -1,18 +1,18 @@
-import type { Metadata } from "next";
 import Header from "@/components/Header";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { BusinessProfileProvider } from '../context/BusinessProfileContext';
-import { BusinessAdjectiveProvider } from '../context/BusinessAdjectiveContext';
-import { BusinessPastPopupProvider } from '../context/BusinessPastPopupContext';
-import { BusinessLogoProvider } from '../context/BusinessLogoContext';
 import { BusinessBudgetProvider } from "@/context/BusinessBudgetContext";
 import { BusinessCustomerProvider } from "@/context/BusinessCustomerContext";
-import { BusinessScheduleProvider } from "@/context/BusinessScheduleContext";
 import { BusinessLocationProvider } from "@/context/BusinessLocationContext";
-import { UserProvider } from '../context/UserContext';
+import { BusinessScheduleProvider } from "@/context/BusinessScheduleContext";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { BusinessAdjectiveProvider } from '../context/BusinessAdjectiveContext';
+import { BusinessLogoProvider } from '../context/BusinessLogoContext';
+import { BusinessPastPopupProvider } from '../context/BusinessPastPopupContext';
+import { BusinessProfileProvider } from '../context/BusinessProfileContext';
+import { ApplicationProfileProvider } from '../context/CreateEventProfileContext';
 import { HostProvider } from '../context/HostContext';
-import { ApplicationProfileProvider } from '../context/ApplicationProfileContext'; 
+import { UserProvider } from '../context/UserContext';
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
