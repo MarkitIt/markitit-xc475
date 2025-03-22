@@ -1,16 +1,19 @@
 "use client";
 
+
+import { onAuthStateChanged, User } from 'firebase/auth';
 import { Autocomplete, LoadScript } from "@react-google-maps/api";
 import { addDoc, collection } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect,useRef, useState } from "react";
 import { useApplicationProfileContext } from "../../context/ApplicationProfileContext";
-import { db } from "../../lib/firebase";
+import { auth,db } from "../../lib/firebase";
 import "../tailwind.css";
 
 const ApplicationProfile = () => {
   const router = useRouter();
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isApiLoaded, setIsApiLoaded] = useState(false); // Track API loading state
   const {
     category, setCategory,
@@ -24,11 +27,27 @@ const ApplicationProfile = () => {
     vendor_id, setVendor_id,
   } = useApplicationProfileContext();
 
+  useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUser(user);
+        } else {
+          setUser(null);
+        }
+      });
+  
+      // Cleanup subscription on unmount
+      return () => unsubscribe();
+    }, []);
   
 
   const handleNextStepClick  = async () =>{
     if (!isApiLoaded) {
       alert("Please wait for the API to load.");
+      return;
+    }
+    if (!user) {
+      console.error('User is not authenticated');
       return;
     }
 
@@ -39,6 +58,7 @@ const ApplicationProfile = () => {
     setEventUniqueId(generatedEventUniqueId);
 
     const data = {
+        uid: user.uid,
         category,
         date,
         description,
