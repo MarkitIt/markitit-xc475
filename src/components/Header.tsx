@@ -12,13 +12,12 @@ import { get } from "http";
 
 const Header: React.FC = () => {
   const { user, vendorProfile, getVendorProfile } = useUserContext();
-  const { hostProfile, setHostProfile } = useHostContext();
+  const { hostProfile, setHostProfile, } = useHostContext();
 
   
   useEffect(() => {
     if (user) {
       getVendorProfile();
-      getHostProfile();
     }
   }, [user]);
 
