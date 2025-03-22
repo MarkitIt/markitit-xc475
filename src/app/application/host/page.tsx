@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { SearchBar } from '@/components/SearchBar';
-import { EventCard } from '@/components/EventCard';
+import { EventCardHost } from '@/components/EventCardHost';
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import styles from "../../page.module.css";
@@ -118,7 +118,7 @@ export default function ApplicationHostProfile() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
           {currentEvents.map((event) => (
-            <EventCard 
+            <EventCardHost 
               key={event.id} 
               event={event}
               rank={rankedEvents.findIndex(e => e.id === event.id) + 1}
