@@ -2,10 +2,6 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface Location {
-  city: string;
-  state: string;
-}
 
 interface ApplicationProfileContextProps {
   category: string[];
@@ -18,8 +14,8 @@ interface ApplicationProfileContextProps {
   setEventId: (id: string) => void;
   event_unique_id: string;
   setEventUniqueId: (uniqueId: string) => void;
-  location: Location;
-  setLocation: (location: Location) => void;
+  location: string;
+  setLocation: (location: string) => void;
   name: string;
   setName: (name: string) => void;
   price: string;
@@ -36,7 +32,7 @@ export const ApplicationProfileProvider = ({ children }: { children: ReactNode }
   const [description, setDescription] = useState<string>("");
   const [event_id, setEventId] = useState<string>("");
   const [event_unique_id, setEventUniqueId] = useState<string>("");
-  const [location, setLocation] = useState<Location>({ city: "", state: "" });
+  const [location, setLocation] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<string>("");
   const [vendor_id, setVendorId] = useState<string>("");

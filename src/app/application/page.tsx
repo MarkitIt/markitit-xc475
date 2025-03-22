@@ -29,8 +29,7 @@ const ApplicationProfile = () => {
 
     if (
       name &&
-      location.city &&
-      location.state &&
+      location &&
       date &&
       description &&
       category.length > 0
@@ -44,20 +43,10 @@ const ApplicationProfile = () => {
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace();
-      const addressComponents = place.address_components;
-
-      if (addressComponents) {
-        const city = addressComponents.find((component) =>
-          component.types.includes("locality")
-        )?.long_name;
-
-        const state = addressComponents.find((component) =>
-          component.types.includes("administrative_area_level_1")
-        )?.short_name;
-
-        if (city && state) {
-          setLocation({ city, state });
-        }
+  
+      if (place && place.formatted_address) {
+        // Directly store the formatted address
+        setLocation(place.formatted_address);
       }
     }
   };
@@ -91,12 +80,12 @@ const ApplicationProfile = () => {
               <Autocomplete
                 onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
                 onPlaceChanged={handlePlaceChanged}
-              >
+                >
                 <input
-                  className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-                  placeholder="Enter city or state"
+                    className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+                    placeholder="Enter address"
                 />
-              </Autocomplete>
+            </Autocomplete>
 
               <div className="">Date<span className="text-red-500">*</span></div>
               <input
