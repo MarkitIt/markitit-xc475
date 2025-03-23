@@ -3,7 +3,7 @@
 
 import { Autocomplete } from "@react-google-maps/api";
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection,doc,setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useApplicationProfileContext } from "../../context/CreateEventProfileContext";
@@ -54,7 +54,7 @@ const CreateEventProfile = () => {
     setEventUniqueId(generatedEventUniqueId);
     setUid([user.uid]);
 
-    const data = {
+    const eventData = {
         uid: user.uid,
         category,
         date,
@@ -70,8 +70,23 @@ const CreateEventProfile = () => {
     if (name && location.city && location.state &&
       date && description  && category.length > 0
     ) {
-      const docRef = await addDoc(collection(db, "events"), data);
-      console.log('Document written with ID: ', docRef.id);
+      // Add the event to the "events" collection
+      const eventDocRef = await addDoc(collection(db, "events"), eventData);
+      console.log("Event document written with ID: ", eventDocRef.id);
+
+      // Create a corresponding vendorApply document
+      const vendorApplyData = {
+        eventId: eventDocRef.id, // Use the event document ID
+        hostId: user.uid, // The host's user ID
+        vendorId: [], // Initialize with an empty array of vendors
+      };
+
+      const vendorApplyDocRef = doc(db, "vendorApply", eventDocRef.id); // Use the event ID as the document ID
+      await setDoc(vendorApplyDocRef, vendorApplyData);
+
+      console.log("VendorApply document created successfully:", vendorApplyData);
+
+      // Redirect to the home page or a success page
       router.push("/");
     } else {
       alert("Please fill in all required fields");

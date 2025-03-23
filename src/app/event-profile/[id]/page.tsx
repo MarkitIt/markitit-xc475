@@ -71,7 +71,7 @@ export default function EventProfilePage() {
           <span>Follow</span>
         </button>
         {user && ( // Show the Apply button only if the user is logged in
-          <Link href={`/event-profile/${id}$/apply`} className="flex items-center space-x-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          <Link href={`/event-profile/${id}/apply`} className="flex items-center space-x-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
             <FontAwesomeIcon icon={faStar} />
             <span>Apply</span>
           </Link>
