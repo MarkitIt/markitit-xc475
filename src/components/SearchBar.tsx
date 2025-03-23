@@ -7,6 +7,8 @@ interface SearchBarProps {
   onSearch: (city: string, startDate: string, endDate: string, keywords: string) => void;
 }
 
+const libraries = "places";
+
 export function SearchBar({ onSearch }: SearchBarProps) {
   const [city, setCity] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -29,7 +31,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
   };
 
   return (
-    <LoadScript googleMapsApiKey={`${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`} libraries={["places"]}>
+    <LoadScript googleMapsApiKey={`${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`} libraries={[libraries]}>
       <form onSubmit={handleSearch} className="flex flex-wrap gap-2">
         <div className="flex-1 min-w-[200px]">
           <Autocomplete
