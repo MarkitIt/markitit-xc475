@@ -3,7 +3,7 @@
 import { useRouter, useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import styles from "../../../../page.module.css";
 import '../../../../tailwind.css';
 
@@ -59,14 +59,61 @@ export default function ApplicationHostProfile() {
     fetchVendors(); // Call the function
   }, [eventId]);
 
-  const handleReject = (email: string) => {
+  const handleReject = async (email: string) => {
     console.log(`Rejected vendor with email: ${email}`);
-    // Add logic to update the vendor's status in the database
+
+    // Update the vendor's status to "REJECTED" in the state
+    setVendors((prevVendors) =>
+      prevVendors.map((vendor) =>
+        vendor.email === email ? { ...vendor, status: "REJECTED" } : vendor
+      )
+    );
+
+    // Update the vendor's status in the database
+    try {
+        const vendorsQuery = collection(db, 'vendorApply');
+        const vendorsSnapshot = await getDocs(vendorsQuery);
+        const vendorDoc = vendorsSnapshot.docs.find(doc => doc.data().vendorId.some((v: any) => v.email === email));
+        if (vendorDoc) {
+          const vendorRef = doc(db, 'vendorApply', vendorDoc.id);
+          await updateDoc(vendorRef, {
+            vendorId: vendorDoc.data().vendorId.map((v: any) =>
+              v.email === email ? { ...v, status: "REJECTED" } : v
+            ),
+          });
+        }
+      console.log(`Vendor with email ${email} status updated to REJECTED in the database.`);
+    } catch (error) {
+      console.error(`Error updating vendor status for email ${email}:`, error);
+    }
   };
 
-  const handleAccept = (email: string) => {
+  const handleAccept = async (email: string) => {
     console.log(`Accepted vendor with email: ${email}`);
-    // Add logic to update the vendor's status in the database
+
+    // Update the vendor's status to "ACCEPTED" in the state
+    setVendors((prevVendors) =>
+      prevVendors.map((vendor) =>
+        vendor.email === email ? { ...vendor, status: "ACCEPTED" } : vendor
+      )
+    );
+
+    try {
+        const vendorsQuery = collection(db, 'vendorApply');
+        const vendorsSnapshot = await getDocs(vendorsQuery);
+        const vendorDoc = vendorsSnapshot.docs.find(doc => doc.data().vendorId.some((v: any) => v.email === email));
+        if (vendorDoc) {
+          const vendorRef = doc(db, 'vendorApply', vendorDoc.id);
+          await updateDoc(vendorRef, {
+            vendorId: vendorDoc.data().vendorId.map((v: any) =>
+              v.email === email ? { ...v, status: "ACCEPTED" } : v
+            ),
+          });
+        }
+      console.log(`Vendor with email ${email} status updated to ACCEPTED in the database.`);
+    } catch (error) {
+      console.error(`Error updating vendor status for email ${email}:`, error);
+    }
   };
 
   return (
