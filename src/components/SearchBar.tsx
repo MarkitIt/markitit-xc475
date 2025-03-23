@@ -1,13 +1,12 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { LoadScript,Autocomplete } from '@react-google-maps/api';
+import { Autocomplete } from '@react-google-maps/api';
 
 interface SearchBarProps {
   onSearch: (city: string, startDate: string, endDate: string, keywords: string) => void;
 }
 
-const libraries = "places";
 
 export function SearchBar({ onSearch }: SearchBarProps) {
   const [city, setCity] = useState('');
@@ -31,7 +30,6 @@ export function SearchBar({ onSearch }: SearchBarProps) {
   };
 
   return (
-    <LoadScript googleMapsApiKey={`${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`} libraries={[libraries]}>
       <form onSubmit={handleSearch} className="flex flex-wrap gap-2">
         <div className="flex-1 min-w-[200px]">
           <Autocomplete
@@ -78,6 +76,5 @@ export function SearchBar({ onSearch }: SearchBarProps) {
           Search
         </button>
       </form>
-    </LoadScript>
   );
 } 
