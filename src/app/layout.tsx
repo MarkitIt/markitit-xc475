@@ -1,12 +1,11 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import Header from "@/components/Header";
 import { BusinessBudgetProvider } from "@/context/BusinessBudgetContext";
 import { BusinessCustomerProvider } from "@/context/BusinessCustomerContext";
 import { BusinessLocationProvider } from "@/context/BusinessLocationContext";
 import { BusinessScheduleProvider } from "@/context/BusinessScheduleContext";
-import type { Metadata } from "next";
+import dynamic from 'next/dynamic';
 import { Geist, Geist_Mono } from "next/font/google";
 import { BusinessAdjectiveProvider } from '../context/BusinessAdjectiveContext';
 import { BusinessLogoProvider } from '../context/BusinessLogoContext';

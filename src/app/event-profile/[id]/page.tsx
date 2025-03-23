@@ -1,12 +1,14 @@
-"use client"
+"use client";
 
-import { useRouter , useParams} from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
+import Link from "next/link";
 import { db } from '../../../lib/firebase';
 import '../../tailwind.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { useUserContext } from '@/context/UserContext'; // Import your user context
 
 interface Event {
   id: string;
@@ -22,9 +24,10 @@ interface Event {
 
 export default function EventProfilePage() {
   const router = useRouter();
-  const params = useParams(); 
-  const id = params.id as string// Get the id from the URL
+  const params = useParams();
+  const id = params.id as string; // Get the id from the URL
   const [event, setEvent] = useState<Event | null>(null);
+  const { user } = useUserContext(); // Get the logged-in user from the context
 
   useEffect(() => {
     if (id) {
@@ -64,9 +67,15 @@ export default function EventProfilePage() {
           </div>
         </div>
         <button className="flex items-center space-x-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            <FontAwesomeIcon icon={faStar} />
-            <span>Follow</span>
+          <FontAwesomeIcon icon={faStar} />
+          <span>Follow</span>
         </button>
+        {user && ( // Show the Apply button only if the user is logged in
+          <Link href={`/event-profile/${id}$/apply`} className="flex items-center space-x-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            <FontAwesomeIcon icon={faStar} />
+            <span>Apply</span>
+          </Link>
+        )}
       </div>
 
       {/* Tabs */}
