@@ -8,14 +8,14 @@ import '../../tailwind.css';
 export default function UniqueInfoPage() {
   const router = useRouter();
   const [submit, setSubmit] = useState(false);
-  const [previousPage, setPreviousPage] = useState<string | null>(null);
+  //   const [previousPage, setPreviousPage] = useState<string | null>(null);
 
   // get previous page if user want to save
-  useState(() => {
-    if (typeof window !== 'undefined') {
-      setPreviousPage(document.referrer || '/application');
-    }
-  });
+  //   useState(() => {
+  //     if (typeof window !== 'undefined') {
+  //       setPreviousPage(document.referrer || '/application');
+  //     }
+  //   });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,16 +87,20 @@ export default function UniqueInfoPage() {
             />
           </div>
 
-          <div className='flex flex-col items-center space-y-4 mt-8'>
+          <div
+            className='flex flex-col items-center mt-8'
+            style={{ width: '50%', margin: '0 auto' }}
+          >
             <button
               type='submit'
               disabled={submit}
-              className='w-full py-4 bg-[#f15152] text-white text-xl font-semibold rounded-lg hover:bg-red-600 transition'
+              className='py-4 bg-[#f15152] text-white text-xl font-semibold rounded-lg hover:bg-red-600 transition'
+              style={{ width: '100%', marginBottom: '10px' }}
             >
               Submit Application
             </button>
 
-            <Link href={previousPage || '/application'} className='w-full'>
+            <Link href='/application' className='w-full'>
               <button
                 type='button'
                 className='w-full py-4 border-2 border-gray-300 text-black text-xl font-semibold rounded-lg hover:bg-gray-100 transition'
