@@ -8,14 +8,6 @@ import '../../tailwind.css';
 export default function UniqueInfoPage() {
   const router = useRouter();
   const [submit, setSubmit] = useState(false);
-  //   const [previousPage, setPreviousPage] = useState<string | null>(null);
-
-  // get previous page if user want to save
-  //   useState(() => {
-  //     if (typeof window !== 'undefined') {
-  //       setPreviousPage(document.referrer || '/application');
-  //     }
-  //   });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -103,6 +95,7 @@ export default function UniqueInfoPage() {
             <Link href='/application' className='w-full'>
               <button
                 type='button'
+                onClick={() => router.back()}
                 className='w-full py-4 border-2 border-gray-300 text-black text-xl font-semibold rounded-lg hover:bg-gray-100 transition'
               >
                 Skip for now
