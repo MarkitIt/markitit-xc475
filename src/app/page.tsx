@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import "./tailwind.css";
-    
+
 
 export default function LandingPage() {
   return (
