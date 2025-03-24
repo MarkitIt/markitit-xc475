@@ -1,16 +1,34 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import Link from "next/link";
-import "./tailwind.css";
-import { useUserContext } from "@/context/UserContext";
-import { auth } from "@/lib/firebase";
+
 import { signOut } from "firebase/auth";
+import Link from "next/link";
+import React, { useEffect, useState, useRef } from "react";
+import { useHostContext } from '../context/HostContext';
+import { useUserContext } from '../context/UserContext';
+import { auth } from "../lib/firebase";
+import './tailwind.css';
+
 
 const Header: React.FC = () => {
-  const { user, vendorProfile } = useUserContext();
+  const { user, vendorProfile, getVendorProfile } = useUserContext();
+  const { hostProfile, setHostProfile } = useHostContext();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      getVendorProfile();
+    }
+  }, [user]);
+
+  const updateHostTrue = () => {
+    setHostProfile(true); // Set the user as a host
+  };
+
+  const updateHostFalse = () => {
+    setHostProfile(false); // Set the user as a vendor
+  };
 
   // Handle opening dropdown
   const handleMouseEnter = () => {
@@ -32,6 +50,7 @@ const Header: React.FC = () => {
       console.error("Error signing out:", error);
     }
   };
+
 
   return (
     <header className="flex justify-between items-center px-10 py-4 border-b border-black w-full bg-white">
@@ -61,6 +80,7 @@ const Header: React.FC = () => {
           Notifications
         </Link>
 
+
         {/* Signup/ Log in Dropdown */}
         <div
           className="relative w-[140px] h-[40px] flex items-center justify-center border border-black rounded-[14px] hover:bg-gray-100 transition cursor-pointer"
@@ -85,12 +105,36 @@ const Header: React.FC = () => {
                     Sign up
                   </Link>
                 </>
-              ) : (
+              ) : hostProfile ? (
                 <>
+                  <Link href="/" onClick={updateHostFalse} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
+                    Become a vendor
+                  </Link>
                   <Link href={vendorProfile ? "/vendor-dashboard" : "/vendor-profile"} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
                     {vendorProfile ? "Dashboard" : "Create Profile"}
                   </Link>
-                  <Link href="/applications" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
+                  <Link href="/application/host" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
+                    My Applications
+                  </Link>
+                  <Link href="/create-event" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
+                    Create Event
+                  </Link>
+                  <Link href="/settings" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
+                    Settings
+                  </Link>
+                  <button onClick={handleLogout} className="block text-lg font-normal text-red-600 px-4 py-2 hover:bg-gray-100 rounded">
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/" onClick={updateHostTrue} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
+                    Become a host
+                  </Link>
+                  <Link href={vendorProfile ? "/vendor-dashboard" : "/vendor-profile"} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
+                    {vendorProfile ? "Dashboard" : "Create Profile"}
+                  </Link>
+                  <Link href="/application/vendor" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
                     My Applications
                   </Link>
                   <Link href="/settings" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">

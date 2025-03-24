@@ -3,6 +3,7 @@
 import Link from "next/link";
 import "./tailwind.css";
 
+
 export default function LandingPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white text-black">
