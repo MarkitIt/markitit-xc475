@@ -1,0 +1,80 @@
+'use client';
+
+import { useState, FormEvent, ChangeEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import '../../tailwind.css';
+
+export default function UniqueInfoPage() {
+  const router = useRouter();
+  const [submit, setSubmit] = useState(false);
+  const [previousPage, setPreviousPage] = useState<string | null>(null);
+
+  // get previous page if user want to save
+  useState(() => {
+    if (typeof window !== 'undefined') {
+      setPreviousPage(document.referrer || '/application');
+    }
+  });
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmit(true);
+
+    // mock, replace api later
+    setTimeout(() => {
+      router.push('/vendor-dashboard');
+    }, 1000);
+  };
+
+  return (
+    <div className='flex flex-col items-center p-8 min-h-screen bg-white'>
+      <div className='w-full max-w-3xl'>
+        <h1 className='text-3xl font-bold text-center mb-4 text-black'>
+          Unique Info Required
+        </h1>
+        <p className='text-lg text-gray-700 text-center mb-8'>
+          This popup requires additional information before we can process your
+          application.
+        </p>
+
+        <form onSubmit={handleSubmit} className='space-y-8'>
+          <div className='mb-6'>
+            <label
+              className='block text-xl mb-3 text-center text-black font-semibold'
+              htmlFor='specialRequirements'
+            >
+              Special Requirements
+            </label>
+            <textarea
+              id='specialRequirements'
+              name='specialRequirements'
+              rows={6}
+              placeholder='Describe any special requirements for your popup...'
+              className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
+            />
+          </div>
+
+          <div className='flex flex-col items-center space-y-4 mt-8'>
+            <button
+              type='submit'
+              disabled={submit}
+              className='w-full py-4 bg-[#f15152] text-white text-xl font-semibold rounded-lg hover:bg-red-600 transition'
+            >
+              Submit Application
+            </button>
+
+            <Link href={previousPage || '/application'} className='w-full'>
+              <button
+                type='button'
+                className='w-full py-4 border-2 border-gray-300 text-black text-xl font-semibold rounded-lg hover:bg-gray-100 transition'
+              >
+                Skip for now
+              </button>
+            </Link>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
