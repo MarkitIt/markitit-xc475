@@ -86,8 +86,7 @@ export default function CreateApplicationPage() {
                 id='event-name'
                 name='event-name'
                 placeholder='Enter your event name'
-                className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
-                required
+                className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black'
               />
             </div>
 
@@ -103,7 +102,7 @@ export default function CreateApplicationPage() {
                   type='date'
                   id='event-date'
                   name='event-date'
-                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
+                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black'
                   required
                 />
               </div>
@@ -118,7 +117,7 @@ export default function CreateApplicationPage() {
                   type='date'
                   id='application-deadline'
                   name='application-deadline'
-                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
+                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black'
                   required
                 />
               </div>
@@ -137,7 +136,7 @@ export default function CreateApplicationPage() {
                   id='booth-cost'
                   name='booth-cost'
                   placeholder='0.00'
-                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
+                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black'
                   min='0'
                   step='0.01'
                   required
@@ -155,7 +154,7 @@ export default function CreateApplicationPage() {
                   id='location'
                   name='location'
                   placeholder='Event location'
-                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
+                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700'
                   required
                 />
               </div>
@@ -171,19 +170,29 @@ export default function CreateApplicationPage() {
             </p>
 
             <div className='p-6 border-2 border-gray-300 rounded-lg bg-white'>
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                {standardFields.map((field) => (
-                  <div key={field.id} className='flex items-center p-2'>
-                    <input
-                      type='checkbox'
-                      id={field.id}
-                      checked={selectedFields.includes(field.id)}
-                      onChange={() => handleFieldToggle(field.id)}
-                      className='mr-3 h-5 w-5'
-                    />
-                    <label htmlFor={field.id} className='text-lg text-gray-700'>
-                      {field.label}
-                    </label>
+              <div className='flex flex-col'>
+                {standardFields.map((field, index) => (
+                  <div key={field.id}>
+                    <div className='flex items-center justify-between py-6'>
+                      <div className='flex items-center'>
+                        <input
+                          type='checkbox'
+                          id={field.id}
+                          checked={selectedFields.includes(field.id)}
+                          onChange={() => handleFieldToggle(field.id)}
+                          className='w-8 h-8 rounded border-2 border-gray-400 checked:bg-[#f15152] bg-white'
+                        />
+                      </div>
+                      <label
+                        htmlFor={field.id}
+                        className='text-xl font-medium text-black'
+                      >
+                        {field.label}
+                      </label>
+                    </div>
+                    {index < standardFields.length - 1 && (
+                      <div className='border-b border-gray-200'></div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -218,9 +227,7 @@ export default function CreateApplicationPage() {
                   type='button'
                   onClick={addCustomQuestion}
                   className='py-4 bg-[#f15152] text-white text-xl font-semibold rounded-lg hover:bg-red-600 transition px-8'
-                >
-                  <FiPlus className='inline mr-2' /> Add Your First Question
-                </button>
+                ></button>
               </div>
             ) : (
               <div className='space-y-6'>

@@ -17,19 +17,22 @@ export default function CustomQuestionField({
   return (
     <div className='mb-6 p-6 border-2 border-gray-300 rounded-lg bg-white'>
       <div className='flex justify-between items-center mb-6'>
-        <div className='flex items-center'>
+        <div className='flex items-center space-x-6'>
           <h3 className='text-xl font-semibold text-black'>
             Question {index + 1}
           </h3>
-          <div className='ml-6 flex items-center'>
+          <div className='flex items-center space-x-2'>
             <input
               type='checkbox'
               id={`required-${index}`}
               checked={isRequired}
               onChange={() => setIsRequired(!isRequired)}
-              className='mr-2 h-5 w-5'
+              className='w-5 h-5 rounded border-2 border-gray-400 checked:bg-[#f15152]'
             />
-            <label htmlFor={`required-${index}`} className='text-lg'>
+            <label
+              htmlFor={`required-${index}`}
+              className='text-lg text-gray-700'
+            >
               Required
             </label>
           </div>
