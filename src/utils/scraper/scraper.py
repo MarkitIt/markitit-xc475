@@ -80,6 +80,7 @@ def scrape_eventeny():
                 ).text.strip()
 
                 # hardcode popup for now, eventeny list theme not cat
+
                 catagories = ["pop up"]
                 catagory_item = event.get("data-category")
                 catagories.append(catagory_item)
@@ -125,6 +126,7 @@ def scrape_eventbrite():
         print("Scraping Eventbrite")
 
         # set num page to scrape
+        # TODO: change to scrape more pages
         for page in range(1, 6):
             print("Scraping eventbrite page:", page)
 
@@ -164,6 +166,7 @@ def scrape_eventbrite():
                     name = label
 
                     # for checking pop up
+                    # check if need to remove, since pop up are in descriptions
                     lower_name = name.lower()
 
                     if (
