@@ -15,33 +15,37 @@ export default function CustomQuestionField({
   const [isRequired, setIsRequired] = useState(false);
 
   return (
-    <div className='mb-6 p-4 border-2 border-gray-300 rounded-lg'>
-      <div className='flex justify-between items-center mb-4'>
+    <div className='mb-6 p-6 border-2 border-gray-300 rounded-lg bg-white'>
+      <div className='flex justify-between items-center mb-6'>
         <div className='flex items-center'>
-          <h3 className='text-lg font-semibold'>Question {index + 1}</h3>
-          <div className='ml-4 flex items-center'>
+          <h3 className='text-xl font-semibold text-black'>
+            Question {index + 1}
+          </h3>
+          <div className='ml-6 flex items-center'>
             <input
               type='checkbox'
               id={`required-${index}`}
               checked={isRequired}
               onChange={() => setIsRequired(!isRequired)}
-              className='mr-2 h-4 w-4'
+              className='mr-2 h-5 w-5'
             />
-            <label htmlFor={`required-${index}`}>Required</label>
+            <label htmlFor={`required-${index}`} className='text-lg'>
+              Required
+            </label>
           </div>
         </div>
         <button
           type='button'
           onClick={() => onDelete(index)}
-          className='text-gray-500 hover:text-red-500'
+          className='text-gray-500 hover:text-[#f15152] transition p-2'
         >
-          <FiTrash2 size={20} />
+          <FiTrash2 size={24} />
         </button>
       </div>
 
-      <div className='mb-4'>
+      <div className='mb-6'>
         <label
-          className='block text-gray-700 mb-2'
+          className='block text-xl mb-3 text-center text-black font-semibold'
           htmlFor={`question-${index}`}
         >
           Question Title
@@ -51,13 +55,13 @@ export default function CustomQuestionField({
           id={`question-${index}`}
           name={`question-${index}`}
           placeholder='e.g., Do you have any dietary restrictions?'
-          className='w-full p-3 border-2 border-gray-300 rounded-lg'
+          className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
         />
       </div>
 
       <div>
         <label
-          className='block text-gray-700 mb-2'
+          className='block text-xl mb-3 text-center text-black font-semibold'
           htmlFor={`description-${index}`}
         >
           Description (Optional)
@@ -66,8 +70,8 @@ export default function CustomQuestionField({
           id={`description-${index}`}
           name={`description-${index}`}
           placeholder="Add more details about what information you're looking for..."
-          rows={2}
-          className='w-full p-3 border-2 border-gray-300 rounded-lg'
+          rows={4}
+          className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
         />
       </div>
     </div>

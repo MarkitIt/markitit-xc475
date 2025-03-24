@@ -53,13 +53,13 @@ export default function CreateApplicationPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form submitted');
-    // uncomment after route added or decided
+    // change redirect after decided where
     // router.push('/event-profile/dashboard');
   };
 
   return (
-    <div className='flex flex-col items-center p-8 min-h-screen bg-white'>
-      <div className='w-full max-w-3xl'>
+    <div className='flex flex-col items-center justify-center p-8 min-h-screen bg-white'>
+      <div className='w-full' style={{ width: '60%' }}>
         <h1 className='text-3xl font-bold text-center mb-4 text-black'>
           Create Application Form
         </h1>
@@ -68,114 +68,112 @@ export default function CreateApplicationPage() {
           applicants
         </p>
 
-        <form onSubmit={handleSubmit} className='space-y-8'>
-          <div className='mb-8'>
-            <h2 className='text-2xl font-semibold mb-4 text-black'>
+        <form onSubmit={handleSubmit} className='space-y-12'>
+          <div className='mb-10'>
+            <h2 className='text-2xl font-semibold mb-6 text-black text-center'>
               Event Information
             </h2>
-            <div className='bg-gray-50 p-6 rounded-lg border-2 border-gray-200'>
-              <div className='mb-4'>
+
+            <div className='mb-6'>
+              <label
+                className='block text-xl mb-3 text-center text-black font-semibold'
+                htmlFor='event-name'
+              >
+                Event Name
+              </label>
+              <input
+                type='text'
+                id='event-name'
+                name='event-name'
+                placeholder='Enter your event name'
+                className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
+                required
+              />
+            </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+              <div>
                 <label
-                  className='block text-gray-700 mb-2 font-medium'
-                  htmlFor='event-name'
+                  className='block text-xl mb-3 text-center text-black font-semibold'
+                  htmlFor='event-date'
                 >
-                  Event Name
+                  Event Date
                 </label>
                 <input
-                  type='text'
-                  id='event-name'
-                  name='event-name'
-                  placeholder='Enter your event name'
-                  className='w-full p-3 border-2 border-gray-300 rounded-lg'
+                  type='date'
+                  id='event-date'
+                  name='event-date'
+                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
                   required
                 />
               </div>
-
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
-                <div>
-                  <label
-                    className='block text-gray-700 mb-2 font-medium'
-                    htmlFor='event-date'
-                  >
-                    Event Date
-                  </label>
-                  <input
-                    type='date'
-                    id='event-date'
-                    name='event-date'
-                    className='w-full p-3 border-2 border-gray-300 rounded-lg'
-                    required
-                  />
-                </div>
-                <div>
-                  <label
-                    className='block text-gray-700 mb-2 font-medium'
-                    htmlFor='application-deadline'
-                  >
-                    Application Deadline
-                  </label>
-                  <input
-                    type='date'
-                    id='application-deadline'
-                    name='application-deadline'
-                    className='w-full p-3 border-2 border-gray-300 rounded-lg'
-                    required
-                  />
-                </div>
+              <div>
+                <label
+                  className='block text-xl mb-3 text-center text-black font-semibold'
+                  htmlFor='application-deadline'
+                >
+                  Application Deadline
+                </label>
+                <input
+                  type='date'
+                  id='application-deadline'
+                  name='application-deadline'
+                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
+                  required
+                />
               </div>
+            </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div>
-                  <label
-                    className='block text-gray-700 mb-2 font-medium'
-                    htmlFor='booth-cost'
-                  >
-                    Booth Cost ($)
-                  </label>
-                  <input
-                    type='number'
-                    id='booth-cost'
-                    name='booth-cost'
-                    placeholder='0.00'
-                    className='w-full p-3 border-2 border-gray-300 rounded-lg'
-                    min='0'
-                    step='0.01'
-                    required
-                  />
-                </div>
-                <div>
-                  <label
-                    className='block text-gray-700 mb-2 font-medium'
-                    htmlFor='location'
-                  >
-                    Location
-                  </label>
-                  <input
-                    type='text'
-                    id='location'
-                    name='location'
-                    placeholder='Event location'
-                    className='w-full p-3 border-2 border-gray-300 rounded-lg'
-                    required
-                  />
-                </div>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <div>
+                <label
+                  className='block text-xl mb-3 text-center text-black font-semibold'
+                  htmlFor='booth-cost'
+                >
+                  Booth Cost ($)
+                </label>
+                <input
+                  type='number'
+                  id='booth-cost'
+                  name='booth-cost'
+                  placeholder='0.00'
+                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
+                  min='0'
+                  step='0.01'
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  className='block text-xl mb-3 text-center text-black font-semibold'
+                  htmlFor='location'
+                >
+                  Location
+                </label>
+                <input
+                  type='text'
+                  id='location'
+                  name='location'
+                  placeholder='Event location'
+                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
+                  required
+                />
               </div>
             </div>
           </div>
 
-          {/* Standard Fields Section */}
-          <div className='mb-8'>
-            <h2 className='text-2xl font-semibold mb-4 text-black'>
+          <div className='mb-10'>
+            <h2 className='text-2xl font-semibold mb-6 text-black text-center'>
               Standard Application Fields
             </h2>
-            <p className='text-gray-600 mb-4'>
+            <p className='text-lg text-gray-700 text-center mb-6'>
               Select the information you want to collect from vendors.
             </p>
 
-            <div className='bg-gray-50 p-6 rounded-lg border-2 border-gray-200'>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='p-6 border-2 border-gray-300 rounded-lg bg-white'>
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
                 {standardFields.map((field) => (
-                  <div key={field.id} className='flex items-center'>
+                  <div key={field.id} className='flex items-center p-2'>
                     <input
                       type='checkbox'
                       id={field.id}
@@ -183,7 +181,7 @@ export default function CreateApplicationPage() {
                       onChange={() => handleFieldToggle(field.id)}
                       className='mr-3 h-5 w-5'
                     />
-                    <label htmlFor={field.id} className='text-gray-700'>
+                    <label htmlFor={field.id} className='text-lg text-gray-700'>
                       {field.label}
                     </label>
                   </div>
@@ -192,42 +190,40 @@ export default function CreateApplicationPage() {
             </div>
           </div>
 
-          {/* Custom Questions Section */}
-          <div className='mb-8'>
-            <div className='flex justify-between items-center mb-4'>
-              <h2 className='text-2xl font-semibold text-black'>
+          <div className='mb-10'>
+            <div className='flex flex-col items-center mb-6'>
+              <h2 className='text-2xl font-semibold text-black text-center mb-6'>
                 Custom Questions
               </h2>
+              <p className='text-lg text-gray-700 text-center mb-6'>
+                Add custom questions that will appear on a separate page of the
+                application. Applicants will need to complete these questions
+                before submitting.
+              </p>
               <button
                 type='button'
                 onClick={addCustomQuestion}
-                className='flex items-center bg-[#f15152] text-white px-4 py-2 rounded-lg hover:bg-red-600 transition'
+                className='py-4 bg-[#f15152] text-white text-xl font-semibold rounded-lg hover:bg-red-600 transition px-8'
               >
-                <FiPlus className='mr-2' /> Add Question
+                <FiPlus className='inline mr-2' /> Add Question
               </button>
             </div>
 
-            <p className='text-gray-600 mb-4'>
-              Add custom questions that will appear on a separate page of the
-              application. Applicants will need to complete these questions
-              before submitting.
-            </p>
-
             {customQuestions.length === 0 ? (
-              <div className='bg-gray-50 p-8 rounded-lg border-2 border-gray-200 flex flex-col items-center'>
-                <p className='text-gray-500 mb-4'>
+              <div className='p-10 border-2 border-gray-300 rounded-lg bg-white flex flex-col items-center'>
+                <p className='text-xl text-gray-500 mb-6'>
                   No custom questions added yet.
                 </p>
                 <button
                   type='button'
                   onClick={addCustomQuestion}
-                  className='flex items-center bg-[#f15152] text-white px-4 py-2 rounded-lg hover:bg-red-600 transition'
+                  className='py-4 bg-[#f15152] text-white text-xl font-semibold rounded-lg hover:bg-red-600 transition px-8'
                 >
-                  <FiPlus className='mr-2' /> Add Your First Question
+                  <FiPlus className='inline mr-2' /> Add Your First Question
                 </button>
               </div>
             ) : (
-              <div className='space-y-4'>
+              <div className='space-y-6'>
                 {customQuestions.map((_, index) => (
                   <CustomQuestionField
                     key={index}
@@ -239,15 +235,16 @@ export default function CreateApplicationPage() {
             )}
           </div>
 
-          {/* Submit Button */}
           <div className='flex justify-center'>
-            <button
-              type='submit'
-              className='px-8 py-4 bg-[#f15152] text-white text-xl font-semibold rounded-lg hover:bg-red-600 transition'
-              style={{ width: '50%' }}
-            >
-              Create Application
-            </button>
+            <div style={{ width: '50%', margin: '0 auto' }}>
+              <button
+                type='submit'
+                className='w-full py-4 bg-[#f15152] text-white text-xl font-semibold rounded-lg hover:bg-red-600 transition'
+                style={{ marginBottom: '10px' }}
+              >
+                Create Application
+              </button>
+            </div>
           </div>
         </form>
       </div>
