@@ -28,8 +28,8 @@ export default function UniqueInfoPage() {
   };
 
   return (
-    <div className='flex flex-col items-center p-8 min-h-screen bg-white'>
-      <div className='w-full max-w-3xl'>
+    <div className='flex flex-col items-center justify-center p-8 min-h-screen bg-white'>
+      <div className='w-full max-w-md' style={{ width: '40%' }}>
         <h1 className='text-3xl font-bold text-center mb-4 text-black'>
           Unique Info Required
         </h1>
@@ -51,6 +51,38 @@ export default function UniqueInfoPage() {
               name='specialRequirements'
               rows={6}
               placeholder='Describe any special requirements for your popup...'
+              className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
+            />
+          </div>
+
+          <div className='mb-6'>
+            <label
+              className='block text-xl mb-3 text-center text-black font-semibold'
+              htmlFor='healthPermit'
+            >
+              Food Permit Number
+            </label>
+            <input
+              type='text'
+              id='healthPermit'
+              name='healthPermit'
+              placeholder='Enter your permit number'
+              className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
+            />
+          </div>
+
+          <div className='mb-6'>
+            <label
+              className='block text-xl mb-3 text-center text-black font-semibold'
+              htmlFor='healthPermit'
+            >
+              Have you attended this event before? *Required
+            </label>
+            <input
+              type='text'
+              id='healthPermit'
+              name='healthPermit'
+              placeholder='Enter your permit number'
               className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white'
             />
           </div>
