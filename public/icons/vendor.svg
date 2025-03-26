@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shop/Stall Roof -->
+  <path d="M12 32L40 12L68 32" stroke="#FF6B6B" stroke-width="4" fill="none"/>
+  
+  <!-- Shop/Stall Base -->
+  <rect x="16" y="32" width="48" height="36" rx="4" stroke="#FF6B6B" stroke-width="4" fill="white"/>
+  
+  <!-- Shop Window -->
+  <rect x="24" y="40" width="32" height="20" rx="2" stroke="#FF6B6B" stroke-width="4" fill="white"/>
+  
+  <!-- Display Items -->
+  <circle cx="32" cy="50" r="3" fill="#FF6B6B"/>
+  <circle cx="40" cy="50" r="3" fill="#FF6B6B"/>
+  <circle cx="48" cy="50" r="3" fill="#FF6B6B"/>
+  
+  <!-- Shop Sign -->
+  <rect x="28" y="24" width="24" height="8" rx="2" fill="#FF6B6B"/>
+</svg> 

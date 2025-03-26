@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Calendar Base -->
+  <rect x="16" y="12" width="48" height="56" rx="4" stroke="#FF6B6B" stroke-width="4" fill="white"/>
+  
+  <!-- Calendar Header -->
+  <rect x="16" y="12" width="48" height="16" rx="4" fill="#FF6B6B"/>
+  
+  <!-- Calendar Days -->
+  <circle cx="28" cy="40" r="3" fill="#FF6B6B"/>
+  <circle cx="40" cy="40" r="3" fill="#FF6B6B"/>
+  <circle cx="52" cy="40" r="3" fill="#FF6B6B"/>
+  <circle cx="28" cy="52" r="3" fill="#FF6B6B"/>
+  <circle cx="40" cy="52" r="3" fill="#FF6B6B"/>
+  <circle cx="52" cy="52" r="3" fill="#FF6B6B"/>
+  
+  <!-- Star (Event Highlight) -->
+  <path d="M40 20L42.5 25L48 25.5L44 29L45 34L40 31.5L35 34L36 29L32 25.5L37.5 25L40 20Z" fill="white"/>
+</svg> 

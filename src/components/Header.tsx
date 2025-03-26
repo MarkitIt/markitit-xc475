@@ -1,6 +1,5 @@
 "use client";
 
-
 import { signOut } from "firebase/auth";
 import Link from "next/link";
 import React, { useEffect, useState, useRef } from "react";
@@ -8,13 +7,23 @@ import { useHostContext } from '../context/HostContext';
 import { useUserContext } from '../context/UserContext';
 import { auth } from "../lib/firebase";
 import './tailwind.css';
+import { theme } from '@/styles/theme';
+import { EventSearchBar } from '@/components/EventSearchBar';
+import Image from 'next/image';
 
+const dropdownLinkStyle = {
+  display: 'block',
+  padding: theme.spacing.sm,
+  color: theme.colors.text.primary,
+  textDecoration: 'none',
+  borderRadius: theme.borderRadius.sm,
+};
 
-const Header: React.FC = () => {
+export default function Header() {
   const { user, vendorProfile, getVendorProfile } = useUserContext();
-  const { hostProfile, setHostProfile } = useHostContext();
+  const { hostProfile } = useHostContext();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -22,135 +31,247 @@ const Header: React.FC = () => {
     }
   }, [user]);
 
-  const updateHostTrue = () => {
-    setHostProfile(true); // Set the user as a host
-  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
 
-  const updateHostFalse = () => {
-    setHostProfile(false); // Set the user as a vendor
-  };
-
-  // Handle opening dropdown
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setDropdownOpen(true);
-  };
-
-  // Handle delayed closing
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setDropdownOpen(false);
-    }, 200); // Short delay to prevent flickering
-  };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      setDropdownOpen(false);
     } catch (error) {
       console.error("Error signing out:", error);
     }
   };
 
-
-  return (
-    <header className="flex justify-between items-center px-10 py-4 border-b border-black w-full bg-white">
-      {/* Left Section: Logo */}
-      <Link href="/" className="w-[160px] h-[40px]">
-        <img src="/images/logo.png" alt="Markitit Logo" className="h-10 w-auto" />
-      </Link>
-
-      {/* Right Section: Navigation Buttons */}
-      <nav className="flex space-x-4">
-        <Link
-          href="/"
-          className="w-[70px] h-[40px] flex items-center justify-center text-black text-lg font-normal font-['Manrope'] border border-black rounded-[14px] hover:bg-gray-100 transition"
-        >
-          Home
+  const renderProfileSection = () => {
+    if (!user) {
+      return (
+        <Link href="/auth/login" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: theme.spacing.xs,
+          textDecoration: 'none',
+          color: theme.colors.text.primary,
+          padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+          border: `1px solid ${theme.colors.primary.black}`,
+          borderRadius: theme.borderRadius.md,
+        }}>
+          <span>Login / Sign Up</span>
         </Link>
-        <Link
-          href="/community"
-          className="w-[110px] h-[40px] flex items-center justify-center text-black text-lg font-normal font-['Manrope'] border border-black rounded-[14px] hover:bg-gray-100 transition"
-        >
-          Community
-        </Link>
-        <Link
-          href="/notifications"
-          className="w-[125px] h-[40px] flex items-center justify-center text-black text-lg font-normal font-['Manrope'] border border-black rounded-[14px] hover:bg-gray-100 transition"
-        >
-          Notifications
-        </Link>
+      );
+    }
 
+    if (!vendorProfile && !hostProfile) {
+      return (
+        <div ref={dropdownRef} style={{ position: 'relative' }}>
+          <button
+            onClick={() => setDropdownOpen(!isDropdownOpen)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: theme.spacing.xs,
+              color: theme.colors.text.primary,
+              padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+              border: `1px solid ${theme.colors.primary.black}`,
+              borderRadius: theme.borderRadius.md,
+              background: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            <span>Create Profile</span>
+          </button>
 
-        {/* Signup/ Log in Dropdown */}
-        <div
-          className="relative w-[140px] h-[40px] flex items-center justify-center border border-black rounded-[14px] hover:bg-gray-100 transition cursor-pointer"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <span className="text-black text-lg font-normal font-['Manrope']">Signup/ Log in</span>
-
-          {/* Dropdown Menu */}
           {isDropdownOpen && (
-            <div
-              className="absolute top-full left-0 mt-1 w-[190px] bg-white border border-black rounded-[14px] shadow-md p-2 flex flex-col space-y-2"
-              onMouseEnter={handleMouseEnter} // Keep it open when hovering over dropdown
-              onMouseLeave={handleMouseLeave} // Delayed close
-            >
-              {!user ? (
-                <>
-                  <Link href="/auth/login" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Log in
-                  </Link>
-                  <Link href="/auth/signup" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Sign up
-                  </Link>
-                </>
-              ) : hostProfile ? (
-                <>
-                  <Link href="/" onClick={updateHostFalse} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Become a vendor
-                  </Link>
-                  <Link href={vendorProfile ? "/vendor-dashboard" : "/vendor-profile"} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    {vendorProfile ? "Dashboard" : "Create Profile"}
-                  </Link>
-                  <Link href="/application/host" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    My Applications
-                  </Link>
-                  <Link href="/create-event" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Create Event
-                  </Link>
-                  <Link href="/settings" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Settings
-                  </Link>
-                  <button onClick={handleLogout} className="block text-lg font-normal text-red-600 px-4 py-2 hover:bg-gray-100 rounded">
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/" onClick={updateHostTrue} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Become a host
-                  </Link>
-                  <Link href={vendorProfile ? "/vendor-dashboard" : "/vendor-profile"} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    {vendorProfile ? "Dashboard" : "Create Profile"}
-                  </Link>
-                  <Link href="/application/vendor" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    My Applications
-                  </Link>
-                  <Link href="/settings" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Settings
-                  </Link>
-                  <button onClick={handleLogout} className="block text-lg font-normal text-red-600 px-4 py-2 hover:bg-gray-100 rounded">
-                    Logout
-                  </button>
-                </>
-              )}
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              marginTop: theme.spacing.xs,
+              backgroundColor: theme.colors.background.white,
+              border: `1px solid ${theme.colors.primary.black}`,
+              borderRadius: theme.borderRadius.md,
+              padding: theme.spacing.sm,
+              minWidth: '200px',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+              zIndex: 50,
+            }}>
+              <Link href="/create-profile" className="dropdown-link" style={dropdownLinkStyle}>
+                Create Profile
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="dropdown-link text-coral"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: theme.spacing.sm,
+                  color: theme.colors.primary.coral,
+                  background: 'none',
+                  border: 'none',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  borderRadius: theme.borderRadius.sm,
+                }}
+              >
+                Logout
+              </button>
             </div>
           )}
         </div>
-      </nav>
-    </header>
-  );
-};
+      );
+    }
 
-export default Header;
+    return (
+      <div ref={dropdownRef} style={{ position: 'relative' }}>
+        <button
+          onClick={() => setDropdownOpen(!isDropdownOpen)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: theme.spacing.xs,
+            color: theme.colors.text.primary,
+            padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+            border: `1px solid ${theme.colors.primary.black}`,
+            borderRadius: theme.borderRadius.md,
+            background: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          <Image src="/icons/profile.svg" alt="Profile" width={24} height={24} />
+          <span>Profile</span>
+        </button>
+
+        {isDropdownOpen && (
+          <div style={{
+            position: 'absolute',
+            top: '100%',
+            right: 0,
+            marginTop: theme.spacing.xs,
+            backgroundColor: theme.colors.background.white,
+            border: `1px solid ${theme.colors.primary.black}`,
+            borderRadius: theme.borderRadius.md,
+            padding: theme.spacing.sm,
+            minWidth: '200px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            zIndex: 50,
+          }}>
+            {hostProfile ? (
+              <>
+                <Link href="/host-dashboard" className="dropdown-link" style={dropdownLinkStyle}>
+                  Dashboard
+                </Link>
+                <Link href="/my-events" className="dropdown-link" style={dropdownLinkStyle}>
+                  My Events
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/vendor-dashboard" className="dropdown-link" style={dropdownLinkStyle}>
+                  Dashboard
+                </Link>
+                <Link href="/my-applications" className="dropdown-link" style={dropdownLinkStyle}>
+                  My Applications
+                </Link>
+              </>
+            )}
+            <Link href="/settings" className="dropdown-link" style={dropdownLinkStyle}>
+              Settings
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="dropdown-link text-coral"
+              style={{
+                display: 'block',
+                width: '100%',
+                padding: theme.spacing.sm,
+                color: theme.colors.primary.coral,
+                background: 'none',
+                border: 'none',
+                textAlign: 'left',
+                cursor: 'pointer',
+                borderRadius: theme.borderRadius.sm,
+              }}
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <nav style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: theme.spacing.xxl,
+      backgroundColor: theme.colors.background.main,
+      borderBottom: `1px solid ${theme.colors.primary.black}`,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing.md }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <Image
+            src="/images/logo.png"
+            alt="MarkitIt Logo"
+            width={250}
+            height={50}
+            style={{
+              objectFit: 'contain'
+            }}
+          />
+        </Link>
+        <EventSearchBar />
+      </div>
+      
+      <div style={{
+        display: 'flex',
+        gap: theme.spacing.xl,
+        alignItems: 'center',
+      }}>
+        <Link href="/search-events" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: theme.spacing.xs,
+          textDecoration: 'none',
+          color: theme.colors.text.primary,
+        }}>
+          <Image src="/icons/home.svg" alt="Home" width={24} height={24} />
+          Home
+        </Link>
+        
+        <Link href="/community" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: theme.spacing.xs,
+          textDecoration: 'none',
+          color: theme.colors.text.primary,
+        }}>
+          <Image src="/icons/community.svg" alt="Community" width={24} height={24} />
+          <span>Community</span>
+        </Link>
+        
+        <Link href="/notifications" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: theme.spacing.xs,
+          textDecoration: 'none',
+          color: theme.colors.text.primary,
+        }}>
+          <Image src="/icons/bell.svg" alt="Notifications" width={24} height={24} />
+          <span>Notifications</span>
+        </Link>
+        
+        {renderProfileSection()}
+      </div>
+    </nav>
+  );
+}

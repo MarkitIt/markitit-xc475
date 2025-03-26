@@ -1,44 +1,28 @@
 "use client";
 
-import { collection, getDocs } from "firebase/firestore";
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from "react";
-import { useBusinessProfileContext } from '../../context/BusinessProfileContext';
-import { db } from "../../lib/firebase";
-import '../tailwind.css';
+import React, { useState } from 'react';
+import { theme } from '@/styles/theme';
+import Image from 'next/image';
 
-// Define the type for the profile data
-interface Profile {
-  id: string;
-  name: string;
-  description: string;
-}
-
-const BusinessProfile = () => {
-  const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [loading, setLoading] = useState(true);
-  const {
-    businessName, setBusinessName,
-    legalBusinessName, setLegalBusinessName,
-    contactLegalName, setContactLegalName,
-    contactPreferredName, setContactPreferredName,
-    country, setCountryName,
-    streetAddress, setStreetAddress,
-    aptSuite, setAptSuite,
-    city, setCity,
-    stateProvince, setStateProvince,
-    zipPostalCode, setZipPostalCode,
-    email, setEmail,
-    phone, setPhone,
-    // website, setWebsite,
-    // numberOfEmployees, setNumberOfEmployees,
-    // description, setDescription,
-    // facebookLink, setFacebookLink,
-    // twitterHandle, setTwitterHandle,
-    // instagramHandle, setInstagramHandle
-  } = useBusinessProfileContext();
-
+export default function VendorProfilePage() {
   const router = useRouter();
+  const [businessName, setBusinessName] = useState('');
+  const [legalBusinessName, setLegalBusinessName] = useState('');
+  const [contactLegalName, setContactLegalName] = useState('');
+  const [contactPreferredName, setContactPreferredName] = useState('');
+  const [country, setCountry] = useState('');
+  const [streetAddress, setStreetAddress] = useState('');
+  const [aptSuite, setAptSuite] = useState('');
+  const [city, setCity] = useState('');
+  const [stateProvince, setStateProvince] = useState('');
+  const [zipPostalCode, setZipPostalCode] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [website, setWebsite] = useState('');
+  const [numberOfEmployees, setNumberOfEmployees] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
 
   const countries = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", 
@@ -63,255 +47,488 @@ const BusinessProfile = () => {
     "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
   ];
 
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      const querySnapshot = await getDocs(collection(db, "businessProfiles"));
-      const profilesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Profile));
-      setProfiles(profilesData);
-      setLoading(false);
-    };
-
-    fetchProfiles();
-  }, []);
-
-  const handleBusinessNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setBusinessName(e.target.value);
-  };
-
-  const handleLegalBusinessNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLegalBusinessName(e.target.value);
-  };
-
-  const handleContactLegalNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setContactLegalName(e.target.value);
-  };
-
-  const handleContactPreferredNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setContactPreferredName(e.target.value);
-  };
-
-  const handleCountryNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCountryName(e.target.value);
-  };
-
-  const handleStreetAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStreetAddress(e.target.value);
-  };
-
-  const handleAptSuiteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAptSuite(e.target.value);
-  };
-
-  const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCity(e.target.value);
-  };
-
-  const handleStateProvinceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStateProvince(e.target.value);
-  };
-
-  const handleZipPostalCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setZipPostalCode(e.target.value);
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value);
-  };
-
-
-  const handleNextStepClick = () => {
-    if (businessName && contactLegalName && country && streetAddress && city && stateProvince && zipPostalCode && email && phone) {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (businessName && contactLegalName && country && streetAddress && city && 
+        stateProvince && zipPostalCode && email && phone && category) {
       router.push('/vendor-profile/businessAdjective');
-
     } else {
-      alert("Please fill in all required fields.");
+      alert('Please fill in all required fields');
     }
   };
 
-
   return (
-    <div className="min-h-screen bg-white text-black">
-      <main className="p-16 flex space-x-16">
+    <main style={{
+      backgroundColor: theme.colors.background.main,
+      minHeight: 'calc(100vh - 80px)',
+      padding: theme.spacing.xl,
+      display: 'flex',
+    }}>
+      {/* Left side - Image */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        paddingTop: theme.spacing.xl,
+      }}>
+        <Image
+          src="/icons/createProf.svg"
+          alt="Business Profile Setup"
+          width={400}
+          height={400}
+          style={{ maxWidth: '100%', height: 'auto' }}
+        />
+      </div>
 
-        {/* Large Placeholder Image */}
-        <div className="w-[50%] h-[450px] bg-gray-300"></div>
+      {/* Right side - Form */}
+      <div style={{
+        flex: 1,
+        maxWidth: '600px',
+      }}>
+        <div style={{
+          marginBottom: theme.spacing.xl,
+        }}>
+          <span style={{
+            fontSize: theme.typography.fontSize.body,
+            color: theme.colors.text.secondary,
+          }}>
+            Step 01/05
+          </span>
+          <h1 style={{
+            fontSize: theme.typography.fontSize.title,
+            color: theme.colors.text.primary,
+            marginTop: theme.spacing.md,
+          }}>
+            Create Business Profile
+          </h1>
+        </div>
 
-        {/* Profile */}
-        <div className="w-[50%]">
-          <h2 className="text-md text-gray-500">Step 01/05</h2>
-          <h1 className="text-5xl font-bold mb-8">Create Business Profile</h1>
-          {/* All the fillable box form */}
-          <div className="text-xl">
-            
-            <div className="">Business name<span className="text-red-500">*</span></div>
+        <form onSubmit={handleSubmit} style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: theme.spacing.xl,
+        }}>
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Business Name<span style={{ color: theme.colors.primary.coral }}>*</span>
+            </label>
             <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              type="text"
               value={businessName}
-              onChange={handleBusinessNameChange}
+              onChange={(e) => setBusinessName(e.target.value)}
               required
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
             />
+          </div>
 
-            <div className="">Legal business name</div>
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Legal Business Name
+            </label>
             <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              type="text"
               value={legalBusinessName}
-              onChange={handleLegalBusinessNameChange}
-              required
+              onChange={(e) => setLegalBusinessName(e.target.value)}
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
             />
+          </div>
 
-            <div className="">Contact legal name<span className="text-red-500">*</span></div>
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Category/Industry<span style={{ color: theme.colors.primary.coral }}>*</span>
+            </label>
             <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              type="text"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Contact Legal Name<span style={{ color: theme.colors.primary.coral }}>*</span>
+            </label>
+            <input
+              type="text"
               value={contactLegalName}
-              onChange={handleContactLegalNameChange}
+              onChange={(e) => setContactLegalName(e.target.value)}
               required
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
             />
+          </div>
 
-            <div className="">Contact preferred name</div>
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Contact Preferred Name
+            </label>
             <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
+              type="text"
               value={contactPreferredName}
-              onChange={handleContactPreferredNameChange}
-              required
+              onChange={(e) => setContactPreferredName(e.target.value)}
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
             />
+          </div>
 
-            <div className="">Country/region<span className="text-red-500">*</span></div>
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Country/Region<span style={{ color: theme.colors.primary.coral }}>*</span>
+            </label>
             <select
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={country} 
-              onChange={(e) => setCountryName(e.target.value)}
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
               required
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
             >
               <option value="">Select a country</option>
-              {countries.map((country) => (
-                <option key={country} value={country}>{country}</option>
+              {countries.map((c) => (
+                <option key={c} value={c}>{c}</option>
               ))}
             </select>
-
-            <div className="">Street address<span className="text-red-500">*</span></div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={streetAddress}
-              onChange={handleStreetAddressChange}
-              required
-            />
-
-            <div className="">Apt, suite. (optional)</div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={aptSuite}
-              onChange={handleAptSuiteChange}
-              required
-            />  
-
-            <div className="">City<span className="text-red-500">*</span></div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={city}
-              onChange={handleCityChange}
-              required
-            />
-
-            <div className="">State/province<span className="text-red-500">*</span></div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={stateProvince}
-              onChange={handleStateProvinceChange}
-              required
-            />
-
-            <div className="">Zip/postal code<span className="text-red-500">*</span></div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={zipPostalCode}
-              onChange={handleZipPostalCodeChange}
-              required
-            />
-
-            <div className="">Email<span className="text-red-500">*</span></div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={email}
-              onChange={handleEmailChange}
-              required
-            />    
-
-            <div className="">Phone<span className="text-red-500">*</span></div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={phone}
-              onChange={handlePhoneChange}
-              required
-            />    
-
-            {/* <div className="">Website</div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={website}
-              onChange={handleWebsiteChange}
-              required
-            />    
-
-            <div className="">Number of employees</div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={numberOfEmployees}
-              onChange={handleNumberOfEmployeesChange}
-              required
-            />    
-
-            <div className="">Description</div>
-            <textarea
-              className="w-[70%] h-40 bg-gray-300 mb-8 text-left align-top p-2"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />     
-
-            <div className="">Facebook link</div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={facebookLink}
-              onChange={handleFacebookLinkChange}
-              required
-            />   
-
-            <div className="">Twitter "X" handle</div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={twitterHandle}
-              onChange={handleTwitterHandleChange}
-              required
-            />   
-
-            <div className="">Instagram handle</div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={instagramHandle}
-              onChange={handleInstagramHandleChange}
-              required
-            />    */}
-
           </div>
 
-          {/* Next step click */}
-          <div className="flex space-x-6 mt-8">
-            <div className="w-36 h-14 bg-gray-300 flex items-center justify-center">Help</div>
-            <div
-              className="w-48 h-14 bg-gray-300 transition-transform transform hover:translate-y-[-5px] hover:shadow-lg cursor-pointer flex items-center justify-center"
-              onClick={handleNextStepClick}
-            >
-              Next Step
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Street Address<span style={{ color: theme.colors.primary.coral }}>*</span>
+            </label>
+            <input
+              type="text"
+              value={streetAddress}
+              onChange={(e) => setStreetAddress(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Apt, Suite (Optional)
+            </label>
+            <input
+              type="text"
+              value={aptSuite}
+              onChange={(e) => setAptSuite(e.target.value)}
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: theme.spacing.xl }}>
+            <div>
+              <label style={{
+                display: 'block',
+                fontSize: theme.typography.fontSize.body,
+                color: theme.colors.text.primary,
+                marginBottom: theme.spacing.sm,
+              }}>
+                City<span style={{ color: theme.colors.primary.coral }}>*</span>
+              </label>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                required
+                style={{
+                  width: '100%',
+                  padding: theme.spacing.md,
+                  border: `1px solid ${theme.colors.text.secondary}`,
+                  borderRadius: theme.borderRadius.md,
+                  fontSize: theme.typography.fontSize.body,
+                  backgroundColor: theme.colors.background.white,
+                }}
+              />
+            </div>
+
+            <div>
+              <label style={{
+                display: 'block',
+                fontSize: theme.typography.fontSize.body,
+                color: theme.colors.text.primary,
+                marginBottom: theme.spacing.sm,
+              }}>
+                State/Province<span style={{ color: theme.colors.primary.coral }}>*</span>
+              </label>
+              <input
+                type="text"
+                value={stateProvince}
+                onChange={(e) => setStateProvince(e.target.value)}
+                required
+                style={{
+                  width: '100%',
+                  padding: theme.spacing.md,
+                  border: `1px solid ${theme.colors.text.secondary}`,
+                  borderRadius: theme.borderRadius.md,
+                  fontSize: theme.typography.fontSize.body,
+                  backgroundColor: theme.colors.background.white,
+                }}
+              />
             </div>
           </div>
-        </div>
-      </main>
-    </div>
-  );
-};
 
-export default BusinessProfile;
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Zip/Postal Code<span style={{ color: theme.colors.primary.coral }}>*</span>
+            </label>
+            <input
+              type="text"
+              value={zipPostalCode}
+              onChange={(e) => setZipPostalCode(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Email<span style={{ color: theme.colors.primary.coral }}>*</span>
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Phone<span style={{ color: theme.colors.primary.coral }}>*</span>
+            </label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Website
+            </label>
+            <input
+              type="url"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Number of Employees
+            </label>
+            <input
+              type="number"
+              value={numberOfEmployees}
+              onChange={(e) => setNumberOfEmployees(e.target.value)}
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: theme.typography.fontSize.body,
+              color: theme.colors.text.primary,
+              marginBottom: theme.spacing.sm,
+            }}>
+              Description
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Tell us about your brand, your mission, or unique selling points."
+              style={{
+                width: '100%',
+                padding: theme.spacing.md,
+                border: `1px solid ${theme.colors.text.secondary}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: theme.typography.fontSize.body,
+                backgroundColor: theme.colors.background.white,
+                minHeight: '150px',
+                resize: 'vertical',
+              }}
+            />
+          </div>
+
+          <button
+            type="submit"
+            style={{
+              padding: `${theme.spacing.md} ${theme.spacing.xl}`,
+              backgroundColor: theme.colors.primary.coral,
+              color: theme.colors.background.white,
+              border: 'none',
+              borderRadius: theme.borderRadius.md,
+              fontSize: theme.typography.fontSize.body,
+              cursor: 'pointer',
+              alignSelf: 'flex-start',
+              marginTop: theme.spacing.lg,
+            }}
+          >
+            Next Steps
+          </button>
+        </form>
+      </div>
+    </main>
+  );
+}

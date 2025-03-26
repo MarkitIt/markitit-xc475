@@ -60,7 +60,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Vendor not found" }, { status: 404 });
     }
     const vendor = vendorSnapshot.docs[0].data();
-    console.log(vendor);
+   // console.log(vendor);
     // Fetch all events
     const eventsSnapshot = await getDocs(collection(db, "events"));
     const events = eventsSnapshot.docs.map(doc => ({
