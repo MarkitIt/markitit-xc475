@@ -2,11 +2,68 @@
 
 import { useState, useRef } from 'react';
 import { Autocomplete } from '@react-google-maps/api';
+import { theme } from '@/styles/theme';
+import { FiSearch } from 'react-icons/fi';
+
+interface SearchBarProps {
+  placeholder?: string;
+  onSearch?: (query: string) => void;
+}
+
+export const SearchBar = ({ 
+  placeholder = "What event are you searching for?",
+  onSearch 
+}: SearchBarProps) => {
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: '500px',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          backgroundColor: theme.colors.background.white,
+          border: '1px solid #E2E8F0',
+          borderRadius: theme.borderRadius.full,
+          padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+        }}
+      >
+        <FiSearch 
+          size={20} 
+          style={{ 
+            color: theme.colors.text.secondary,
+            marginRight: theme.spacing.sm,
+          }} 
+        />
+        <input
+          type="text"
+          placeholder={placeholder}
+          onChange={(e) => onSearch?.(e.target.value)}
+          style={{
+            width: '100%',
+            border: 'none',
+            outline: 'none',
+            backgroundColor: 'transparent',
+            fontFamily: theme.typography.fontFamily.primary,
+            fontSize: theme.typography.fontSize.body,
+            color: theme.colors.text.primary,
+            '::placeholder': {
+              color: theme.colors.text.secondary,
+            }
+          }}
+        />
+      </div>
+    </div>
+  );
+};
 
 interface SearchBarProps {
   onSearch: (city: string, startDate: string, endDate: string, keywords: string) => void;
 }
-
 
 export function SearchBar({ onSearch }: SearchBarProps) {
   const [city, setCity] = useState('');
@@ -37,10 +94,8 @@ export function SearchBar({ onSearch }: SearchBarProps) {
             onPlaceChanged={handlePlaceChanged}
           >
             <input
-
               placeholder="City or Address"
               className="w-full p-2 border rounded"
-
             />
           </Autocomplete>
         </div>

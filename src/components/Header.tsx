@@ -8,9 +8,12 @@ import { useHostContext } from '../context/HostContext';
 import { useUserContext } from '../context/UserContext';
 import { auth } from "../lib/firebase";
 import './tailwind.css';
+import { theme } from '@/styles/theme';
+import { EventSearchBar } from '@/components/EventSearchBar';
+import Image from 'next/image';
 
 
-const Header: React.FC = () => {
+export default function Header() {
   const { user, vendorProfile, getVendorProfile } = useUserContext();
   const { hostProfile, setHostProfile } = useHostContext();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -53,104 +56,73 @@ const Header: React.FC = () => {
 
 
   return (
-    <header className="flex justify-between items-center px-10 py-4 border-b border-black w-full bg-white">
-      {/* Left Section: Logo */}
-      <Link href="/" className="w-[160px] h-[40px]">
-        <img src="/images/logo.png" alt="Markitit Logo" className="h-10 w-auto" />
-      </Link>
-
-      {/* Right Section: Navigation Buttons */}
-      <nav className="flex space-x-4">
-        <Link
-          href="/"
-          className="w-[70px] h-[40px] flex items-center justify-center text-black text-lg font-normal font-['Manrope'] border border-black rounded-[14px] hover:bg-gray-100 transition"
-        >
-          Home
+    <nav style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: theme.spacing.xxl,
+      backgroundColor: theme.colors.background.main,
+      borderBottom: `1px solid ${theme.colors.primary.black}`,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing.md }}>
+        <Image
+          src="/logo.svg"
+          alt="MarkitIt Logo"
+          width={120}
+          height={40}
+        />
+        <EventSearchBar />
+      </div>
+      
+      <div style={{
+        display: 'flex',
+        gap: theme.spacing.xl,
+        alignItems: 'center',
+      }}>
+        <Link href="/" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: theme.spacing.xs,
+          textDecoration: 'none',
+          color: theme.colors.text.primary,
+        }}>
+          <Image src="/icons/home.svg" alt="Home" width={24} height={24} />
+          <span>Home</span>
         </Link>
-        <Link
-          href="/community"
-          className="w-[110px] h-[40px] flex items-center justify-center text-black text-lg font-normal font-['Manrope'] border border-black rounded-[14px] hover:bg-gray-100 transition"
-        >
-          Community
+        
+        <Link href="/community" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: theme.spacing.xs,
+          textDecoration: 'none',
+          color: theme.colors.text.primary,
+        }}>
+          <Image src="/icons/community.svg" alt="Community" width={24} height={24} />
+          <span>Community</span>
         </Link>
-        <Link
-          href="/notifications"
-          className="w-[125px] h-[40px] flex items-center justify-center text-black text-lg font-normal font-['Manrope'] border border-black rounded-[14px] hover:bg-gray-100 transition"
-        >
-          Notifications
+        
+        <Link href="/notifications" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: theme.spacing.xs,
+          textDecoration: 'none',
+          color: theme.colors.text.primary,
+        }}>
+          <Image src="/icons/bell.svg" alt="Notifications" width={24} height={24} />
+          <span>Notifications</span>
         </Link>
-
-
-        {/* Signup/ Log in Dropdown */}
-        <div
-          className="relative w-[140px] h-[40px] flex items-center justify-center border border-black rounded-[14px] hover:bg-gray-100 transition cursor-pointer"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <span className="text-black text-lg font-normal font-['Manrope']">Signup/ Log in</span>
-
-          {/* Dropdown Menu */}
-          {isDropdownOpen && (
-            <div
-              className="absolute top-full left-0 mt-1 w-[190px] bg-white border border-black rounded-[14px] shadow-md p-2 flex flex-col space-y-2"
-              onMouseEnter={handleMouseEnter} // Keep it open when hovering over dropdown
-              onMouseLeave={handleMouseLeave} // Delayed close
-            >
-              {!user ? (
-                <>
-                  <Link href="/auth/login" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Log in
-                  </Link>
-                  <Link href="/auth/signup" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Sign up
-                  </Link>
-                </>
-              ) : hostProfile ? (
-                <>
-                  <Link href="/" onClick={updateHostFalse} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Become a vendor
-                  </Link>
-                  <Link href={vendorProfile ? "/vendor-dashboard" : "/vendor-profile"} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    {vendorProfile ? "Dashboard" : "Create Profile"}
-                  </Link>
-                  <Link href="/application/host" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    My Applications
-                  </Link>
-                  <Link href="/create-event" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Create Event
-                  </Link>
-                  <Link href="/settings" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Settings
-                  </Link>
-                  <button onClick={handleLogout} className="block text-lg font-normal text-red-600 px-4 py-2 hover:bg-gray-100 rounded">
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/" onClick={updateHostTrue} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Become a host
-                  </Link>
-                  <Link href={vendorProfile ? "/vendor-dashboard" : "/vendor-profile"} className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    {vendorProfile ? "Dashboard" : "Create Profile"}
-                  </Link>
-                  <Link href="/application/vendor" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    My Applications
-                  </Link>
-                  <Link href="/settings" className="block text-lg font-normal text-black px-4 py-2 hover:bg-gray-100 rounded">
-                    Settings
-                  </Link>
-                  <button onClick={handleLogout} className="block text-lg font-normal text-red-600 px-4 py-2 hover:bg-gray-100 rounded">
-                    Logout
-                  </button>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      </nav>
-    </header>
+        
+        <Link href="/profile" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: theme.spacing.xs,
+          textDecoration: 'none',
+          color: theme.colors.text.primary,
+        }}>
+          <Image src="/icons/profile.svg" alt="Profile" width={24} height={24} />
+          <span>Profile</span>
+        </Link>
+      </div>
+    </nav>
   );
-};
-
-export default Header;
+}
