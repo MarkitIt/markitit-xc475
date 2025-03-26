@@ -1,6 +1,5 @@
 "use client";
 
-
 import { signOut } from "firebase/auth";
 import Link from "next/link";
 import React, { useEffect, useState, useRef } from "react";
@@ -12,12 +11,19 @@ import { theme } from '@/styles/theme';
 import { EventSearchBar } from '@/components/EventSearchBar';
 import Image from 'next/image';
 
+const dropdownLinkStyle = {
+  display: 'block',
+  padding: theme.spacing.sm,
+  color: theme.colors.text.primary,
+  textDecoration: 'none',
+  borderRadius: theme.borderRadius.sm,
+};
 
 export default function Header() {
   const { user, vendorProfile, getVendorProfile } = useUserContext();
-  const { hostProfile, setHostProfile } = useHostContext();
+  const { hostProfile } = useHostContext();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -25,35 +31,139 @@ export default function Header() {
     }
   }, [user]);
 
-  const updateHostTrue = () => {
-    setHostProfile(true); // Set the user as a host
-  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
 
-  const updateHostFalse = () => {
-    setHostProfile(false); // Set the user as a vendor
-  };
-
-  // Handle opening dropdown
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setDropdownOpen(true);
-  };
-
-  // Handle delayed closing
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setDropdownOpen(false);
-    }, 200); // Short delay to prevent flickering
-  };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      setDropdownOpen(false);
     } catch (error) {
       console.error("Error signing out:", error);
     }
   };
 
+  const renderProfileSection = () => {
+    if (!user) {
+      return (
+        <Link href="/auth/login" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: theme.spacing.xs,
+          textDecoration: 'none',
+          color: theme.colors.text.primary,
+          padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+          border: `1px solid ${theme.colors.primary.black}`,
+          borderRadius: theme.borderRadius.md,
+        }}>
+          <span>Login / Sign Up</span>
+        </Link>
+      );
+    }
+
+    if (!vendorProfile && !hostProfile) {
+      return (
+        <Link href="/create-profile" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: theme.spacing.xs,
+          textDecoration: 'none',
+          color: theme.colors.text.primary,
+          padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+          border: `1px solid ${theme.colors.primary.black}`,
+          borderRadius: theme.borderRadius.md,
+        }}>
+          <span>Create Profile</span>
+        </Link>
+      );
+    }
+
+    return (
+      <div ref={dropdownRef} style={{ position: 'relative' }}>
+        <button
+          onClick={() => setDropdownOpen(!isDropdownOpen)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: theme.spacing.xs,
+            color: theme.colors.text.primary,
+            padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+            border: `1px solid ${theme.colors.primary.black}`,
+            borderRadius: theme.borderRadius.md,
+            background: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          <Image src="/icons/profile.svg" alt="Profile" width={24} height={24} />
+          <span>Profile</span>
+        </button>
+
+        {isDropdownOpen && (
+          <div style={{
+            position: 'absolute',
+            top: '100%',
+            right: 0,
+            marginTop: theme.spacing.xs,
+            backgroundColor: theme.colors.background.white,
+            border: `1px solid ${theme.colors.primary.black}`,
+            borderRadius: theme.borderRadius.md,
+            padding: theme.spacing.sm,
+            minWidth: '200px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            zIndex: 50,
+          }}>
+            {hostProfile ? (
+              <>
+                <Link href="/host-dashboard" className="dropdown-link" style={dropdownLinkStyle}>
+                  Dashboard
+                </Link>
+                <Link href="/my-events" className="dropdown-link" style={dropdownLinkStyle}>
+                  My Events
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/vendor-dashboard" className="dropdown-link" style={dropdownLinkStyle}>
+                  Dashboard
+                </Link>
+                <Link href="/my-applications" className="dropdown-link" style={dropdownLinkStyle}>
+                  My Applications
+                </Link>
+              </>
+            )}
+            <Link href="/settings" className="dropdown-link" style={dropdownLinkStyle}>
+              Settings
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="dropdown-link text-coral"
+              style={{
+                display: 'block',
+                width: '100%',
+                padding: theme.spacing.sm,
+                color: theme.colors.primary.coral,
+                background: 'none',
+                border: 'none',
+                textAlign: 'left',
+                cursor: 'pointer',
+                borderRadius: theme.borderRadius.sm,
+              }}
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <nav style={{
@@ -115,16 +225,7 @@ export default function Header() {
           <span>Notifications</span>
         </Link>
         
-        <Link href="/profile" style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: theme.spacing.xs,
-          textDecoration: 'none',
-          color: theme.colors.text.primary,
-        }}>
-          <Image src="/icons/profile.svg" alt="Profile" width={24} height={24} />
-          <span>Profile</span>
-        </Link>
+        {renderProfileSection()}
       </div>
     </nav>
   );

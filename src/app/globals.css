@@ -1,4 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+.dropdown-link {
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-link:hover {
+  background-color: rgb(243, 229, 226);
+}
+
+.text-coral {
+  color: #F15152;
+}
 
 :root {
   --background: #ffffff;
