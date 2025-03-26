@@ -66,10 +66,13 @@ export default function Header() {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing.md }}>
         <Image
-          src="/logo.svg"
+          src="/images/logo.png"
           alt="MarkitIt Logo"
-          width={120}
+          width={160}
           height={40}
+          style={{
+            objectFit: 'contain'
+          }}
         />
         <EventSearchBar />
       </div>
