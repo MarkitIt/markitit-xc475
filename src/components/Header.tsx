@@ -71,18 +71,61 @@ export default function Header() {
 
     if (!vendorProfile && !hostProfile) {
       return (
-        <Link href="/create-profile" style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: theme.spacing.xs,
-          textDecoration: 'none',
-          color: theme.colors.text.primary,
-          padding: `${theme.spacing.sm} ${theme.spacing.md}`,
-          border: `1px solid ${theme.colors.primary.black}`,
-          borderRadius: theme.borderRadius.md,
-        }}>
-          <span>Create Profile</span>
-        </Link>
+        <div ref={dropdownRef} style={{ position: 'relative' }}>
+          <button
+            onClick={() => setDropdownOpen(!isDropdownOpen)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: theme.spacing.xs,
+              color: theme.colors.text.primary,
+              padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+              border: `1px solid ${theme.colors.primary.black}`,
+              borderRadius: theme.borderRadius.md,
+              background: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            <span>Create Profile</span>
+          </button>
+
+          {isDropdownOpen && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              marginTop: theme.spacing.xs,
+              backgroundColor: theme.colors.background.white,
+              border: `1px solid ${theme.colors.primary.black}`,
+              borderRadius: theme.borderRadius.md,
+              padding: theme.spacing.sm,
+              minWidth: '200px',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+              zIndex: 50,
+            }}>
+              <Link href="/create-profile" className="dropdown-link" style={dropdownLinkStyle}>
+                Create Profile
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="dropdown-link text-coral"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: theme.spacing.sm,
+                  color: theme.colors.primary.coral,
+                  background: 'none',
+                  border: 'none',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  borderRadius: theme.borderRadius.sm,
+                }}
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       );
     }
 
@@ -175,15 +218,17 @@ export default function Header() {
       borderBottom: `1px solid ${theme.colors.primary.black}`,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing.md }}>
-        <Image
-          src="/images/logo.png"
-          alt="MarkitIt Logo"
-          width={160}
-          height={40}
-          style={{
-            objectFit: 'contain'
-          }}
-        />
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <Image
+            src="/images/logo.png"
+            alt="MarkitIt Logo"
+            width={250}
+            height={50}
+            style={{
+              objectFit: 'contain'
+            }}
+          />
+        </Link>
         <EventSearchBar />
       </div>
       
@@ -192,7 +237,7 @@ export default function Header() {
         gap: theme.spacing.xl,
         alignItems: 'center',
       }}>
-        <Link href="/" style={{
+        <Link href="/search-events" style={{
           display: 'flex',
           alignItems: 'center',
           gap: theme.spacing.xs,
@@ -200,7 +245,7 @@ export default function Header() {
           color: theme.colors.text.primary,
         }}>
           <Image src="/icons/home.svg" alt="Home" width={24} height={24} />
-          <span>Home</span>
+          Home
         </Link>
         
         <Link href="/community" style={{
