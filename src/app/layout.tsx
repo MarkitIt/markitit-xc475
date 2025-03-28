@@ -11,7 +11,6 @@ import { BusinessLogoProvider } from '../context/BusinessLogoContext';
 import { BusinessPastPopupProvider } from '../context/BusinessPastPopupContext';
 import { BusinessProfileProvider } from '../context/BusinessProfileContext';
 import { ApplicationProfileProvider } from '../context/CreateEventProfileContext';
-import { HostProvider } from '../context/HostContext';
 import { UserProvider } from '../context/UserContext';
 import Header from '@/components/Header';
 
@@ -37,28 +36,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <LoadScript id="google-maps-script" googleMapsApiKey={`${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`} libraries={[libraries]}>
           <UserProvider>
-            <HostProvider>
-              <ApplicationProfileProvider>
-                <BusinessProfileProvider>
-                  <BusinessAdjectiveProvider>
-                    <BusinessLogoProvider>
-                      <BusinessPastPopupProvider>
-                        <BusinessBudgetProvider>
-                          <BusinessCustomerProvider>
-                            <BusinessScheduleProvider>
-                              <BusinessLocationProvider>
-                                <Header />
-                                {children}
-                              </BusinessLocationProvider>
-                            </BusinessScheduleProvider>
-                          </BusinessCustomerProvider>
-                        </BusinessBudgetProvider>
-                      </BusinessPastPopupProvider>
-                    </BusinessLogoProvider>
-                  </BusinessAdjectiveProvider>
-                </BusinessProfileProvider>
-              </ApplicationProfileProvider>
-            </HostProvider>
+            <ApplicationProfileProvider>
+              <BusinessProfileProvider>
+                <BusinessAdjectiveProvider>
+                  <BusinessLogoProvider>
+                    <BusinessPastPopupProvider>
+                      <BusinessBudgetProvider>
+                        <BusinessCustomerProvider>
+                          <BusinessScheduleProvider>
+                            <BusinessLocationProvider>
+                              <Header />
+                              {children}
+                            </BusinessLocationProvider>
+                          </BusinessScheduleProvider>
+                        </BusinessCustomerProvider>
+                      </BusinessBudgetProvider>
+                    </BusinessPastPopupProvider>
+                  </BusinessLogoProvider>
+                </BusinessAdjectiveProvider>
+              </BusinessProfileProvider>
+            </ApplicationProfileProvider>
           </UserProvider>
         </LoadScript>
       </body>

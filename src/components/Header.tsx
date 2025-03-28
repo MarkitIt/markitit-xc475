@@ -3,7 +3,6 @@
 import { signOut } from "firebase/auth";
 import Link from "next/link";
 import React, { useEffect, useState, useRef } from "react";
-import { useHostContext } from '../context/HostContext';
 import { useUserContext } from '../context/UserContext';
 import { auth } from "../lib/firebase";
 import './tailwind.css';
@@ -20,14 +19,19 @@ const dropdownLinkStyle = {
 };
 
 export default function Header() {
-  const { user, vendorProfile, getVendorProfile } = useUserContext();
-  const { hostProfile } = useHostContext();
+  const { user, vendorProfile, getVendorProfile,hostProfile,getHostProfile } = useUserContext();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
-      getVendorProfile();
+      console.log(user.role)
+      if (user?.role === 'vendor') {
+        getVendorProfile();
+      }
+      else if (user?.role === 'host') {
+        getHostProfile();
+      }
     }
   }, [user]);
 
@@ -103,26 +107,79 @@ export default function Header() {
               boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
               zIndex: 50,
             }}>
-              <Link href="/create-profile" className="dropdown-link" style={dropdownLinkStyle}>
-                Create Profile
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="dropdown-link text-coral"
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: theme.spacing.sm,
-                  color: theme.colors.primary.coral,
-                  background: 'none',
-                  border: 'none',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  borderRadius: theme.borderRadius.sm,
-                }}
-              >
-                Logout
-              </button>
+              {user?.role === 'host' && (
+                <>
+                  <Link href="/create-profile/host" className="dropdown-link" style={dropdownLinkStyle}>
+                    Create Host Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="dropdown-link text-coral"
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      padding: theme.spacing.sm,
+                      color: theme.colors.primary.coral,
+                      background: 'none',
+                      border: 'none',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      borderRadius: theme.borderRadius.sm,
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
+              {user?.role === 'vendor' && (
+                <>
+                <Link href="'/vendor-profile" className="dropdown-link" style={dropdownLinkStyle}>
+                  Create Vendor Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="dropdown-link text-coral"
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: theme.spacing.sm,
+                    color: theme.colors.primary.coral,
+                    background: 'none',
+                    border: 'none',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    borderRadius: theme.borderRadius.sm,
+                  }}
+                >
+                  Logout
+                </button>
+              </>
+              )}
+              {user?.role === undefined && (
+                <>
+                <Link href="'/create-profile" className="dropdown-link" style={dropdownLinkStyle}>
+                  Create Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="dropdown-link text-coral"
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: theme.spacing.sm,
+                    color: theme.colors.primary.coral,
+                    background: 'none',
+                    border: 'none',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    borderRadius: theme.borderRadius.sm,
+                  }}
+                >
+                  Logout
+                </button>
+              </>
+              )}
+              
             </div>
           )}
         </div>

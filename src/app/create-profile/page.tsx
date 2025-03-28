@@ -31,7 +31,8 @@ export default function CreateProfilePage() {
       });
   
       alert(`Your role has been updated to ${role} successfully!`);
-      router.push("/vendor-profile"); // Redirect to the dashboard or appropriate page
+      if (role=="vendor") router.push("/vendor-profile"); // Redirect to the dashboard or appropriate page
+      else router.push('/create-profile/host')
     } catch (error) {
       console.error("Error updating role:", error);
       setError((error as Error).message);
@@ -75,7 +76,7 @@ export default function CreateProfilePage() {
         maxWidth: '1000px',
       }}>
         <button
-          onClick={() => router.push('/create-profile/host')}
+          onClick={() => handleSubmit("host")}
           style={{
             flex: 1,
             maxWidth: '400px',
