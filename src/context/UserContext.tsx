@@ -64,12 +64,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const getHostProfile = () => {
     if (user) {
+      
       const hostProfileCollection = collection(db, 'hostProfile');
       const q = query(hostProfileCollection, where('uid', '==', user.uid));
       getDocs(q).then((querySnapshot) => {
         if (!querySnapshot.empty) {
           const hostProfileData = querySnapshot.docs[0].data();
-          setVendorProfile(hostProfileData);
+          console.log(hostProfileData)
+          setHostProfile(hostProfileData);
         }
       }).catch((error) => {
         console.error("Error getting host profile: ", error);

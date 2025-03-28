@@ -4,7 +4,6 @@ import { BusinessBudgetProvider } from "@/context/BusinessBudgetContext";
 import { BusinessCustomerProvider } from "@/context/BusinessCustomerContext";
 import { BusinessLocationProvider } from "@/context/BusinessLocationContext";
 import { BusinessScheduleProvider } from "@/context/BusinessScheduleContext";
-import dynamic from 'next/dynamic';
 import { Manrope } from "next/font/google";
 import { BusinessAdjectiveProvider } from '../context/BusinessAdjectiveContext';
 import { BusinessLogoProvider } from '../context/BusinessLogoContext';
@@ -13,13 +12,9 @@ import { BusinessProfileProvider } from '../context/BusinessProfileContext';
 import { ApplicationProfileProvider } from '../context/CreateEventProfileContext';
 import { UserProvider } from '../context/UserContext';
 import Header from '@/components/Header';
+import GoogleMapsLoader from '../components/GoogleMapsLoader';
 
 import "./globals.css";
-
-// Dynamically import LoadScript to disable SSR
-const LoadScript = dynamic(() => import('@react-google-maps/api').then(mod => mod.LoadScript), { ssr: false });
-
-const libraries = "places";
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -34,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="description" content="A one-stop platform for finding top-tier events, managing applications, and connecting with a thriving vendor community." />
       </head>
       <body>
-        <LoadScript id="google-maps-script" googleMapsApiKey={`${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`} libraries={[libraries]}>
+        <GoogleMapsLoader>
           <UserProvider>
             <ApplicationProfileProvider>
               <BusinessProfileProvider>
@@ -57,7 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </BusinessProfileProvider>
             </ApplicationProfileProvider>
           </UserProvider>
-        </LoadScript>
+        </GoogleMapsLoader>
       </body>
     </html>
   );

@@ -6,7 +6,7 @@ interface EventProps {
     name: string;
     image: string;
     date: string;
-    location: {
+    location?: {
       city: string;
       state: string;
     };
@@ -35,7 +35,11 @@ export function EventCardHost({ event, rank, showRank }: EventProps) {
         </div>
         <div className="p-4">
           <h3 className="font-semibold text-lg mb-2">{event.name}</h3>
-          <p className="text-gray-800 text-lg">{`${event.location.city}, ${event.location.state}`}</p>
+          <p className="text-gray-800 text-lg">
+            {event.location
+              ? `${event.location.city}, ${event.location.state}`
+              : "Location not available"}
+          </p>
           <p className="text-gray-600">{event.date}</p>
         </div>
       </div>

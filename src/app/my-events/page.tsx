@@ -7,10 +7,12 @@ import { SearchBar } from '@/components/SearchBar';
 import { EventCardHost } from '@/components/EventCardHost';
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
-import styles from "../../page.module.css";
-import '../../tailwind.css';
+import styles from "../page.module.css";
+import '../tailwind.css';
 import "leaflet/dist/leaflet.css";
 import { useUserContext } from '@/context/UserContext';
+
+import { theme } from '@/styles/theme';
 
 
 
@@ -92,14 +94,38 @@ export default function ApplicationHostProfile() {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ol>
-          <li>
-            Welcome to MarkitIt!.
-          </li>
-          <li>From xc475</li>
-        </ol>
+    <main style={{
+      backgroundColor: theme.colors.background.main,
+      minHeight: 'calc(100vh - 80px)',
+      padding: theme.spacing.xl,
+    }}>
+        <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: theme.spacing.xl,
+              }}>
+                <h1 style={{
+                  fontSize: theme.typography.fontSize.title,
+                  color: theme.colors.text.primary,
+                }}>
+                  My Applications
+                </h1>
+                
+                <button
+                onClick={() => router.push('/my-events/create-application')}
+                style={{
+                  backgroundColor: theme.colors.primary.coral,
+                  color: theme.colors.background.white,
+                  padding: `${theme.spacing.sm} ${theme.spacing.xl}`,
+                  borderRadius: theme.borderRadius.md,
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: theme.typography.fontSize.body,
+                }}>
+                  New Application
+                </button>
+              </div>
 
         {!user && (
           <div className="text-center p-4 bg-yellow-100 text-yellow-800">
@@ -152,6 +178,5 @@ export default function ApplicationHostProfile() {
         </ul>
       </main>
           
-    </div>
   );
 }
