@@ -3,9 +3,41 @@
 import { theme } from '@/styles/theme';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useUserContext } from '../../context/UserContext';
+import React, { useEffect, useState, useRef } from "react";
 
 export default function CreateProfilePage() {
+   
   const router = useRouter();
+  const { user } = useUserContext();
+  const [role, setRole] = useState("");
+  const [error, setError] = useState("");
+
+
+
+  const handleSubmit = async (role: string) => {
+    try {
+      // Ensure the user is logged in
+      if (!user) {
+        alert("You must be logged in to update your role.");
+        return;
+      }
+  
+      // Update the user's role in Firestore
+      await updateDoc(doc(db, "users", user.uid), {
+        role, // Update the role property (e.g., "host" or "vendor")
+      });
+  
+      alert(`Your role has been updated to ${role} successfully!`);
+      router.push("/vendor-profile"); // Redirect to the dashboard or appropriate page
+    } catch (error) {
+      console.error("Error updating role:", error);
+      setError((error as Error).message);
+    }
+  };
+
 
   return (
     <main style={{
@@ -88,7 +120,7 @@ export default function CreateProfilePage() {
         </button>
 
         <button
-          onClick={() => router.push('/vendor-profile')}
+          onClick={() => handleSubmit("vendor")}
           style={{
             flex: 1,
             maxWidth: '400px',
