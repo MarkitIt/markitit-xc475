@@ -11,7 +11,6 @@ import styles from "../../page.module.css";
 import '../../tailwind.css';
 import "leaflet/dist/leaflet.css";
 import { useUserContext } from '@/context/UserContext';
-import { useHostContext } from '@/context/HostContext';
 
 
 
@@ -29,8 +28,7 @@ interface Event {
 
 export default function ApplicationHostProfile() {
   const router = useRouter();
-  const { user, vendorProfile } = useUserContext();
-  const { hostProfile, setHostProfile } = useHostContext();
+  const { user, vendorProfile} = useUserContext();
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
