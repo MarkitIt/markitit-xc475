@@ -109,7 +109,7 @@ export default function ApplicationHostProfile() {
                   fontSize: theme.typography.fontSize.title,
                   color: theme.colors.text.primary,
                 }}>
-                  My Applications
+                  My Events
                 </h1>
                 
                 <button
@@ -123,7 +123,7 @@ export default function ApplicationHostProfile() {
                   cursor: 'pointer',
                   fontSize: theme.typography.fontSize.body,
                 }}>
-                  New Application
+                  New Events
                 </button>
               </div>
 
