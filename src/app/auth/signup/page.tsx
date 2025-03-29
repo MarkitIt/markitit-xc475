@@ -28,6 +28,7 @@ export default function SignupPage() {
         lastName,
         email,
         uid: user.uid,
+        role: "",
       });
 
       alert("Account created successfully!");

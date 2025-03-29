@@ -2,69 +2,124 @@
 
 import { theme } from '@/styles/theme';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useUserContext } from '@/context/UserContext';
 
 export default function HostProfilePage() {
   const router = useRouter();
+  const { user } = useUserContext();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [organizationName, setOrganizationName] = useState('');
+  const [organizationDescription, setOrganizationDescription] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [website, setWebsite] = useState('');
+  const [eventTypes, setEventTypes] = useState<string[]>([]);
+  const [eventCapacity, setEventCapacity] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    // After successful submission, redirect to dashboard
-    router.push('/dashboard');
+
+    if (!user) {
+      alert('You must be logged in to create a host profile.');
+      return;
+    }
+
+    try {
+      const hostProfileData = {
+        uid: user.uid,
+        organizationName,
+        organizationDescription,
+        contactEmail,
+        phoneNumber,
+        website,
+        eventTypes,
+        eventCapacity,
+        createdAt: new Date().toISOString(),
+      };
+
+      // Save the host profile data to Firestore
+      await setDoc(doc(db, 'hostProfile', user.uid), hostProfileData);
+
+      alert('Host profile created successfully!');
+      router.push('/dashboard'); // Redirect to the dashboard
+    } catch (error) {
+      console.error('Error creating host profile:', error);
+      alert('An error occurred while creating your profile. Please try again.');
+    }
   };
 
   return (
-    <main style={{
-      backgroundColor: theme.colors.background.main,
-      minHeight: 'calc(100vh - 80px)',
-      padding: theme.spacing.xl,
-    }}>
-      <div style={{
-        maxWidth: '800px',
-        margin: '0 auto',
-      }}>
-        <h1 style={{
-          fontSize: theme.typography.fontSize.title,
-          color: theme.colors.text.primary,
-          marginBottom: theme.spacing.xl,
-        }}>
+    <main
+      style={{
+        backgroundColor: theme.colors.background.main,
+        minHeight: 'calc(100vh - 80px)',
+        padding: theme.spacing.xl,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: '800px',
+          margin: '0 auto',
+        }}
+      >
+        <h1
+          style={{
+            fontSize: theme.typography.fontSize.title,
+            color: theme.colors.text.primary,
+            marginBottom: theme.spacing.xl,
+          }}
+        >
           Create Host Profile
         </h1>
 
-        <form onSubmit={handleSubmit} style={{
-          backgroundColor: theme.colors.background.white,
-          borderRadius: theme.borderRadius.lg,
-          padding: theme.spacing.xl,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: theme.spacing.xl,
-        }}>
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            backgroundColor: theme.colors.background.white,
+            borderRadius: theme.borderRadius.lg,
+            padding: theme.spacing.xl,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: theme.spacing.xl,
+          }}
+        >
           <div>
-            <h2 style={{
-              fontSize: theme.typography.fontSize.header,
-              color: theme.colors.text.primary,
-              marginBottom: theme.spacing.lg,
-            }}>
+            <h2
+              style={{
+                fontSize: theme.typography.fontSize.header,
+                color: theme.colors.text.primary,
+                marginBottom: theme.spacing.lg,
+              }}
+            >
               Basic Information
             </h2>
-            
-            <div style={{
-              display: 'grid',
-              gap: theme.spacing.lg,
-            }}>
+
+            <div
+              style={{
+                display: 'grid',
+                gap: theme.spacing.lg,
+              }}
+            >
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: theme.typography.fontSize.body,
-                  color: theme.colors.text.primary,
-                  marginBottom: theme.spacing.sm,
-                }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: theme.typography.fontSize.body,
+                    color: theme.colors.text.primary,
+                    marginBottom: theme.spacing.sm,
+                  }}
+                >
                   Organization Name*
                 </label>
                 <input
                   type="text"
                   required
                   placeholder="Enter your organization name"
+                  value={organizationName}
+                  onChange={(e) => setOrganizationName(e.target.value)}
                   style={{
                     width: '100%',
                     padding: theme.spacing.md,
@@ -76,18 +131,22 @@ export default function HostProfilePage() {
               </div>
 
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: theme.typography.fontSize.body,
-                  color: theme.colors.text.primary,
-                  marginBottom: theme.spacing.sm,
-                }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: theme.typography.fontSize.body,
+                    color: theme.colors.text.primary,
+                    marginBottom: theme.spacing.sm,
+                  }}
+                >
                   Organization Description*
                 </label>
                 <textarea
                   required
                   placeholder="Tell us about your organization"
                   rows={4}
+                  value={organizationDescription}
+                  onChange={(e) => setOrganizationDescription(e.target.value)}
                   style={{
                     width: '100%',
                     padding: theme.spacing.md,
@@ -102,31 +161,39 @@ export default function HostProfilePage() {
           </div>
 
           <div>
-            <h2 style={{
-              fontSize: theme.typography.fontSize.header,
-              color: theme.colors.text.primary,
-              marginBottom: theme.spacing.lg,
-            }}>
+            <h2
+              style={{
+                fontSize: theme.typography.fontSize.header,
+                color: theme.colors.text.primary,
+                marginBottom: theme.spacing.lg,
+              }}
+            >
               Contact Information
             </h2>
-            
-            <div style={{
-              display: 'grid',
-              gap: theme.spacing.lg,
-            }}>
+
+            <div
+              style={{
+                display: 'grid',
+                gap: theme.spacing.lg,
+              }}
+            >
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: theme.typography.fontSize.body,
-                  color: theme.colors.text.primary,
-                  marginBottom: theme.spacing.sm,
-                }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: theme.typography.fontSize.body,
+                    color: theme.colors.text.primary,
+                    marginBottom: theme.spacing.sm,
+                  }}
+                >
                   Contact Email*
                 </label>
                 <input
                   type="email"
                   required
                   placeholder="Enter your contact email"
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
                   style={{
                     width: '100%',
                     padding: theme.spacing.md,
@@ -138,18 +205,22 @@ export default function HostProfilePage() {
               </div>
 
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: theme.typography.fontSize.body,
-                  color: theme.colors.text.primary,
-                  marginBottom: theme.spacing.sm,
-                }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: theme.typography.fontSize.body,
+                    color: theme.colors.text.primary,
+                    marginBottom: theme.spacing.sm,
+                  }}
+                >
                   Phone Number*
                 </label>
                 <input
                   type="tel"
                   required
                   placeholder="Enter your phone number"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
                   style={{
                     width: '100%',
                     padding: theme.spacing.md,
@@ -161,17 +232,21 @@ export default function HostProfilePage() {
               </div>
 
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: theme.typography.fontSize.body,
-                  color: theme.colors.text.primary,
-                  marginBottom: theme.spacing.sm,
-                }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: theme.typography.fontSize.body,
+                    color: theme.colors.text.primary,
+                    marginBottom: theme.spacing.sm,
+                  }}
+                >
                   Website (Optional)
                 </label>
                 <input
                   type="url"
                   placeholder="Enter your website URL"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
                   style={{
                     width: '100%',
                     padding: theme.spacing.md,
@@ -185,30 +260,40 @@ export default function HostProfilePage() {
           </div>
 
           <div>
-            <h2 style={{
-              fontSize: theme.typography.fontSize.header,
-              color: theme.colors.text.primary,
-              marginBottom: theme.spacing.lg,
-            }}>
+            <h2
+              style={{
+                fontSize: theme.typography.fontSize.header,
+                color: theme.colors.text.primary,
+                marginBottom: theme.spacing.lg,
+              }}
+            >
               Event Preferences
             </h2>
-            
-            <div style={{
-              display: 'grid',
-              gap: theme.spacing.lg,
-            }}>
+
+            <div
+              style={{
+                display: 'grid',
+                gap: theme.spacing.lg,
+              }}
+            >
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: theme.typography.fontSize.body,
-                  color: theme.colors.text.primary,
-                  marginBottom: theme.spacing.sm,
-                }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: theme.typography.fontSize.body,
+                    color: theme.colors.text.primary,
+                    marginBottom: theme.spacing.sm,
+                  }}
+                >
                   Event Types*
                 </label>
                 <select
                   required
                   multiple
+                  value={eventTypes}
+                  onChange={(e) =>
+                    setEventTypes(Array.from(e.target.selectedOptions, (option) => option.value))
+                  }
                   style={{
                     width: '100%',
                     padding: theme.spacing.md,
@@ -226,16 +311,20 @@ export default function HostProfilePage() {
               </div>
 
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: theme.typography.fontSize.body,
-                  color: theme.colors.text.primary,
-                  marginBottom: theme.spacing.sm,
-                }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: theme.typography.fontSize.body,
+                    color: theme.colors.text.primary,
+                    marginBottom: theme.spacing.sm,
+                  }}
+                >
                   Typical Event Capacity*
                 </label>
                 <select
                   required
+                  value={eventCapacity}
+                  onChange={(e) => setEventCapacity(e.target.value)}
                   style={{
                     width: '100%',
                     padding: theme.spacing.md,
@@ -254,12 +343,14 @@ export default function HostProfilePage() {
             </div>
           </div>
 
-          <div style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: theme.spacing.md,
-            marginTop: theme.spacing.lg,
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: theme.spacing.md,
+              marginTop: theme.spacing.lg,
+            }}
+          >
             <button
               type="button"
               onClick={() => router.back()}
@@ -294,4 +385,4 @@ export default function HostProfilePage() {
       </div>
     </main>
   );
-} 
+}

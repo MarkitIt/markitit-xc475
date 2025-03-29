@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const FinancialCalculator = () => {
   const [revenue, setRevenue] = useState(0);
