@@ -133,7 +133,7 @@ export default function Header() {
               )}
               {user?.role === 'vendor' && (
                 <>
-                <Link href="'/vendor-profile" className="dropdown-link" style={dropdownLinkStyle}>
+                <Link href="/vendor-profile" className="dropdown-link" style={dropdownLinkStyle}>
                   Create Vendor Profile
                 </Link>
                 <button
@@ -155,9 +155,9 @@ export default function Header() {
                 </button>
               </>
               )}
-              {user?.role === undefined && (
+              {user?.role === "" && (
                 <>
-                <Link href="'/create-profile" className="dropdown-link" style={dropdownLinkStyle}>
+                <Link href="/create-profile" className="dropdown-link" style={dropdownLinkStyle}>
                   Create Profile
                 </Link>
                 <button

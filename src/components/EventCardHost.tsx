@@ -17,7 +17,7 @@ interface EventProps {
 
 export function EventCardHost({ event, rank, showRank }: EventProps) {
   return (
-    <Link href={`/application/host/${event.id}/vendor-manage`}>
+    <Link href={`/my-events/${event.id}/vendor-manage`}>
       <div className="rounded-lg overflow-hidden shadow-md bg-white relative">
         {showRank && rank && rank <= 20 && (
           <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center">

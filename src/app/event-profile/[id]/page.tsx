@@ -12,9 +12,9 @@ import { useUserContext } from '@/context/UserContext'; // Import your user cont
 
 interface Event {
   id: string;
-  name: string;
+  eventName: string;
   image: string;
-  date: string;
+  eventDate: string;
   location: {
     city: string;
     state: string;
@@ -59,7 +59,7 @@ export default function EventProfilePage() {
       <div className="flex items-center gap-4 w-full max-w-2xl">
         <div className="w-16 h-16 bg-gray-300 rounded"></div>
         <div className="flex-1">
-          <h2 className="text-2xl font-semibold">{event.name}</h2>
+          <h2 className="text-2xl font-semibold">{event.eventName}</h2>
           <div className="flex space-x-1 text-black">
             {[...Array(5)].map((_, i) => (
               <FontAwesomeIcon key={i} icon={faStar} />
@@ -96,7 +96,7 @@ export default function EventProfilePage() {
           {event.image && (
             <img
               src={event.image}
-              alt={event.name}
+              alt={event.eventName}
               className="w-full h-full object-cover"
             />
           )}

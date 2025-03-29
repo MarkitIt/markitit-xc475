@@ -91,8 +91,8 @@ const CreateApplicationProfile = () => {
       
         try {
           // Collect form data
-          const eventName = (document.getElementById("event-name") as HTMLInputElement).value;
-          const eventDate = (document.getElementById("event-date") as HTMLInputElement).value;
+          const name = (document.getElementById("event-name") as HTMLInputElement).value;
+          const date = (document.getElementById("event-date") as HTMLInputElement).value;
           const applicationDeadline = (document.getElementById("application-deadline") as HTMLInputElement).value;
           const boothCost = parseFloat((document.getElementById("booth-cost") as HTMLInputElement).value);
           const location = handlePlaceChanged() || { city: "", state: "" };
@@ -105,8 +105,8 @@ const CreateApplicationProfile = () => {
           // Prepare the event data
           const eventData = {
             uid: user.uid,
-            eventName,
-            eventDate,
+            name,
+            date,
             applicationDeadline,
             boothCost,
             location,

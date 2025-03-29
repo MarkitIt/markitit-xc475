@@ -10,14 +10,14 @@ import '../../../tailwind.css';
 interface Vendor {
   eventId: string;
   hostId: string;
-  vendorId: { email: string; status: string }[]; // Array of objects with email and status
+  vendorId: { email: string; firstName: string; lastName:string; status: string }[]; // Array of objects with email and status
 }
 
 export default function ApplicationHostProfile() {
   const router = useRouter();
   const params = useParams();
   const eventId = params.id as string; // Get the id from the URL
-  const [vendors, setVendors] = useState<{ email: string; status: string }[]>([]);
+  const [vendors, setVendors] = useState<{ email: string; firstName: string; lastName:string; status: string }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -41,6 +41,8 @@ export default function ApplicationHostProfile() {
               vendorId: Array.isArray(data.vendorId)
                 ? data.vendorId.map((vendor: any) => ({
                     email: vendor.email || "",
+                    firstName: vendor.firstName || "",
+                    lastName: vendor.firstName || "",
                     status: vendor.status || "",
                   }))
                 : [],
@@ -132,6 +134,8 @@ export default function ApplicationHostProfile() {
               <thead>
                 <tr className="bg-gray-200">
                   <th className="border border-gray-300 px-4 py-2">Email</th>
+                  <th className="border border-gray-300 px-4 py-2">FirstName</th>
+                  <th className="border border-gray-300 px-4 py-2">LastName</th>
                   <th className="border border-gray-300 px-4 py-2">Status</th>
                   <th className="border border-gray-300 px-4 py-2">Action</th>
                 </tr>
@@ -140,6 +144,8 @@ export default function ApplicationHostProfile() {
                 {vendors.map((vendor, index) => (
                   <tr key={index} className="hover:bg-gray-100">
                     <td className="border border-gray-300 px-4 py-2">{vendor.email}</td>
+                    <td className="border border-gray-300 px-4 py-2">{vendor.firstName}</td>
+                    <td className="border border-gray-300 px-4 py-2">{vendor.lastName}</td>
                     <td className="border border-gray-300 px-4 py-2">{vendor.status}</td>
                     <td className="border border-gray-300 px-4 py-2">
                       <button
