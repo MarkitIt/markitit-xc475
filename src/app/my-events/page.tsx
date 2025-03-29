@@ -127,18 +127,6 @@ export default function ApplicationHostProfile() {
                 </button>
               </div>
 
-        {!user && (
-          <div className="text-center p-4 bg-yellow-100 text-yellow-800">
-            Events are not ranked. Please log in to see personalized recommendations.
-          </div>
-        )}
-        
-        {user && !vendorProfile && (
-          <div className="text-center p-4 bg-yellow-100 text-yellow-800">
-            Events are not ranked as vendor profile not found. Create a profile to see personalized recommendations.
-          </div>
-        )}
-
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
           {currentEvents.map((event) => (
