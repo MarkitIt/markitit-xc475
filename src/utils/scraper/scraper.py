@@ -274,22 +274,51 @@ def scrape_eventbrite():
                     event_id = event_link.get("data-event-id", "")
                     event_url = event_link.get("href", "")
 
-                    event = {
+                    img_element = card.find("img", {"class": "event-card-image"})
+                    image_url = (
+                        img_element["src"]
+                        if img_element and img_element.has_attr("src")
+                        else ""
+                    )
+
+                    event_data = {
                         "name": name,
-                        # TODO: next level scrape
                         "description": "",
                         "location": location,
                         "venue": venue,
-                        # Hardcoded vendor ID
                         "vendor_id": "Eventbrite",
                         "category": ["pop up"],
                         "date": date,
                         "price": price,
                         "event_id": event_id,
                         "url": event_url,
+                        "image_url": image_url,
+                        "host": "",
                     }
 
-                    events.append(event)
+                    if event_url:
+                        # random delays incase of flag
+                        time.sleep(random.uniform(1, 3))
+                        details = scrape_eventbrite_details(event_url, headers)
+
+                        # Update with details
+                        if details:
+                            if "description" in details:
+                                event_data["description"] = details["description"]
+                            if "host" in details:
+                                event_data["host"] = details["host"]
+                            if "image_url" in details and not event_data["image_url"]:
+                                event_data["image_url"] = details["image_url"]
+                            if "full_address" in details:
+                                event_data["full_address"] = details["full_address"]
+                            if "detailed_date" in details:
+                                event_data["detailed_date"] = details["detailed_date"]
+                            if "additional_tags" in details:
+                                for tag in details["additional_tags"]:
+                                    if tag not in event_data["category"]:
+                                        event_data["category"].append(tag)
+
+                    events.append(event_data)
 
                 except Exception as e:
                     print(f"Error processing card: {e}")
@@ -302,6 +331,78 @@ def scrape_eventbrite():
     except Exception as e:
         print(f"Error scraping Eventbrite: {e}")
         return []
+
+
+def scrape_eventbrite_details(event_url, headers):
+    try:
+        print(f"Scraping details for: {event_url}")
+        response = requests.get(event_url, headers=headers, timeout=15)
+        if response.status_code != 200:
+            print(
+                f"get go into eventbrite link: {response.status_code} for {event_url}"
+            )
+            return {}
+
+        soup = BeautifulSoup(response.content, "html.parser")
+        details = {}
+
+        # event description
+        description_div = soup.find(
+            "div", {"class": "has-user-generated-content event-description__content"}
+        )
+        if description_div:
+            # need to combine elements
+            paragraphs = description_div.find_all("p")
+            description_text = "\n".join(
+                [p.text.strip() for p in paragraphs if p.text.strip()]
+            )
+            details["description"] = description_text
+
+        # address
+        location_div = soup.find("div", {"class": "location-info__address"})
+        if location_div:
+            address_text = location_div.text.strip()
+            details["full_address"] = address_text
+
+        # information
+        organizer_name = soup.find(
+            "strong", {"class": "organizer-listing-info-variant-b__name-link"}
+        )
+        if organizer_name:
+            details["host"] = organizer_name.text.strip()
+
+        # date/time
+        date_span = soup.find("span", {"class": "date-info__full-datetime"})
+        if date_span:
+            details["detailed_date"] = date_span.text.strip()
+
+        # image url
+        img_element = soup.select_one("picture[data-testid='hero-image'] img")
+        if img_element and img_element.has_attr("src"):
+            details["image_url"] = img_element["src"]
+
+        # tags
+        tags = []
+        tags_ul = soup.find("section", {"aria-labelledby": "tags-heading"})
+        if tags_ul:
+            tag_links = tags_ul.find_all("a", {"class": "tags-link"})
+            for tag in tag_links:
+                tag_text = tag.text.strip()
+                if tag_text.startswith("#"):
+                    # Remove the # and replace underscores with spaces
+                    clean_tag = tag_text[1:].replace("_", " ")
+                    tags.append(clean_tag)
+                elif "pop up" in tag_text.lower() or "popup" in tag_text.lower():
+                    tags.append("pop up")
+
+        if tags:
+            details["additional_tags"] = tags
+
+        return details
+
+    except Exception as e:
+        print(f"Error scraping event details: {e}")
+        return {}
 
 
 """
