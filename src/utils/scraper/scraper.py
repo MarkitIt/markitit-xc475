@@ -79,24 +79,49 @@ def scrape_eventeny():
                     "span", {"style": lambda value: value and "color: #08A6A0" in value}
                 ).text.strip()
 
+                # get url for details
+                url_meta = event.find("meta", {"itemprop": "url"})
+                event_url = url_meta["content"] if url_meta else None
+
+                image_meta = event.find("meta", {"itemprop": "image"})
+                image_url = image_meta["content"] if image_meta else ""
+
                 # hardcode popup for now, eventeny list theme not cat
-                catagories = ["pop up"]
-                catagory_item = event.get("data-category")
-                catagories.append(catagory_item)
+                categories = ["pop up"]
+                category_item = event.get("data-category")
+                categories.append(category_item)
 
                 # Single event dict to add
-                event = {
+                event_data = {
                     "name": name,
-                    # TODO: next level scrape
                     "description": "",
                     "location": location,
-                    # hardcode for now TODO
                     "vendor_id": "Eventeny",
-                    "category": catagories,
+                    "category": categories,
                     "date": date,
+                    "image_url": image_url,
+                    "host": "",
                 }
 
-                events.append(event)
+                if event_url:
+                    # random delays incase of flag
+                    time.sleep(random.uniform(1, 2))
+                    details = scrape_eventeny_details(event_url, headers)
+
+                    # Update event data with details
+                    if details:
+                        if "description" in details:
+                            event_data["description"] = details["description"]
+                        if "host" in details:
+                            event_data["host"] = details["host"]
+                        if "image_url" in details and not event_data["image_url"]:
+                            event_data["image_url"] = details["image_url"]
+                        if "full_address" in details:
+                            event_data["full_address"] = details["full_address"]
+                        if "detailed_date" in details:
+                            event_data["detailed_date"] = details["detailed_date"]
+
+                events.append(event_data)
 
             except Exception as e:
                 print("Error: ", e)
@@ -106,6 +131,48 @@ def scrape_eventeny():
     except:
         print("Error: ", e)
         return []
+
+
+def scrape_eventeny_details(event_url, headers):
+    try:
+        print(f"Scraping more info for: {event_url}")
+        response = requests.get(event_url, headers=headers, timeout=15)
+        if response.status_code != 200:
+            print(f"cant go into detail's link {response.status_code}")
+            return {}
+
+        soup = BeautifulSoup(response.content, "html.parser")
+        details = {}
+
+        # event description
+        description_div = soup.find("div", {"class": "overview-text-maxheight"})
+        if description_div:
+            details["description"] = description_div.text.strip()
+
+        # event address
+        address_link = soup.find("a", {"class": "stronger text-secondary-2 underline"})
+        if address_link:
+            details["full_address"] = address_link.text.strip()
+
+        # event host info
+        host_div = soup.find("div", {"class": "heading-4 mb1"})
+        if host_div and "Hosted by" in host_div.text:
+            details["host"] = host_div.text.replace("Hosted by", "").strip()
+
+        # image url
+        img_meta = soup.find("meta", {"itemprop": "image"})
+        if img_meta:
+            details["image_url"] = img_meta.get("content")
+
+        # event time
+        date_div = soup.find("div", {"class": "mb1 body-1"})
+        if date_div:
+            details["detailed_date"] = date_div.text.strip()
+
+        return details
+    except Exception as e:
+        print(f"Error scraping event details: {e}")
+        return {}
 
 
 # remove later, comparing div
