@@ -42,7 +42,7 @@ export default function ApplicationHostProfile() {
                 ? data.vendorId.map((vendor: any) => ({
                     email: vendor.email || "",
                     firstName: vendor.firstName || "",
-                    lastName: vendor.firstName || "",
+                    lastName: vendor.lastName || "",
                     status: vendor.status || "",
                   }))
                 : [],

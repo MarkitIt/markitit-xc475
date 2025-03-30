@@ -40,7 +40,7 @@ export default function MyApplicationsPage() {
               return {
                 eventId,
                 eventName: eventName || vendorApplyData.eventName || 'Unnamed Event', // Use eventName from the user's document or fallback to vendorApply
-                status: vendor?.status || 'UNKOWN', // Get the status (e.g., PENDING)
+                status: vendor?.status || 'UNKNOWN', // Get the status (e.g., PENDING)
                 appliedAt: event.appliedAt || 'N/A', // Use appliedAt from the user's document
               };
               } else {
