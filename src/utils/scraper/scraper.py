@@ -482,6 +482,16 @@ def scrape_zapp():
                     print(f"Error getting location for {name}: {e}")
                     location = {"city": "", "state": ""}
 
+                # get app fee
+                try:
+                    fee_div = card.find_element(By.XPATH, ".//div[contains(., 'Fee')]")
+                    fee = fee_div.find_element(
+                        By.CSS_SELECTOR, "span.font-weight-bold"
+                    ).text.strip()
+                except Exception as e:
+                    print(f"Error getting fee for {name}: {e}")
+                    fee = ""
+
                 # basic info from outside cards
                 basic_event_info.append(
                     {
@@ -489,6 +499,8 @@ def scrape_zapp():
                         "date": date,
                         "location": location,
                         "event_id": event_id,
+                        "url": event_link,
+                        "fee": fee,
                     }
                 )
             except Exception as e:
@@ -502,57 +514,174 @@ def scrape_zapp():
                 driver.get(f"https://www.zapplication.org/event-info.php?ID={event_id}")
                 time.sleep(2)
 
-                description = ""
+                description_sections = []
                 try:
                     event_info_section = driver.find_element(
                         By.XPATH, "//h2[@id='event-info']/following-sibling::div[1]"
                     )
-                    description = event_info_section.text.strip()
+                    description_sections.append(event_info_section.text.strip())
                 except:
                     # another place inside link for description (alt)
+                    # try:
+                    #     event_info_section = driver.find_element(
+                    #         By.CSS_SELECTOR, "div.my-4 div"
+                    #     )
+                    #     description = event_info_section.text.strip()
+                    # except:
+                    #     print(f"Couldn't find description for: {basic_info['name']}")
+                    print(f"Couldn't find event info section for: {basic_info['name']}")
+
+                try:
+                    general_info_section = driver.find_element(
+                        By.XPATH,
+                        "//h2[contains(text(), 'GENERAL INFORMATION')]/following-sibling::div[1]",
+                    )
+                    description_sections.append(general_info_section.text.strip())
+                except:
+                    pass
+
+                try:
+                    booth_info_section = driver.find_element(
+                        By.XPATH,
+                        "//h2[contains(text(), 'BOOTH INFORMATION')]/following-sibling::div[1]",
+                    )
+                    description_sections.append(booth_info_section.text.strip())
+                except:
+                    pass
+
+                try:
+                    rules_section = driver.find_element(
+                        By.XPATH,
+                        "//h2[contains(text(), 'RULES/REGULATIONS')]/following-sibling::div[1]",
+                    )
+                    description_sections.append(rules_section.text.strip())
+                except:
+                    pass
+
+                # combine all, cuz zapp split them into different div
+                description = "\n\n".join(description_sections)
+
+                # use old method
+                if not description:
                     try:
-                        event_info_section = driver.find_element(
+                        all_div_elements = driver.find_elements(
                             By.CSS_SELECTOR, "div.my-4 div"
                         )
-                        description = event_info_section.text.strip()
-                    except:
-                        print(f"Couldn't find description for: {basic_info['name']}")
-
-                price = ""
-                try:
-                    fee_section = driver.find_element(
-                        By.XPATH,
-                        "//span[contains(., 'Fee:')]/following-sibling::text()[1]",
-                    )
-                    price = fee_section.strip()
-                except:
-                    try:
-                        fee_section = driver.find_element(
-                            By.XPATH,
-                            "//span[contains(@class, 'font-weight-bold')][contains(., 'Fee:')]",
+                        description = "\n\n".join(
+                            [
+                                div.text.strip()
+                                for div in all_div_elements
+                                if div.text.strip()
+                            ]
                         )
-                        price = fee_section.find_element(
-                            By.XPATH, "following-sibling::text()[1]"
-                        ).strip()
                     except:
-                        try:
-                            fee_section = driver.find_element(
-                                By.CSS_SELECTOR,
-                                ".col-md-4 span.font-weight-bold:contains('Fee:')",
+                        print(
+                            f"Couldn't find any description for: {basic_info['name']}"
+                        )
+                        description = ""
+
+                # price = ""
+                # try:
+                #     fee_section = driver.find_element(
+                #         By.XPATH,
+                #         "//span[contains(., 'Fee:')]/following-sibling::text()[1]",
+                #     )
+                #     price = fee_section.strip()
+                # except:
+                #     try:
+                #         fee_section = driver.find_element(
+                #             By.XPATH,
+                #             "//span[contains(@class, 'font-weight-bold')][contains(., 'Fee:')]",
+                #         )
+                #         price = fee_section.find_element(
+                #             By.XPATH, "following-sibling::text()[1]"
+                #         ).strip()
+                #     except:
+                #         try:
+                #             fee_section = driver.find_element(
+                #                 By.CSS_SELECTOR,
+                #                 ".col-md-4 span.font-weight-bold:contains('Fee:')",
+                #             )
+                #             price = fee_section.parent.text.replace("Fee:", "").strip()
+                #         except:
+                #             print(f"Couldn't find fee for: {basic_info['name']}")
+
+                price = basic_info.get("fee", "")
+                if not price:
+                    try:
+                        fee_elements = driver.find_elements(
+                            By.XPATH,
+                            "//*[contains(text(), 'Fee:') or contains(text(), 'fee')]",
+                        )
+                        for fee_elem in fee_elements:
+                            fee_text = fee_elem.text
+                            if "Fee:" in fee_text and len(fee_text) < 100:
+                                price = fee_text.replace("Fee:", "").strip()
+                                break
+                    except:
+                        print(f"Couldn't find fee for: {basic_info['name']}")
+
+                full_address = ""
+                try:
+                    address_elements = driver.find_elements(
+                        By.XPATH, "//*[contains(text(), 'Where:')]"
+                    )
+                    for addr_elem in address_elements:
+                        addr_text = addr_elem.text
+                        if "Where:" in addr_text:
+                            full_address = addr_text.replace("Where:", "").strip()
+                            break
+                except:
+                    print(f"Couldn't find detailed address for: {basic_info['name']}")
+
+                detailed_date = basic_info["date"]
+                try:
+                    date_elements = driver.find_elements(
+                        By.XPATH, "//*[contains(text(), 'When:')]"
+                    )
+                    for date_elem in date_elements:
+                        date_text = date_elem.text
+                        if "When:" in date_text:
+                            detailed_date = date_text.replace("When:", "").strip()
+                            break
+                except:
+                    print(f"Couldn't find detailed date for: {basic_info['name']}")
+
+                host = ""
+                try:
+                    host_elements = driver.find_elements(
+                        By.XPATH,
+                        "//*[contains(text(), 'Hosted by') or contains(text(), 'Organizer')]",
+                    )
+                    for host_elem in host_elements:
+                        host_text = host_elem.text
+                        if "Hosted by" in host_text or "Organizer" in host_text:
+                            host = (
+                                host_text.replace("Hosted by", "")
+                                .replace("Organizer:", "")
+                                .strip()
                             )
-                            price = fee_section.parent.text.replace("Fee:", "").strip()
-                        except:
-                            print(f"Couldn't find fee for: {basic_info['name']}")
+                            # Limit to reasonable length
+                            if len(host) > 50:
+                                host = host[:50] + "..."
+                            break
+                except:
+                    print(f"Couldn't find host for: {basic_info['name']}")
 
                 event = {
                     "name": basic_info["name"],
                     "description": description,
                     "location": basic_info["location"],
+                    "full_address": full_address,
                     "vendor_id": "Zapplication",
                     "category": ["pop up"],
                     "date": basic_info["date"],
+                    "detailed_date": detailed_date,
                     "price": price,
+                    "host": host,
                     "event_id": event_id,
+                    "url": basic_info["url"],
+                    "image_url": "",  # Zapplication don't have images for events
                 }
 
                 events.append(event)
