@@ -3,6 +3,7 @@
 import { theme } from '@/styles/theme';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import styles from './styles.module.css';
 
 export default function CreateProfilePage() {
   const router = useRouter();
@@ -44,6 +45,7 @@ export default function CreateProfilePage() {
       }}>
         <button
           onClick={() => router.push('/create-profile/host')}
+          className={styles.roleButton}
           style={{
             flex: 1,
             maxWidth: '400px',
@@ -59,10 +61,6 @@ export default function CreateProfilePage() {
             justifyContent: 'center',
             gap: theme.spacing.lg,
             transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-            ':hover': {
-              transform: 'translateY(-4px)',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            },
           }}
         >
           <Image
@@ -89,6 +87,7 @@ export default function CreateProfilePage() {
 
         <button
           onClick={() => router.push('/vendor-profile')}
+          className={styles.roleButton}
           style={{
             flex: 1,
             maxWidth: '400px',
@@ -104,10 +103,6 @@ export default function CreateProfilePage() {
             justifyContent: 'center',
             gap: theme.spacing.lg,
             transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-            ':hover': {
-              transform: 'translateY(-4px)',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            },
           }}
         >
           <Image
