@@ -93,7 +93,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Firebase Operations")
     parser.add_argument(
         "operation",
-        choices=["check", "empty"],
+        choices=["check", "empty_events"],
         help="Operation to perform (check: view events, empty: delete all events)",
     )
 
@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     if args.operation == "check":
         firebase_ops.check_firebase()
-    elif args.operation == "empty events":
+    elif args.operation == "empty_events":
         confirmation = input("Are you sure, DELETING ALL EVENTS?! (yes/no): ")
         if confirmation.lower() == "yes":
             firebase_ops.empty_firebase_events()
