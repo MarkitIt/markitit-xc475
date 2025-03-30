@@ -1,95 +1,64 @@
 'use client';
 
+import { useState } from 'react';
 import { theme } from '@/styles/theme';
+import styles from './styles.module.css';
+import { ApplicationCard } from './components/ApplicationCard';
+
+interface Application {
+  id: string;
+  eventName: string;
+  status: string;
+  submissionDate: string;
+}
 
 export default function MyApplicationsPage() {
+  //placeholder data
+  const [applications, setApplications] = useState<Application[]>([
+    {
+      id: '1',
+      eventName: 'Summer Night Market 2024',
+      status: 'Pending',
+      submissionDate: 'March 26, 2024',
+    },
+    // Add more applications as needed
+  ]);
+
+  const handleViewDetails = (applicationId: string) => {
+    // Implement view details functionality
+    console.log('View details for application:', applicationId);
+  };
+
+  const handleNewApplication = () => {
+    // Implement new application functionality
+    console.log('Create new application');
+  };
+
   return (
-    <main style={{
-      backgroundColor: theme.colors.background.main,
-      minHeight: 'calc(100vh - 80px)',
-      padding: theme.spacing.xl,
-    }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: theme.spacing.xl,
-      }}>
-        <h1 style={{
-          fontSize: theme.typography.fontSize.title,
-          color: theme.colors.text.primary,
-        }}>
+    <main className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>
           My Applications
         </h1>
         
-        <button style={{
-          backgroundColor: theme.colors.primary.coral,
-          color: theme.colors.background.white,
-          padding: `${theme.spacing.sm} ${theme.spacing.xl}`,
-          borderRadius: theme.borderRadius.md,
-          border: 'none',
-          cursor: 'pointer',
-          fontSize: theme.typography.fontSize.body,
-        }}>
+        <button 
+          onClick={handleNewApplication}
+          className={styles.newButton}
+        >
           New Application
         </button>
       </div>
 
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: theme.spacing.lg,
-      }}>
-        {/* Example Application Card */}
-        <div style={{
-          backgroundColor: theme.colors.background.white,
-          borderRadius: theme.borderRadius.lg,
-          padding: theme.spacing.xl,
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: theme.spacing.md,
-          }}>
-            <h2 style={{
-              fontSize: theme.typography.fontSize.header,
-              color: theme.colors.text.primary,
-            }}>
-              Summer Night Market 2024
-            </h2>
-            <span style={{
-              backgroundColor: theme.colors.background.main,
-              color: theme.colors.text.primary,
-              padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
-              borderRadius: theme.borderRadius.full,
-              fontSize: theme.typography.fontSize.body,
-            }}>
-              Pending
-            </span>
-          </div>
-          
-          <p style={{
-            fontSize: theme.typography.fontSize.body,
-            color: theme.colors.text.secondary,
-            marginBottom: theme.spacing.md,
-          }}>
-            Application submitted on March 26, 2024
-          </p>
-          
-          <button style={{
-            backgroundColor: 'transparent',
-            color: theme.colors.primary.coral,
-            padding: theme.spacing.sm,
-            borderRadius: theme.borderRadius.md,
-            border: `1px solid ${theme.colors.primary.coral}`,
-            cursor: 'pointer',
-            fontSize: theme.typography.fontSize.body,
-          }}>
-            View Details
-          </button>
-        </div>
+      <div className={styles.applicationsList}>
+        {applications.map((application) => (
+          <ApplicationCard
+            key={application.id}
+            eventName={application.eventName}
+            status={application.status}
+            submissionDate={application.submissionDate}
+            onViewDetails={() => handleViewDetails(application.id)}
+          />
+        ))}
       </div>
     </main>
   );

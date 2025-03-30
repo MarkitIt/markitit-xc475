@@ -1,18 +1,18 @@
 "use client";
 
-
-import { Autocomplete } from "@react-google-maps/api";
+import { useState, useRef } from 'react';
+import { Autocomplete } from '@react-google-maps/api';
+import { FormField } from './components/FormField';
+import styles from './styles.module.css';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { addDoc, collection,doc,setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useApplicationProfileContext } from "../../context/CreateEventProfileContext";
 import { auth, db } from "../../lib/firebase";
-import "../tailwind.css";
 
-const CreateEventProfile = () => {
+export default function CreateEventPage() {
   const router = useRouter();
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const {
     uid, setUid,
@@ -26,6 +26,7 @@ const CreateEventProfile = () => {
     venue, setVenue,
     vendor_id, setVendor_id,
   } = useApplicationProfileContext();
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -41,7 +42,7 @@ const CreateEventProfile = () => {
     }, []);
   
 
-  const handleNextStepClick  = async () =>{
+  const handleNextStepClick = async () => {
     if (!user) {
       console.error('User is not authenticated');
       return;
@@ -126,95 +127,74 @@ const CreateEventProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black">
-      <main className="p-16 flex space-x-16">
-        {/* Large Placeholder Image */}
-        <div className="w-[50%] h-[450px] bg-gray-300"></div>
+    <div className={styles.container}>
+      <main className={styles.main}>
+        <div className={styles.imagePlaceholder} />
+        
+        <div className={styles.formSection}>
+          <div className={styles.stepIndicator}>Step 01/05</div>
+          <h1 className={styles.title}>Create Event Profile</h1>
 
-        {/* Profile */}
-        <div className="w-[50%]">
-          <h2 className="text-md text-gray-500">Step 01/05</h2>
-          <h1 className="text-5xl font-bold mb-8">Create Event Profile</h1>
-          {/* All the fillable box form */}
-          <div className="text-xl">
-            <div className="">
-              Event Name<span className="text-red-500">*</span>
-            </div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+          <FormField
+            label="Event Name"
+            required
+            value={name}
+            onChange={setName}
+          />
+
+          <Autocomplete
+            onLoad={autocomplete => (autocompleteRef.current = autocomplete)}
+            onPlaceChanged={handlePlaceChanged}
+          >
+            <FormField
+              label="City and State"
               required
+              value=""
+              onChange={() => {}}
+              placeholder="Enter city and state"
             />
+          </Autocomplete>
 
-            <div className="">
-              City and State<span className="text-red-500">*</span>
-            </div>
-            <Autocomplete
-              onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-              onPlaceChanged={handlePlaceChanged}
-            >
-              <input
-                className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-                placeholder="Enter city and state"
-              />
-            </Autocomplete>
+          <FormField
+            label="Date"
+            required
+            type="date"
+            value={date}
+            onChange={setDate}
+          />
 
-            <div className="">
-              Date<span className="text-red-500">*</span>
-            </div>
-            <input
-              type="date"
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-            />
+          <FormField
+            label="Description"
+            required
+            value={description}
+            onChange={setDescription}
+            isTextArea
+          />
 
-            <div className="">
-              Description<span className="text-red-500">*</span>
-            </div>
-            <textarea
-              className="w-[70%] h-40 bg-gray-300 mb-8 text-left align-top p-2"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
+          <FormField
+            label="Category"
+            required
+            value={category.join(", ")}
+            onChange={value => setCategory(value.split(", "))}
+            placeholder="Enter categories (comma-separated)"
+          />
 
-            <div className="">
-              Category<span className="text-red-500">*</span>
-            </div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={category.join(", ")}
-              onChange={(e) => setCategory(e.target.value.split(", "))}
-              placeholder="Enter categories (comma-separated)"
-              required
-            />
+          <FormField
+            label="Price"
+            type="number"
+            value={price}
+            onChange={setPrice}
+          />
 
-            <div className="">Price</div>
-            <input
-              type="number"
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
+          <FormField
+            label="Venue"
+            value={venue}
+            onChange={setVenue}
+          />
 
-            <div className="">Venue</div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={venue}
-              onChange={(e) => setVenue(e.target.value)}
-            />
-          </div>
-
-          {/* Next step click */}
-          <div className="flex space-x-6 mt-8">
-            <div className="w-36 h-14 bg-gray-300 flex items-center justify-center">Help</div>
-            <div
-              className={`w-48 h-14 bg-gray-300 transition-transform transform hover:translate-y-[-5px] hover:shadow-lg cursor-pointer flex items-center justify-center`}
-              onClick={handleNextStepClick}
-            >
+          <div className={styles.buttonContainer}>
+            <div className={styles.helpButton}>Help</div>
+            <div className={styles.nextButton} onClick={handleNextStepClick}>
               Next Step
             </div>
           </div>
@@ -222,6 +202,4 @@ const CreateEventProfile = () => {
       </main>
     </div>
   );
-};
-
-export default CreateEventProfile;
+}

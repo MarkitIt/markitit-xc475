@@ -2,84 +2,140 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase"; // Import Firestore setup
 import { collection, getDocs, query, where } from "firebase/firestore";
 
-// Function to calculate event score (simplified for now)
+import stringSimilarity from 'string-similarity';
+
+interface Vendor {
+  eventPreference?: string[];
+  travelRadius?: number;
+  coordinates: { lat: number; lng: number };
+  budget?: {
+    maxVendorFee?: number;
+    totalCostEstimate?: number;
+  };
+  idealCustomer?: string;
+  demographic?: string[];
+  selectedPastPopups?: string[];
+  schedule?: {
+    preferredDays?: string[];
+  };
+  description?: string;
+}
+
+interface Event {
+  type?: string;
+  vendorFee?: number;
+  totalCost?: number;
+  attendeeType?: string[];
+  demographics?: string[];
+  name?: string;
+  days?: string[];
+  lat: number;
+  lng: number;
+  description?: string;
+}
+
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const toRadians = (degrees: number) => degrees * (Math.PI / 180);
+  const R = 3958.8; // Miles
+
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRadians(lat1)) *
+      Math.cos(toRadians(lat2)) *
+      Math.sin(dLon / 2) ** 2;
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
 const calculateEventScore = (vendor: any, event: any): number => {
   let score = 0;
 
-  // Check if properties exist before using them
+  // Event type preference match
   if (vendor.eventPreference?.includes(event.type)) {
     score += 30;
   }
 
-  const distance = Math.random() * 100; // Replace with actual calculation
-  if (vendor.travelRadius && distance <= vendor.travelRadius) {
-    score += 20;
+  // Travel distance match (more points the closer it is)
+  if (
+    typeof vendor.coordinates?.lat === "number" &&
+    typeof vendor.coordinates?.lng === "number" &&
+    typeof event.lat === "number" &&
+    typeof event.lng === "number"
+  ) {
+    const distance = calculateDistance(
+      vendor.coordinates.lat,
+      vendor.coordinates.lng,
+      event.lat,
+      event.lng
+    );
+    const proximityScore = Math.max(0, 20 - distance * 0.2); // Reduce score the farther away
+    score += proximityScore;
   }
 
-  if (vendor.budget?.maxVendorFee && event.vendorFee && 
-      event.vendorFee <= vendor.budget.maxVendorFee) {
+  // Budget match
+  if (
+    vendor.budget?.maxVendorFee &&
+    event.vendorFee &&
+    event.vendorFee <= vendor.budget.maxVendorFee
+  ) {
     score += 15;
   }
 
+  // Customer type match
   if (vendor.idealCustomer && event.attendeeType?.includes(vendor.idealCustomer)) {
     score += 15;
   }
 
-  if (vendor.demographic?.some((demo: string) => 
-      event.demographics?.includes(demo))) {
+  // Demographic match
+  if (
+    vendor.demographic?.some((demo: string) =>
+      event.demographics?.includes(demo)
+    )
+  ) {
     score += 10;
   }
 
-  if (vendor.selectedPastPopups?.some((pastEvent: string) => 
-      event.name === pastEvent)) {
+  // Past event preference
+  if (
+    vendor.selectedPastPopups?.some(
+      (pastEvent: string) => event.name === pastEvent
+    )
+  ) {
     score += 5;
   }
 
-  if (vendor.schedule?.preferredDays?.some((day: string) => 
-      event.days?.includes(day))) {
+  // Preferred days match
+// Preferred days match (convert event dates to weekday strings)
+if (Array.isArray(event.dates) && Array.isArray(vendor.schedule?.preferredDays)) {
+  const eventDaysOfWeek = event.dates.map((dateStr: string) => {
+    const day = new Date(dateStr).toLocaleString("en-US", { weekday: "long" });
+    return day;
+  });
+
+  const matches = vendor.schedule.preferredDays.filter((pref: string) =>
+    eventDaysOfWeek.includes(pref)
+  );
+
+  if (matches.length > 0) {
     score += 5;
   }
+}
+
+
+  // Fallback to empty strings if descriptions are missing
+  const vendorDescription = vendor.description ?? "";
+  const eventDescription = event.description ?? "";
+
+  // Semantic similarity of vendor & event descriptions
+  const similarity = stringSimilarity.compareTwoStrings(
+    vendorDescription.toLowerCase(),
+    eventDescription.toLowerCase()
+  );
+  score += Math.floor(similarity * 10); // Max 10 points based on match strength
 
   return score;
 };
-
-// Next.js App Router API Route
-export async function POST(req: Request) {
-  try {
-    const { vendorId } = await req.json();
-    if (!vendorId) {
-      return NextResponse.json({ error: "Vendor ID is required" }, { status: 400 });
-    }
-
-    // Fetch vendor profile
-    const vendorProfileRef = collection(db, "vendorProfile");
-    const q = query(vendorProfileRef, where("uid", "==", vendorId));
-    const vendorSnapshot = await getDocs(q);
-    
-    if (vendorSnapshot.empty) {
-      return NextResponse.json({ error: "Vendor not found" }, { status: 404 });
-    }
-    const vendor = vendorSnapshot.docs[0].data();
-   // console.log(vendor);
-    // Fetch all events
-    const eventsSnapshot = await getDocs(collection(db, "events"));
-    const events = eventsSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-
-    // Score and rank events
-    const rankedEvents = events
-      .map(event => ({
-        ...event,
-        score: calculateEventScore(vendor, event)
-      }))
-      .sort((a, b) => b.score - a.score);
-
-    return NextResponse.json({ success: true, rankedEvents });
-  } catch (error) {
-    console.error("Error ranking events:");
-    //console.error("Error ranking events:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-  }
-}

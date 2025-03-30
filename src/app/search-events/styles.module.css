@@ -1,0 +1,105 @@
+.container {
+  min-height: 100vh;
+  background-color: var(--background-main);
+  font-family: var(--font-primary);
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xxl);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--spacing-xxl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.logo {
+  margin-bottom: var(--spacing-md);
+}
+
+.welcomeContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background-color: var(--background-white);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.welcomeTitle {
+  font-size: var(--font-size-header);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+}
+
+.alert {
+  padding: var(--spacing-lg);
+  background-color: var(--secondary-light-pink);
+  color: var(--primary-coral);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+.eventsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-xl);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xxl);
+}
+
+.pageButton {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.pageButtonActive {
+  background-color: var(--primary-black);
+  color: var(--background-white);
+}
+
+.pageButtonInactive {
+  background-color: var(--background-white);
+  color: var(--text-primary);
+}
+
+.recommendations {
+  margin-top: var(--spacing-xxl);
+}
+
+.recommendationsTitle {
+  font-size: var(--font-size-header);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.recommendationsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recommendationItem {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--primary-beige);
+  color: var(--text-primary);
+} 
