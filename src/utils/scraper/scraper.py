@@ -160,6 +160,7 @@ def scrape_eventeny_details(event_url, headers):
             details["host"] = host_div.text.replace("Hosted by", "").strip()
 
         # image url
+        # NOTE: image is currently using the link from eventeny instead of downloading
         img_meta = soup.find("meta", {"itemprop": "image"})
         if img_meta:
             details["image_url"] = img_meta.get("content")
