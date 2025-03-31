@@ -13,6 +13,9 @@ hosting/.cache
 /functions/.env
 /functions/package-lock.json
 
+# Migration scripts
+/scripts/migration/node_modules
+
 # Firebase Emulators
 /firebase-*.zip
 /.firebase/
@@ -76,3 +79,5 @@ next-env.d.ts
 venv/
 env/
 .venv/
+
+scripts/migration/node_modules/

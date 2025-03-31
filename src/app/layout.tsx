@@ -14,6 +14,7 @@ import { ApplicationProfileProvider } from '../context/CreateEventProfileContext
 import { HostProvider } from '../context/HostContext';
 import { UserProvider } from '../context/UserContext';
 import Header from '@/components/Header';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 import "./globals.css";
 
@@ -35,32 +36,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="description" content="A one-stop platform for finding top-tier events, managing applications, and connecting with a thriving vendor community." />
       </head>
       <body>
-        <LoadScript id="google-maps-script" googleMapsApiKey={`${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`} libraries={[libraries]}>
-          <UserProvider>
-            <HostProvider>
-              <ApplicationProfileProvider>
-                <BusinessProfileProvider>
-                  <BusinessAdjectiveProvider>
-                    <BusinessLogoProvider>
-                      <BusinessPastPopupProvider>
-                        <BusinessBudgetProvider>
-                          <BusinessCustomerProvider>
-                            <BusinessScheduleProvider>
-                              <BusinessLocationProvider>
-                                <Header />
-                                {children}
-                              </BusinessLocationProvider>
-                            </BusinessScheduleProvider>
-                          </BusinessCustomerProvider>
-                        </BusinessBudgetProvider>
-                      </BusinessPastPopupProvider>
-                    </BusinessLogoProvider>
-                  </BusinessAdjectiveProvider>
-                </BusinessProfileProvider>
-              </ApplicationProfileProvider>
-            </HostProvider>
-          </UserProvider>
-        </LoadScript>
+        <ThemeProvider>
+          <LoadScript id="google-maps-script" googleMapsApiKey={`${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`} libraries={[libraries]}>
+            <UserProvider>
+              <HostProvider>
+                <ApplicationProfileProvider>
+                  <BusinessProfileProvider>
+                    <BusinessAdjectiveProvider>
+                      <BusinessLogoProvider>
+                        <BusinessPastPopupProvider>
+                          <BusinessBudgetProvider>
+                            <BusinessCustomerProvider>
+                              <BusinessScheduleProvider>
+                                <BusinessLocationProvider>
+                                  <Header />
+                                  {children}
+                                </BusinessLocationProvider>
+                              </BusinessScheduleProvider>
+                            </BusinessCustomerProvider>
+                          </BusinessBudgetProvider>
+                        </BusinessPastPopupProvider>
+                      </BusinessLogoProvider>
+                    </BusinessAdjectiveProvider>
+                  </BusinessProfileProvider>
+                </ApplicationProfileProvider>
+              </HostProvider>
+            </UserProvider>
+          </LoadScript>
+        </ThemeProvider>
       </body>
     </html>
   );

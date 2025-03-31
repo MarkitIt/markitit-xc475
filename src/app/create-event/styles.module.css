@@ -1,0 +1,76 @@
+.container {
+  min-height: 100vh;
+  background-color: white;
+  color: black;
+}
+
+.main {
+  padding: 4rem;
+  display: flex;
+  gap: 4rem;
+}
+
+.imagePlaceholder {
+  width: 50%;
+  height: 450px;
+  background-color: #D1D5DB;
+}
+
+.formSection {
+  width: 50%;
+}
+
+.stepIndicator {
+  color: #6B7280;
+  font-size: 0.875rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.formField {
+  width: 70%;
+  height: 3.5rem;
+  background-color: #D1D5DB;
+  margin-bottom: 2rem;
+  padding: 0.5rem;
+}
+
+.textArea {
+  composes: formField;
+  height: 10rem;
+}
+
+.required {
+  color: #EF4444;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.helpButton {
+  width: 9rem;
+  height: 3.5rem;
+  background-color: #D1D5DB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nextButton {
+  composes: helpButton;
+  width: 12rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.nextButton:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+} 
