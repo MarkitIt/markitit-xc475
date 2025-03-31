@@ -2,13 +2,21 @@
 const nextConfig = {
   // Exclude Firebase Functions from Next.js build
   webpack: (config, { isServer }) => {
-    // Add a rule to exclude fb_functions directory
-    config.module.rules.push({
-      test: /fb_functions/,
-      loader: 'ignore-loader',
-    });
+    // This will completely ignore the fb_functions directory
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'fb_functions': false,
+    };
     
     return config;
+  },
+  // Explicitly exclude fb_functions directory from being processed
+  transpilePackages: [],
+  // Exclude specific directories from being watched or processed
+  experimental: {
+    outputFileTracingExcludes: {
+      '*': ['./fb_functions/**/*'],
+    },
   },
 }
 
