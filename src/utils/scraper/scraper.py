@@ -11,11 +11,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-# TODO:
-# 1 more layer of scraping needed to get event host name and description
-# need more scraper or api
-# for scraper need 1 for each website becuase of setup?? double check
-
 
 # initialize admin and db with admin
 # using client SDK cuz recommended for scraper and "backend" like stuff
@@ -174,11 +169,6 @@ def scrape_eventeny_details(event_url, headers):
     except Exception as e:
         print(f"Error scraping event details: {e}")
         return {}
-
-
-# remove later, comparing div
-# <span class="size-14 flex flex-wrap inline overflow-hidden" style="font-weight: 700; color: #7E7E7E; height: 20px;">
-# <span class="size-14 flex flex-wrap inline overflow-hidden" style="font-weight: 700; color: #7E7E7E; height: 20px;">
 
 
 def scrape_eventbrite():
