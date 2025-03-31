@@ -1,0 +1,15 @@
+{
+  "name": "event-dates-migration",
+  "version": "1.0.0",
+  "description": "Migration script to convert detailed_date to startDate and endDate",
+  "main": "migrateEventDates.js",
+  "scripts": {
+    "migrate": "node migrateEventDates.js",
+    "migrate:force": "node migrateEventDates.js --force",
+    "test": "node migrateEventDates.js --test"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1",
+    "luxon": "^3.4.3"
+  }
+} 

@@ -20,6 +20,7 @@ interface Event {
     city: string;
     state: string;
   };
+  score: number;
 }
 
 export default function EventsPage() {
@@ -32,37 +33,58 @@ export default function EventsPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAndRankEvents = async () => {
+    const fetchEvents = async () => {
       setIsLoading(true);
       try {
-        // Fetch base events
-        const eventsSnapshot = await getDocs(collection(db, 'events'));
-        const eventList = eventsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        } as Event));
-        setEvents(eventList);
-        setFilteredEvents(eventList);
-
-        // Rank events if user has vendor profile
+        // For users with vendor profiles, fetch directly from the rankEvents API
         if (user && vendorProfile) {
+          console.log("🔍 Fetching ranked events from API for vendor ID:", user.uid);
+          console.log("🧩 Using vendor profile with vendor ID:", vendorProfile.uid);
+          
           const response = await fetch("/api/rankEvents", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ vendorId: user.uid }),
           });
+          
           const data = await response.json();
-          if (data.success) {
-            setRankedEvents(data.rankedEvents);
+          
+          // Log full API response for debugging
+          console.log("API Response:", data);
+          
+          if (data.rankedEvents && Array.isArray(data.rankedEvents)) {
+            console.log("First ranked event:", data.rankedEvents[0]);
+            console.log("Score of first event:", data.rankedEvents[0].score);
+            console.log("Total events returned:", data.rankedEvents.length);
+            
+            // IMPORTANT: Use the events DIRECTLY from the API without any transformation
+            const apiEvents = data.rankedEvents;
+            
+            // Keep the original sorting from the API (should already be sorted by score)
+            setEvents(apiEvents);
+            setFilteredEvents(apiEvents);
+            setRankedEvents(apiEvents);
+          } else {
+            console.error("Invalid or empty API response:", data);
           }
+        } else {
+          // Non-vendor users get unsorted events from Firestore
+          const eventsSnapshot = await getDocs(collection(db, 'events'));
+          const eventList = eventsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          } as Event));
+          
+          setEvents(eventList);
+          setFilteredEvents(eventList);
         }
       } catch (error) {
-        console.error("Error fetching events:"/*, error*/);
+        console.error("Error fetching events:", error);
       }
       setIsLoading(false);
     };
 
-    fetchAndRankEvents();
+    fetchEvents();
   }, [user, vendorProfile]);
 
 
@@ -141,6 +163,7 @@ export default function EventsPage() {
               event={event}
               rank={rankedEvents.findIndex(e => e.id === event.id) + 1}
               showRank={!!user && !!vendorProfile}
+              score={event.score}
             />
           ))}
         </div>

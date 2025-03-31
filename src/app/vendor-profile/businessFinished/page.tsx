@@ -40,7 +40,7 @@ const BusinessFinished = () => {
     twitterHandle,
     instagramHandle
   } = useBusinessProfileContext();
-  const { selectedAdjectives } = useBusinessAdjectiveContext();
+  const { selectedCategories } = useBusinessAdjectiveContext();
   const { images } = useBusinessLogoContext();
   const { selectedPastPopups } = useBusinessPastPopupContext();
   const { maxApplicationFee, maxVendorFee, totalCostEstimate }= useBusinessBudgetContext();
@@ -92,7 +92,7 @@ const BusinessFinished = () => {
       facebookLink,
       twitterHandle,
       instagramHandle,
-      selectedAdjectives,
+      selectedCategories,
       selectedPastPopups,
       images: images.map(image => image.name), // Assuming you will handle image uploads separately
       
@@ -281,10 +281,10 @@ const BusinessFinished = () => {
 
           <h1 className="text-3xl font-bold mb-8 mt-2">Adjectives</h1>
           <div className="grid grid-cols-4 gap-4">
-            {selectedAdjectives.map((adjective, index) => (
+            {selectedCategories.map((adjective, index) => (
               <button
                 key={index}
-                className={`h-12 flex items-center justify-center pointer-events-none ${selectedAdjectives.includes(adjective) ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+                className={`h-12 flex items-center justify-center pointer-events-none ${selectedCategories.includes(adjective) ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
               >
                 {adjective}
               </button>

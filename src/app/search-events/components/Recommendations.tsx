@@ -17,13 +17,13 @@ export const Recommendations = ({ events }: RecommendationsProps) => {
       <h2 className={styles.recommendationsTitle}>
         Recommended Events
       </h2>
-      <ul className={styles.recommendationsList}>
+      {/* <ul className={styles.recommendationsList}>
         {events.map(event => (
           <li key={event.id} className={styles.recommendationItem}>
             {event.name}
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 }; 

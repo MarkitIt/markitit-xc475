@@ -8,7 +8,7 @@ import '../../tailwind.css';
 const BusinessPastPopup = () => {
   const router = useRouter();
   const {selectedPastPopups, setSelectedPastPopups} : { selectedPastPopups: string[], setSelectedPastPopups: React.Dispatch<React.SetStateAction<string[]>> } = useBusinessPastPopupContext();
-  //const { selectedAdjectives, setSelectedAdjectives }: { selectedAdjectives: string[], setSelectedAdjectives: React.Dispatch<React.SetStateAction<string[]>> } = useBusinessAdjectiveContext();
+  //const { selectedCategories, setSelectedCategories }: { selectedCategories: string[], setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>> } = useBusinessAdjectiveContext();
 
   const handleNextStepClick = () => {
     router.push('/vendor-profile/businessFinished');

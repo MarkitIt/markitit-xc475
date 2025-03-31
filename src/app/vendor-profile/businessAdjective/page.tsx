@@ -3,12 +3,14 @@
 import { useRouter } from 'next/navigation';
 import { useBusinessAdjectiveContext } from '../../../context/BusinessAdjectiveContext';
 import { useBusinessProfileContext } from '../../../context/BusinessProfileContext';
-import '../../tailwind.css';
-
+import { VendorTypeSelector } from './components/VendorTypeSelector';
+import { CategorySelector } from './components/CategorySelector';
+import { SocialMediaForm } from './components/SocialMediaForm';
+import styles from './styles.module.css';
 
 const BusinessAdjective = () => {
   const router = useRouter();
-  const { selectedAdjectives, setSelectedAdjectives, vendorType, setVendorType } = useBusinessAdjectiveContext();
+  const { selectedCategories, setSelectedCategories, vendorType, setVendorType } = useBusinessAdjectiveContext();
   const {
     website, setWebsite,
     description, setDescription,
@@ -17,154 +19,46 @@ const BusinessAdjective = () => {
     instagramHandle, setInstagramHandle
   } = useBusinessProfileContext();
 
-
   const handleNextStepClick = () => {
     router.push('/vendor-profile/businessLocation');
-
   };
 
-  const categories = [
-    "Accessories", "Art", "Fashion", "Kids", "Home Decor", "Beauty & Skincare", 
-    "Jewelry", "Food & Beverage", "Candles", "Books & Stationery", "Tech & Gadgets",
-    "Vintage & Thrift", "Handmade Goods", "Pet Products", "Wellness & Health", 
-    "Plants & Gardening", "Toys & Games", "Bags & Wallets", "Spiritual & Metaphysical",
-    "Sports & Fitness", "Bath & Body", "Music & Instruments", "Automotive", 
-    "Photography", "Sustainable & Eco-Friendly", "Gifts & Seasonal", 
-    "DIY & Craft Supplies", "Furniture", "Men's Fashion", "Women's Fashion", 
-    "Children's Fashion", "Digital Art & NFTs", "Custom Apparel", "Luxury Goods",
-    "Event Planning & Party Supplies", "Hobby & Collectibles", "Baking & Desserts"
-  ];
-
-  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOptions = Array.from(event.target.selectedOptions, option => option.value);
-    
-    if (selectedOptions.length <= 3) {
-      setSelectedAdjectives(selectedOptions);
-    } else {
-      // Optionally, you can alert the user or handle the case where more than 3 are selected
-      alert("You can only select up to 3 categories.");
-    }
-  };
-
-  const handleWebsiteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWebsite(e.target.value);
-  };
-
-
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDescription(e.target.value);
-  };
-
-  const handleFacebookLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFacebookLink(e.target.value);
-  };
-
-  const handleTwitterHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTwitterHandle(e.target.value);
-  };
-
-  const handleInstagramHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInstagramHandle(e.target.value);
-  };
-  
   return (
-    <div className="min-h-screen bg-white text-black">
-      <main className="p-16 flex space-x-16">
-        {/* Large Placeholder Image */}
-        <div className="w-[50%] h-[450px] bg-gray-300"></div>
+    <div className={styles.container}>
+      <main className={styles.main}>
+        <div className={styles.imagePlaceholder}></div>
+        
+        <div className={styles.formSection}>
+          <h2 className={styles.stepIndicator}>Step 02/05</h2>
+          <h1 className={styles.title}>Tell us about your business</h1>
 
-        {/* Adjective section */}
-        <div className="w-[50%]">
-          <h2 className="text-md text-gray-500">Step 02/05</h2>
-          <h1 className="text-5xl font-bold mb-8">Tell us about your business</h1>
+          <VendorTypeSelector 
+            vendorType={vendorType as "Food Vendor" | "Market Vendor" | null}
+            setVendorType={setVendorType}
+          />
 
-          {/* Multiple Choice Question */}
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold">What kind of vendor are you?</h2>
-            <div className="flex flex-col mt-2">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="vendorType"
-                  value="food vendor"
-                  className="mr-2"
-                  onChange={(e) => setVendorType(e.target.value)}
-                />
-                Food Vendor
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="vendorType"
-                  value="market vendor"
-                  className="mr-2"
-                  onChange={(e) => setVendorType(e.target.value)}
-                />
-                Market Vendor
-              </label>
-            </div>
-          </div>
+          <CategorySelector 
+            selectedCategories={selectedCategories}
+            setSelectedCategories={setSelectedCategories}
+          />
 
-          {/* Multi-select dropdown for categories */}
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold">Select your business categories (max 3):</h2>
-            <select
-              multiple
-              className="mt-2 p-2 border border-gray-300 rounded"
-              onChange={handleCategoryChange}
-              value={selectedAdjectives}
-            >
-              {categories.map((adjective, index) => (
-                <option key={index} value={adjective}>
-                  {adjective}
-                </option>
-              ))}
-            </select>
-          </div>
-             <div className="">Website</div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={website}
-              onChange={handleWebsiteChange}
-              required
-            />    
+          <SocialMediaForm 
+            website={website}
+            description={description}
+            facebookLink={facebookLink}
+            twitterHandle={twitterHandle}
+            instagramHandle={instagramHandle}
+            onWebsiteChange={(e) => setWebsite(e.target.value)}
+            onDescriptionChange={(e) => setDescription(e.target.value)}
+            onFacebookLinkChange={(e) => setFacebookLink(e.target.value)}
+            onTwitterHandleChange={(e) => setTwitterHandle(e.target.value)}
+            onInstagramHandleChange={(e) => setInstagramHandle(e.target.value)}
+          />
 
-            <div className="">Description</div>
-            <textarea
-              className="w-[70%] h-40 bg-gray-300 mb-8 text-left align-top p-2"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />     
-
-            <div className="">Facebook link</div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={facebookLink}
-              onChange={handleFacebookLinkChange}
-              required
-            />   
-
-            <div className="">Twitter "X" handle</div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={twitterHandle}
-              onChange={handleTwitterHandleChange}
-              required
-            />   
-
-            <div className="">Instagram handle</div>
-            <input
-              className="w-[70%] h-14 bg-gray-300 mb-8 text-left align-top p-2"
-              value={instagramHandle}
-              onChange={handleInstagramHandleChange}
-              required
-            />    
-          {/* Next step click */}
-          <div className="flex space-x-6 mt-8">
-            <div className="w-36 h-14 bg-gray-300 flex items-center justify-center">Help</div>
+          <div className={styles.buttonGroup}>
+            <div className={styles.helpButton}>Help</div>
             <div
-              className="w-48 h-14 bg-gray-300 transition-transform transform hover:translate-y-[-5px] hover:shadow-lg cursor-pointer flex items-center justify-center"
+              className={styles.nextButton}
               onClick={handleNextStepClick}
             >
               Next Step
