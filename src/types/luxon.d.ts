@@ -9,6 +9,8 @@ declare module 'luxon' {
     toJSDate(): Date;
     toISO(): string;
     toFormat(format: string): string;
+    toSeconds(): number;
+    toMillis(): number;
     
     plus(duration: object | Duration): DateTime;
     minus(duration: object | Duration): DateTime;
