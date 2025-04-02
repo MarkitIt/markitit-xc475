@@ -3,7 +3,7 @@
 import { useRouter, useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs,getDoc, doc, updateDoc } from 'firebase/firestore';
 import styles from "../../../page.module.css";
 import '../../../tailwind.css';
 
@@ -73,17 +73,23 @@ export default function ApplicationHostProfile() {
 
     // Update the vendor's status in the database
     try {
-        const vendorsQuery = collection(db, 'vendorApply');
-        const vendorsSnapshot = await getDocs(vendorsQuery);
-        const vendorDoc = vendorsSnapshot.docs.find(doc => doc.data().vendorId.some((v: any) => v.email === email));
-        if (vendorDoc) {
-          const vendorRef = doc(db, 'vendorApply', vendorDoc.id);
-          await updateDoc(vendorRef, {
-            vendorId: vendorDoc.data().vendorId.map((v: any) =>
-              v.email === email ? { ...v, status: "REJECTED" } : v
-            ),
-          });
-        }
+      // Fetch the vendorApply document
+      const vendorRef = doc(db, 'vendorApply', eventId);
+      const vendorDocSnap = await getDoc(vendorRef);
+
+      if (!vendorDocSnap.exists()) {
+        console.error(`VendorApply document not found for eventId: ${eventId}`);
+        return;
+      }
+      const vendorData = vendorDocSnap.data();
+      // Update the vendor's status in the vendorId array
+      const updatedVendors = vendorData.vendorId.map((v: any) =>
+        v.email === email ? { ...v, status: "REJECTED" } : v
+      );
+      // Update the document in Firestore
+      await updateDoc(vendorRef, {
+        vendorId: updatedVendors,
+      });
       console.log(`Vendor with email ${email} status updated to REJECTED in the database.`);
     } catch (error) {
       console.error(`Error updating vendor status for email ${email}:`, error);
@@ -101,17 +107,23 @@ export default function ApplicationHostProfile() {
     );
 
     try {
-        const vendorsQuery = collection(db, 'vendorApply');
-        const vendorsSnapshot = await getDocs(vendorsQuery);
-        const vendorDoc = vendorsSnapshot.docs.find(doc => doc.data().vendorId.some((v: any) => v.email === email));
-        if (vendorDoc) {
-          const vendorRef = doc(db, 'vendorApply', vendorDoc.id);
-          await updateDoc(vendorRef, {
-            vendorId: vendorDoc.data().vendorId.map((v: any) =>
-              v.email === email ? { ...v, status: "ACCEPTED" } : v
-            ),
-          });
-        }
+      // Fetch the vendorApply document
+      const vendorRef = doc(db, 'vendorApply', eventId);
+      const vendorDocSnap = await getDoc(vendorRef);
+
+      if (!vendorDocSnap.exists()) {
+        console.error(`VendorApply document not found for eventId: ${eventId}`);
+        return;
+      }
+      const vendorData = vendorDocSnap.data();
+      // Update the vendor's status in the vendorId array
+      const updatedVendors = vendorData.vendorId.map((v: any) =>
+        v.email === email ? { ...v, status: "ACCEPTED" } : v
+      );
+      // Update the document in Firestore
+      await updateDoc(vendorRef, {
+        vendorId: updatedVendors,
+      });
       console.log(`Vendor with email ${email} status updated to ACCEPTED in the database.`);
     } catch (error) {
       console.error(`Error updating vendor status for email ${email}:`, error);

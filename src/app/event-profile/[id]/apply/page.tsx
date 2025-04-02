@@ -49,6 +49,18 @@ const EventApplyProfile = () => {
         alert("Event not found in vendorApply collection.");
         return;
       }
+
+      const vendorApplyData = vendorApplyDocSnap.data();
+
+      // Check if the user is already in the vendorId array
+      const isAlreadyApplied = vendorApplyData.vendorId?.some(
+        (v: any) => v.email === userData.email
+      );
+
+      if (isAlreadyApplied) {
+        alert("You have already applied to this event.");
+        return;
+      }
   
       // Update the existing document by appending the new vendor data
       const vendorData = {

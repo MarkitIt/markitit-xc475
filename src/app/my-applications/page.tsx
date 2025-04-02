@@ -2,7 +2,7 @@
 
 import {ApplicationCard} from './components/ApplicationCard';
 import { useEffect, useState } from 'react';
-import { theme } from '@/styles/theme';
+import  '@/styles/theme';
 import { db } from '@/lib/firebase';
 import { useUserContext } from '@/context/UserContext';
 import { doc, getDoc } from 'firebase/firestore';
@@ -93,21 +93,22 @@ export default function MyApplicationsPage() {
 
         <button 
           onClick={handleNewApplication}
+          className={styles.newButton}
         >
           New Application
         </button>
       </div>
 
       <div className={styles.applicationsList}>
-        {applications.map((application) => (
-          <ApplicationCard
-            key={application.id}
-            eventName={application.eventName}
-            status={application.status}
-            submissionDate={application.submissionDate}
-            onViewDetails={() => handleViewDetails(application.id)}
-          />
-        ))}
+      {applications.map((application) => (
+        <ApplicationCard
+          key={application.eventId} // Use a unique key
+          eventName={application.eventName}
+          status={application.status}
+          submissionDate={application.submissionDate}
+          onViewDetails={() => handleViewDetails(application.id)}
+        />
+      ))}
       </div>
     </main>
   );
