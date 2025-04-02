@@ -4,6 +4,10 @@ import { theme } from '@/styles/theme';
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.css';
 import { RoleCard } from './components/RoleCard';
+import { useUserContext } from '@/context/UserContext';
+import { useState } from 'react';
+import { db } from "../../lib/firebase";
+import { doc, updateDoc } from 'firebase/firestore';
 
 const ROLES = [
   {
