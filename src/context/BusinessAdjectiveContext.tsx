@@ -3,8 +3,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface BusinessAdjectiveContextProps {
-  selectedAdjectives: string[];
-  setSelectedAdjectives: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedCategories: string[];
+  setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>;
   vendorType: string | null;
   setVendorType: React.Dispatch<React.SetStateAction<string | null>>;
 }
@@ -12,11 +12,11 @@ interface BusinessAdjectiveContextProps {
 const BusinessAdjectiveContext = createContext<BusinessAdjectiveContextProps | undefined>(undefined);
 
 export const BusinessAdjectiveProvider = ({ children }: { children: ReactNode }) => {
-  const [selectedAdjectives, setSelectedAdjectives] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [vendorType, setVendorType] = useState<string | null>(null);
 
   return (
-    <BusinessAdjectiveContext.Provider value={{ selectedAdjectives, setSelectedAdjectives, vendorType, setVendorType }}>
+    <BusinessAdjectiveContext.Provider value={{ selectedCategories, setSelectedCategories, vendorType, setVendorType }}>
       {children}
     </BusinessAdjectiveContext.Provider>
   );

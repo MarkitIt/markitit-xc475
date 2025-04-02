@@ -12,6 +12,7 @@ import { BusinessProfileProvider } from '../context/BusinessProfileContext';
 import { ApplicationProfileProvider } from '../context/CreateEventProfileContext';
 import { UserProvider } from '../context/UserContext';
 import Header from '@/components/Header';
+import { ThemeProvider } from '@/context/ThemeContext';
 import GoogleMapsLoader from '../components/GoogleMapsLoader';
 
 import "./globals.css";
@@ -29,30 +30,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="description" content="A one-stop platform for finding top-tier events, managing applications, and connecting with a thriving vendor community." />
       </head>
       <body>
-        <GoogleMapsLoader>
-          <UserProvider>
-            <ApplicationProfileProvider>
-              <BusinessProfileProvider>
-                <BusinessAdjectiveProvider>
-                  <BusinessLogoProvider>
-                    <BusinessPastPopupProvider>
-                      <BusinessBudgetProvider>
-                        <BusinessCustomerProvider>
-                          <BusinessScheduleProvider>
-                            <BusinessLocationProvider>
-                              <Header />
-                              {children}
-                            </BusinessLocationProvider>
-                          </BusinessScheduleProvider>
-                        </BusinessCustomerProvider>
-                      </BusinessBudgetProvider>
-                    </BusinessPastPopupProvider>
-                  </BusinessLogoProvider>
-                </BusinessAdjectiveProvider>
-              </BusinessProfileProvider>
-            </ApplicationProfileProvider>
-          </UserProvider>
-        </GoogleMapsLoader>
+        <ThemeProvider>
+          <GoogleMapsLoader>
+            <UserProvider>
+              <ApplicationProfileProvider>
+                <BusinessProfileProvider>
+                  <BusinessAdjectiveProvider>
+                    <BusinessLogoProvider>
+                      <BusinessPastPopupProvider>
+                        <BusinessBudgetProvider>
+                          <BusinessCustomerProvider>
+                            <BusinessScheduleProvider>
+                              <BusinessLocationProvider>
+                                <Header />
+                                {children}
+                              </BusinessLocationProvider>
+                            </BusinessScheduleProvider>
+                          </BusinessCustomerProvider>
+                        </BusinessBudgetProvider>
+                      </BusinessPastPopupProvider>
+                    </BusinessLogoProvider>
+                  </BusinessAdjectiveProvider>
+                </BusinessProfileProvider>
+              </ApplicationProfileProvider>
+            </UserProvider>
+          </GoogleMapsLoader>
+        </ThemeProvider>
       </body>
     </html>
   );
