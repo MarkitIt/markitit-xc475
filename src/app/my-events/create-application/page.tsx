@@ -22,7 +22,9 @@ const CreateApplicationProfile = () => {
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  const [customQuestions, setCustomQuestions] = useState<number[]>([]);
+  const [customQuestions, setCustomQuestions] = useState<
+    { title: string; description: string; isRequired: boolean }[]
+  >([]);
 
   // Standard fields that can be selected
   // const standardFields = [
@@ -56,7 +58,7 @@ const CreateApplicationProfile = () => {
   };
 
   const addCustomQuestion = () => {
-    setCustomQuestions([...customQuestions, customQuestions.length]);
+    setCustomQuestions([...customQuestions, { title: '', description: '', isRequired: false }]);
   };
 
   const removeCustomQuestion = (indexToRemove: number) => {
@@ -65,6 +67,10 @@ const CreateApplicationProfile = () => {
     );
   };
 
+  const handleUpdateQuestion = (index: number, data: { title: string; description: string; isRequired: boolean }) => {
+    console.log("Updating question at index:", index, "with data:", data);
+    setCustomQuestions(customQuestions.map((q, i) => (i === index ? data : q)));
+  };
 
   useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -96,12 +102,13 @@ const CreateApplicationProfile = () => {
           const applicationDeadline = (document.getElementById("application-deadline") as HTMLInputElement).value;
           const boothCost = parseFloat((document.getElementById("booth-cost") as HTMLInputElement).value);
           const location = handlePlaceChanged() || { city: "", state: "" };
-
+          
           if (!location.city || !location.state) {
             alert("Please select a valid location.");
             return;
           }
           
+          console.log("Custom question",customQuestions);
           // Prepare the event data
           const eventData = {
             uid: user.uid,
@@ -111,10 +118,7 @@ const CreateApplicationProfile = () => {
             boothCost,
             location,
             // selectedFields, // Fields selected by the user
-            customQuestions: customQuestions.map((_, index) => {
-              const questionInput = document.getElementById(`custom-question-${index}`) as HTMLInputElement;
-              return questionInput ? questionInput.value : "";
-            }),
+            customQuestions, // Custom questions added by the user
             createdAt: new Date().toISOString(),
           };
       
@@ -368,6 +372,7 @@ const CreateApplicationProfile = () => {
                       key={index}
                       index={index}
                       onDelete={removeCustomQuestion}
+                      onUpdate={handleUpdateQuestion}
                     />
                   ))}
                 </div>
