@@ -14,13 +14,13 @@ const ROLES = [
     title: 'Become a Host',
     description: 'Create and manage events, connect with vendors, and grow your community',
     icon: '/icons/host.svg',
-    path: '/create-profile/host'
+    role: 'host'
   },
   {
     title: 'Become a Vendor',
     description: 'Find events, showcase your products, and grow your business',
     icon: '/icons/vendor.svg',
-    path: '/vendor-profile'
+    role: 'vendor'
   }
 ];
 
@@ -81,7 +81,7 @@ export default function CreateProfilePage() {
             title={role.title}
             description={role.description}
             icon={role.icon}
-            onClick={() => router.push(role.path)}
+            onClick={() => handleSubmit(role.role)}
           />
         ))}
       </div>
