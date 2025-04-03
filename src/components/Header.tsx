@@ -25,7 +25,6 @@ export default function Header() {
 
   useEffect(() => {
     if (user) {
-      console.log(user.uid)
       if (user?.role === 'vendor') {
         getVendorProfile();
       }
