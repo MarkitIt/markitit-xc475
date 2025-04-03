@@ -25,20 +25,20 @@ const CreateApplicationProfile = () => {
   const [customQuestions, setCustomQuestions] = useState<number[]>([]);
 
   // Standard fields that can be selected
-  const standardFields = [
-    { id: 'business-name', label: 'Business Name' },
-    { id: 'business-type', label: 'Business Type' },
-    { id: 'contact-name', label: 'Contact Name' },
-    { id: 'contact-email', label: 'Contact Email' },
-    { id: 'contact-phone', label: 'Contact Phone' },
-    { id: 'social-media', label: 'Social Media Links' },
-    { id: 'product-description', label: 'Product Description' },
-    { id: 'price-range', label: 'Price Range' },
-    { id: 'website', label: 'Website' },
-    { id: 'product-images', label: 'Product Images' },
-    { id: 'past-events', label: 'Past Events Experience' },
-    { id: 'space-requirements', label: 'Space Requirements' },
-  ];
+  // const standardFields = [
+  //   { id: 'business-name', label: 'Business Name' },
+  //   { id: 'business-type', label: 'Business Type' },
+  //   { id: 'contact-name', label: 'Contact Name' },
+  //   { id: 'contact-email', label: 'Contact Email' },
+  //   { id: 'contact-phone', label: 'Contact Phone' },
+  //   { id: 'social-media', label: 'Social Media Links' },
+  //   { id: 'product-description', label: 'Product Description' },
+  //   { id: 'price-range', label: 'Price Range' },
+  //   { id: 'website', label: 'Website' },
+  //   { id: 'product-images', label: 'Product Images' },
+  //   { id: 'past-events', label: 'Past Events Experience' },
+  //   { id: 'space-requirements', label: 'Space Requirements' },
+  // ];
 
   const [selectedFields, setSelectedFields] = useState<string[]>([
     // basic fields selected
@@ -110,7 +110,7 @@ const CreateApplicationProfile = () => {
             applicationDeadline,
             boothCost,
             location,
-            selectedFields, // Fields selected by the user
+            // selectedFields, // Fields selected by the user
             customQuestions: customQuestions.map((_, index) => {
               const questionInput = document.getElementById(`custom-question-${index}`) as HTMLInputElement;
               return questionInput ? questionInput.value : "";
@@ -294,7 +294,7 @@ const CreateApplicationProfile = () => {
             </div>
   
             <div className='mb-10'>
-              <h2 className='text-2xl font-semibold mb-6 text-black text-center'>
+              {/*<h2 className='text-2xl font-semibold mb-6 text-black text-center'>
                 Standard Application Fields
               </h2>
               <p className='text-lg text-gray-700 text-center mb-6'>
@@ -328,8 +328,8 @@ const CreateApplicationProfile = () => {
                     </div>
                   ))}
                 </div>
-              </div>
-            </div>
+              </div>*/}
+            </div> 
   
             <div className='mb-10'>
               <div className='flex flex-col items-center mb-6'>

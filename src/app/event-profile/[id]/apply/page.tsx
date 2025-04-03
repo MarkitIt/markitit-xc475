@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { useUserContext } from "@/context/UserContext";
 import { db } from "../../../../lib/firebase";
 import '../../../tailwind.css';
+import BusinessAdjective from "@/app/vendor-profile/businessAdjective/page";
 
 
 const EventApplyProfile = () => {
@@ -38,6 +39,17 @@ const EventApplyProfile = () => {
       }
   
       const userData = userDocSnap.data();
+
+      // Fetch the vendor's profile from the `vendorProfile` collection
+      const vendorProfileDocRef = doc(db, "vendorProfile", user.uid);
+      const vendorProfileDocSnap = await getDoc(vendorProfileDocRef);
+
+      if (!vendorProfileDocSnap.exists()) {
+        alert("Vendor profile not found.");
+        return;
+      }
+
+      const vendorProfileData = vendorProfileDocSnap.data();
   
       // Reference the existing document in the `vendorApply` collection
       const vendorApplyDocRef = doc(db, "vendorApply", eventId); // Assuming `eventId` is the document ID
@@ -67,6 +79,16 @@ const EventApplyProfile = () => {
         email: userData.email, // User's email
         firstName: userData.firstName, // User's first name
         lastName: userData.lastName, // User's last name
+        businessName: vendorProfileData.businessName, // Vendor's business name
+        description: vendorProfileData.description, // Vendor's description
+        streetAddress: vendorProfileData.streetAddress, // Vendor's street address
+        city: vendorProfileData.city, // Vendor's city
+        stateProvince: vendorProfileData.stateProvince, // Vendor's state
+        zipPostalCode: vendorProfileData.zipPostalCode, // Vendor's zip code
+        country: vendorProfileData.country, // Vendor's country
+        phone:vendorProfileData.phone, // Vendor's phone number
+        categories: vendorProfileData.selectedCategories, // Vendor's categories
+        pastPopup: vendorProfileData.selectedPastPopups, // Vendor's past popup experience
         status: "PENDING", // Default status
       };
   

@@ -13,10 +13,8 @@ const nextConfig = {
   // Explicitly exclude fb_functions directory from being processed
   transpilePackages: [],
   // Exclude specific directories from being watched or processed
-  experimental: {
-    outputFileTracingExcludes: {
-      '*': ['./fb_functions/**/*'],
-    },
+  outputFileTracingExcludes: {
+    '*': ['node_modules/some-package'],
   },
 }
 
