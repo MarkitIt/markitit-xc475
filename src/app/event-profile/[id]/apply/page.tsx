@@ -181,7 +181,7 @@ const EventApplyProfile = () => {
                       placeholder="Your answer"
                       value={answers[index]?.value || ""}
                       onChange={(e) => handleAnswerChange(index,question.title, e.target.value)}
-                      className="w-full p-4 border-2 border-gray-300 rounded-lg mt-2"
+                      className="w-full p-4 border-2 border-gray-300 rounded-lg mt-2 bg-gray-100"
                     />
                   </div>
                 ))}
