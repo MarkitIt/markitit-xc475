@@ -130,6 +130,10 @@ export default function ApplicationHostProfile() {
     }
   };
 
+  const viewDetail = async (email: string) => {
+    console.log("View details for vendor with email:", email);
+  }
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -149,6 +153,7 @@ export default function ApplicationHostProfile() {
                   <th className="border border-gray-300 px-4 py-2">FirstName</th>
                   <th className="border border-gray-300 px-4 py-2">LastName</th>
                   <th className="border border-gray-300 px-4 py-2">Status</th>
+                  <th className="border border-gray-300 px-4 py-2">Details</th>
                   <th className="border border-gray-300 px-4 py-2">Action</th>
                 </tr>
               </thead>
@@ -158,6 +163,14 @@ export default function ApplicationHostProfile() {
                     <td className="border border-gray-300 px-4 py-2">{vendor.email}</td>
                     <td className="border border-gray-300 px-4 py-2">{vendor.firstName}</td>
                     <td className="border border-gray-300 px-4 py-2">{vendor.lastName}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                    <button
+                        className="bg-red-500 text-white px-3 py-1 rounded mr-2 hover:bg-red-600"
+                        onClick={() => viewDetail(vendor.email)}
+                      >
+                        Details
+                      </button>
+                    </td>
                     <td className="border border-gray-300 px-4 py-2">{vendor.status}</td>
                     <td className="border border-gray-300 px-4 py-2">
                       <button
