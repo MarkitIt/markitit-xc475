@@ -41,12 +41,24 @@ const EventApplyProfile = () => {
   
       // Reference the existing document in the `vendorApply` collection
       const vendorApplyDocRef = doc(db, "vendorApply", eventId); // Assuming `eventId` is the document ID
-  
+      const eventDocRef = doc(db, "events", eventId); // Reference to the event document
       // Check if the document exists
       const vendorApplyDocSnap = await getDoc(vendorApplyDocRef);
   
       if (!vendorApplyDocSnap.exists()) {
         alert("Event not found in vendorApply collection.");
+        return;
+      }
+
+      const vendorApplyData = vendorApplyDocSnap.data();
+
+      // Check if the user is already in the vendorId array
+      const isAlreadyApplied = vendorApplyData.vendorId?.some(
+        (v: any) => v.email === userData.email
+      );
+
+      if (isAlreadyApplied) {
+        alert("You have already applied to this event.");
         return;
       }
   
@@ -64,6 +76,20 @@ const EventApplyProfile = () => {
   
       console.log("Vendor application submitted successfully:", vendorData);
   
+      const appliedAt= new Date().toISOString();
+      const eventDocSnap = await getDoc(eventDocRef); // Fetch the event document
+      const eventName = eventDocSnap.exists() ? eventDocSnap.data().name : null; // Get the event name from the document
+      if (!eventName) {
+        alert("Event name not found.");
+        return;
+      }
+
+      await updateDoc(userDocRef, {
+        events: arrayUnion({eventId:eventId,appliedAt:appliedAt,eventName:eventName}),
+      });
+  
+      console.log("Vendor application submitted successfully:", eventId);
+
       // Redirect to the home page or a success page
       router.push("/");
     } catch (error) {

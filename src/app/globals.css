@@ -2,6 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Colors */
+  --primary-black: #3A2E39;
+  --primary-green: #1E555C;
+  --primary-beige: #F4D8CD;
+  --primary-sand: #EDB183;
+  --primary-pink: #E4B7B7;
+  --primary-dark-blue: #1B2559;
+  --primary-coral: #E88D67;
+
+  --secondary-yellow: #F4D03F;
+  --secondary-light-pink: #FFF1F1;
+
+  --text-primary: #3A2E39;
+  --text-secondary: #64748B;
+
+  --background-main: #F3E5E2;
+  --background-white: #FFFFFF;
+  --background-gradient: linear-gradient(180deg, #f3e5e2 0%, rgb(233, 86, 73) 100%);
+
+  /* Typography */
+  --font-family-primary: 'Manrope, sans-serif';
+  --font-size-title: 72px;
+  --font-size-header: 24px;
+  --font-size-body: 20px;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+
+  /* Border Radius */
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 1rem;
+  --border-radius-full: 9999px;
+}
+
 .dropdown-link {
   transition: background-color 0.2s ease;
 }
