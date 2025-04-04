@@ -186,8 +186,10 @@ const CreateApplicationProfile = () => {
         try {
           // Collect form data
           const name = (document.getElementById("event-name") as HTMLInputElement).value;
-          const startDate = (document.getElementById("start-date") as HTMLInputElement).value;
-          const endDate = (document.getElementById("end-date") as HTMLInputElement).value;
+          const startDateInput = (document.getElementById("start-date") as HTMLInputElement).value;
+          const startTimeInput = (document.getElementById("start-time") as HTMLInputElement).value;
+          const endDateInput = (document.getElementById("end-date") as HTMLInputElement).value;
+          const endTimeInput = (document.getElementById("end-time") as HTMLInputElement).value;
           const totalCost = parseFloat((document.getElementById("booth-cost") as HTMLInputElement).value);
           const imageFile = (document.getElementById("image") as HTMLInputElement).files?.[0]; // Get the uploaded file
           const location = handlePlaceChanged() || { city: "", state: "" };
@@ -213,6 +215,21 @@ const CreateApplicationProfile = () => {
             return;
           }
 
+          // Combine date and time into a single Date object
+          const startDate = new Date(`${startDateInput}T${startTimeInput}:00`);
+          const endDate = new Date(`${endDateInput}T${endTimeInput}:00`);
+
+          // Validate required fields
+          if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            alert("Please enter valid start and end dates/times.");
+            return;
+          }
+
+          if (startDate > endDate) {
+            alert("Start date/time cannot be after the end date/time.");
+            return;
+          }
+          
           // Upload the image to Firebase Storage (optional)
           let imageUrl = "";
           if (imageFile) {
@@ -360,6 +377,19 @@ const CreateApplicationProfile = () => {
                     className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black'
                     required
                   />
+                  <label
+                    className="block text-xl mt-3 mb-3 text-center text-black font-semibold"
+                    htmlFor="start-time"
+                  >
+                    Start Time
+                  </label>
+                  <input
+                    type="time"
+                    id="start-time"
+                    name="start-time"
+                    className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
+                    required
+                  />
                 </div>
                 <div>
                   <label
@@ -373,6 +403,19 @@ const CreateApplicationProfile = () => {
                     id='end-date'
                     name='end-date'
                     className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black'
+                    required
+                  />
+                  <label
+                    className="block text-xl mt-3 mb-3 text-center text-black font-semibold"
+                    htmlFor="end-time"
+                  >
+                    End Time
+                  </label>
+                  <input
+                    type="time"
+                    id="end-time"
+                    name="end-time"
+                    className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
                     required
                   />
                 </div>

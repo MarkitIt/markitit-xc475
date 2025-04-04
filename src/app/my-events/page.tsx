@@ -133,8 +133,6 @@ export default function ApplicationHostProfile() {
             <EventCardHost 
               key={event.id} 
               event={event}
-              rank={rankedEvents.findIndex(e => e.id === event.id) + 1}
-              showRank={!!user && !!vendorProfile}
             />
           ))}
         </div>
@@ -154,16 +152,6 @@ export default function ApplicationHostProfile() {
           ))}
         </div>
 
-        <h2>Ranked Events</h2>
-        <ul>
-          {rankedEvents && rankedEvents.length > 0 ? (
-            rankedEvents.map(event => (
-              <li key={event.id}>{event.name}</li>
-            ))
-          ) : (
-            <p>No ranked events found.</p>
-          )}
-        </ul>
       </main>
           
   );
