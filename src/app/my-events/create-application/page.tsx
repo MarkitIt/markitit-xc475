@@ -22,6 +22,58 @@ const CreateApplicationProfile = () => {
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
+  const attendeeTypes = [
+    'Families',
+    'College Students',
+    'Professionals',
+    'High-End Buyers',
+    'Tourists',
+    'Local Shoppers',
+    'Trendsetters & Influencers',
+    'Eco-Conscious Consumers',
+    'Collectors & Hobbyists',
+    'DIY & Handmade Enthusiasts',
+    'Luxury Shoppers',
+    'Tech Enthusiasts',
+    'Foodies & Culinary Enthusiasts'
+  ];
+  
+  const categories = [
+    'Farmers Markets',
+    'Art Fairs',
+    'Festivals',
+    'Small Pop-Ups',
+    'Luxury Pop-Ups',
+    'Craft & Handmade Markets',
+    'Holiday & Seasonal Markets',
+    'Food & Beverage Festivals',
+    'Night Markets',
+    'Vintage & Thrift Markets',
+    'Health & Wellness Events',
+    'Cultural & Heritage Festivals',
+    'Music & Entertainment Events',
+    'Outdoor Adventure & Sporting Events',
+    'Tech & Innovation Expos'
+  ];
+  
+  const demographics = [
+    'Black',
+    'Women',
+    'LGBT',
+    'Young Adults',
+    'Seniors',
+    'Parents',
+    'Hispanic/Latino',
+    'Asian-American',
+    'Indigenous Communities',
+    'Immigrant Communities',
+    'Entrepreneurs & Small Business Owners',
+    'Pet Owners',
+    'Health & Wellness Enthusiasts',
+    'Sustainable & Zero-Waste Shoppers',
+    'Luxury & High-End Consumers'
+  ];
+
   const [customQuestions, setCustomQuestions] = useState<
     { title: string; description: string; isRequired: boolean }[]
   >([]);
@@ -98,11 +150,26 @@ const CreateApplicationProfile = () => {
         try {
           // Collect form data
           const name = (document.getElementById("event-name") as HTMLInputElement).value;
-          const date = (document.getElementById("event-date") as HTMLInputElement).value;
-          const applicationDeadline = (document.getElementById("application-deadline") as HTMLInputElement).value;
-          const boothCost = parseFloat((document.getElementById("booth-cost") as HTMLInputElement).value);
+          const startDate = (document.getElementById("start-date") as HTMLInputElement).value;
+          const endDate = (document.getElementById("end-date") as HTMLInputElement).value;
+          const totalCost = parseFloat((document.getElementById("booth-cost") as HTMLInputElement).value);
           const location = handlePlaceChanged() || { city: "", state: "" };
-          
+          const image = (document.getElementById("image") as HTMLInputElement).value;
+          const type = (document.getElementById("type") as HTMLInputElement).value;
+          const vendorFee = parseFloat((document.getElementById("vendorFee") as HTMLInputElement).value);
+          const attendeeType = Array.from(
+            (document.getElementById("attendeeTypes") as HTMLSelectElement).selectedOptions
+          ).map((option) => option.value);
+          const headcount = parseInt((document.getElementById("headcount") as HTMLInputElement).value, 10);
+          const demographics = Array.from(
+            (document.getElementById("demographics") as HTMLSelectElement).selectedOptions
+          ).map((option) => option.value);
+          const description = (document.getElementById("description") as HTMLTextAreaElement).value;
+          const categories = Array.from(
+            (document.getElementById("categories") as HTMLSelectElement).selectedOptions
+          ).map((option) => option.value);
+
+          // Validate required fields
           if (!location.city || !location.state) {
             alert("Please select a valid location.");
             return;
@@ -113,10 +180,18 @@ const CreateApplicationProfile = () => {
           const eventData = {
             uid: user.uid,
             name,
-            date,
-            applicationDeadline,
-            boothCost,
+            image,
+            startDate,
+            endDate,
+            totalCost,
             location,
+            type,
+            vendorFee,
+            attendeeType,
+            headcount,
+            demographics,
+            description,
+            categories,
             // selectedFields, // Fields selected by the user
             customQuestions, // Custom questions added by the user
             createdAt: new Date().toISOString(),
@@ -224,14 +299,14 @@ const CreateApplicationProfile = () => {
                 <div>
                   <label
                     className='block text-xl mb-3 text-center text-black font-semibold'
-                    htmlFor='event-date'
+                    htmlFor='start-date'
                   >
-                    Event Date
+                    Start Date
                   </label>
                   <input
                     type='date'
-                    id='event-date'
-                    name='event-date'
+                    id='start-date'
+                    name='start-date'
                     className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black'
                     required
                   />
@@ -239,21 +314,21 @@ const CreateApplicationProfile = () => {
                 <div>
                   <label
                     className='block text-xl mb-3 text-center text-black font-semibold'
-                    htmlFor='application-deadline'
+                    htmlFor='end-date'
                   >
-                    Application Deadline
+                    End Date
                   </label>
                   <input
                     type='date'
-                    id='application-deadline'
-                    name='application-deadline'
+                    id='end-date'
+                    name='end-date'
                     className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black'
                     required
                   />
                 </div>
               </div>
   
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
                 <div>
                   <label
                     className='block text-xl mb-3 text-center text-black font-semibold'
@@ -272,6 +347,7 @@ const CreateApplicationProfile = () => {
                     required
                   />
                 </div>
+
                 <div>
                   <label
                     className='block text-xl mb-3 text-center text-black font-semibold'
@@ -294,6 +370,171 @@ const CreateApplicationProfile = () => {
                     </Autocomplete>
                 </div>
                 
+              </div>
+            </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+              {/* Image */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="image"
+                >
+                  Event Image URL
+                </label>
+                <input
+                  type="text"
+                  id="image"
+                  name="image"
+                  placeholder="Enter the image URL"
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                />
+              </div>
+
+              {/* Type */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="type"
+                >
+                  Event Type
+                </label>
+                <input
+                  type="text"
+                  id="type"
+                  name="type"
+                  placeholder="Enter the event type"
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                />
+              </div>
+            </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+              {/* Vendor Fee */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="vendorFee"
+                >
+                  Vendor Fee ($)
+                </label>
+                <input
+                  type="number"
+                  id="vendorFee"
+                  name="vendorFee"
+                  placeholder="Enter the vendor fee"
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+
+              {/* Attendee Type */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="attendeeType"
+                >
+                  Attendee Type
+                </label>
+                <select
+                  id="attendeeType"
+                  name="attendeeType"
+                  multiple // Allows multi-select
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                >
+                  {attendeeTypes.map((demo, index) => (
+                    <option key={index} value={demo}>
+                      {demo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+              {/* Headcount */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="headcount"
+                >
+                  Expected Headcount
+                </label>
+                <input
+                  type="number"
+                  id="headcount"
+                  name="headcount"
+                  placeholder="Enter the expected headcount"
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                  min="0"
+                />
+              </div>
+
+              {/* Demographics */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="demographics"
+                >
+                  Demographics
+                </label>
+                <select
+                  id="demographics"
+                  name="demographics"
+                  multiple // Allows multi-select
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
+                >
+                  {demographics.map((demo, index) => (
+                    <option key={index} value={demo}>
+                      {demo}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-sm text-gray-500 mt-2">
+                  Hold down the Ctrl (Windows) or Command (Mac) key to select multiple options.
+                </p>
+              </div>
+            </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+              {/* Description */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="description"
+                >
+                  Event Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Enter the event description"
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                  rows={4}
+                ></textarea>
+              </div>
+
+              {/* Categories */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="categories"
+                >
+                  Event Categories
+                </label>
+                <select
+                  id="categories"
+                  name="categories"
+                  multiple // Allows multi-select
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                >
+                  {categories.map((demo, index) => (
+                    <option key={index} value={demo}>
+                      {demo}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
   
