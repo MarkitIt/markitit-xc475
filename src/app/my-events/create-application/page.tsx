@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { useApplicationProfileContext } from "../../../context/CreateEventProfileContext";
 import { auth, db } from "../../../lib/firebase";
 import CustomQuestionField from '../../../components/CustomQuestionField';
+import { getStorage, ref,uploadBytes, getDownloadURL } from "firebase/storage";
 import { FiPlus } from 'react-icons/fi';
 import "../../tailwind.css";
 
@@ -38,7 +39,42 @@ const CreateApplicationProfile = () => {
     'Foodies & Culinary Enthusiasts'
   ];
   
-  const categories = [
+  const categories = [  
+    "Latin American (Mexican, Caribbean, Peruvian, Brazilian)",  
+    "Fusion (Latin-Asian, Tex-Mex, Mediterranean-Latin)",  
+    "Street Food & Casual Bites",  
+    "Fine Dining & Gourmet",  
+    "Plant-Based & Vegan Cuisine",  
+    "Pop-Up Experiences",  
+    "Themed Pop-Up Dinners",  
+    "Chef Collaborations",  
+    "Seasonal/Flash Pop-Ups",  
+    "Food Trucks & Mobile Kitchens",  
+    "Tasting Menus & Chef’s Table",  
+    "Brunch/Lunch vs. Dinner Events",  
+    "Latin American Heritage (Dia de los Muertos, Carnaval-themed)",  
+    "Regional Specialties (Oaxacan, Andean, Coastal Caribbean)",  
+    "Immersive Cultural Experiences (Live Music, Dance, Art)",  
+    "Gluten-Free & Allergy-Friendly",  
+    "Vegetarian & Vegan Options",  
+    "Low-Carb/Keto-Friendly",  
+    "Family-Style Sharing Plates",  
+    "Tapas/Small Plates",  
+    "Interactive Cooking Stations",  
+    "Grab-and-Go (Food Markets, Festivals)",  
+    "Farm-to-Table/Locally Sourced",  
+    "Zero-Waste Initiatives",  
+    "Ethical Sourcing (Fair Trade, Organic)",  
+    "Holiday Menus (Cinco de Mayo, Christmas Tamales)",  
+    "Summer BBQ/Tropical Themes",  
+    "Winter Comfort Food",  
+    "Latin Cocktails (Margaritas, Pisco Sours)",  
+    "Craft Beer/Wine Pairings",  
+    "Non-Alcoholic (Aguas Frescas, Coffee Blends)"  
+  ];  
+
+
+  const eventTypes = [
     'Farmers Markets',
     'Art Fairs',
     'Festivals',
@@ -153,12 +189,14 @@ const CreateApplicationProfile = () => {
           const startDate = (document.getElementById("start-date") as HTMLInputElement).value;
           const endDate = (document.getElementById("end-date") as HTMLInputElement).value;
           const totalCost = parseFloat((document.getElementById("booth-cost") as HTMLInputElement).value);
+          const imageFile = (document.getElementById("image") as HTMLInputElement).files?.[0]; // Get the uploaded file
           const location = handlePlaceChanged() || { city: "", state: "" };
-          const image = (document.getElementById("image") as HTMLInputElement).value;
-          const type = (document.getElementById("type") as HTMLInputElement).value;
+          const type = Array.from(
+            (document.getElementById("type") as HTMLSelectElement).selectedOptions
+          ).map((option) => option.value);
           const vendorFee = parseFloat((document.getElementById("vendorFee") as HTMLInputElement).value);
           const attendeeType = Array.from(
-            (document.getElementById("attendeeTypes") as HTMLSelectElement).selectedOptions
+            (document.getElementById("attendeeType") as HTMLSelectElement).selectedOptions
           ).map((option) => option.value);
           const headcount = parseInt((document.getElementById("headcount") as HTMLInputElement).value, 10);
           const demographics = Array.from(
@@ -174,13 +212,25 @@ const CreateApplicationProfile = () => {
             alert("Please select a valid location.");
             return;
           }
+
+          // Upload the image to Firebase Storage (optional)
+          let imageUrl = "";
+          if (imageFile) {
+            const storage = getStorage(); // Initialize Firebase Storage
+            const storageRef = ref(storage); // Use the ref function from Firebase Storage
+            const fileRef = ref(storage, `event-images/${imageFile.name}`); // Create a reference to the file in Firebase Storage
+            // Upload the file to Firebase Storage
+            await uploadBytes(fileRef, imageFile);
+            imageUrl = await getDownloadURL(fileRef);
+          }
+
           
           console.log("Custom question",customQuestions);
           // Prepare the event data
           const eventData = {
             uid: user.uid,
             name,
-            image,
+            image:imageUrl, // Use the uploaded image URL
             startDate,
             endDate,
             totalCost,
@@ -329,22 +379,21 @@ const CreateApplicationProfile = () => {
               </div>
   
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
-                <div>
+                {/* Headcount */}
+                <div className="mb-6">
                   <label
-                    className='block text-xl mb-3 text-center text-black font-semibold'
-                    htmlFor='booth-cost'
+                    className="block text-xl mb-3 text-center text-black font-semibold"
+                    htmlFor="headcount"
                   >
-                    Booth Cost ($)
+                    Expected Headcount
                   </label>
                   <input
-                    type='number'
-                    id='booth-cost'
-                    name='booth-cost'
-                    placeholder='0.00'
-                    className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black'
-                    min='0'
-                    step='0.01'
-                    required
+                    type="number"
+                    id="headcount"
+                    name="headcount"
+                    placeholder="Enter the expected headcount"
+                    className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                    min="0"
                   />
                 </div>
 
@@ -374,42 +423,6 @@ const CreateApplicationProfile = () => {
             </div>
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
-              {/* Image */}
-              <div className="mb-6">
-                <label
-                  className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="image"
-                >
-                  Event Image URL
-                </label>
-                <input
-                  type="text"
-                  id="image"
-                  name="image"
-                  placeholder="Enter the image URL"
-                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
-                />
-              </div>
-
-              {/* Type */}
-              <div className="mb-6">
-                <label
-                  className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="type"
-                >
-                  Event Type
-                </label>
-                <input
-                  type="text"
-                  id="type"
-                  name="type"
-                  placeholder="Enter the event type"
-                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
-                />
-              </div>
-            </div>
-
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
               {/* Vendor Fee */}
               <div className="mb-6">
                 <label
@@ -429,92 +442,50 @@ const CreateApplicationProfile = () => {
                 />
               </div>
 
-              {/* Attendee Type */}
+              <div>
+                  <label
+                    className='block text-xl mb-3 text-center text-black font-semibold'
+                    htmlFor='booth-cost'
+                  >
+                    Total Cost ($)
+                  </label>
+                  <input
+                    type='number'
+                    id='booth-cost'
+                    name='booth-cost'
+                    placeholder='0.00'
+                    className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black'
+                    min='0'
+                    step='0.01'
+                    required
+                  />
+                </div>
+            </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+              {/* Type */}
               <div className="mb-6">
                 <label
                   className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="attendeeType"
+                  htmlFor="type"
                 >
-                  Attendee Type
+                  Event Type
                 </label>
                 <select
-                  id="attendeeType"
-                  name="attendeeType"
+                  id="type"
+                  name="type"
                   multiple // Allows multi-select
                   className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
                 >
-                  {attendeeTypes.map((demo, index) => (
+                  {eventTypes.map((demo, index) => (
                     <option key={index} value={demo}>
                       {demo}
                     </option>
                   ))}
                 </select>
               </div>
-            </div>
 
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
-              {/* Headcount */}
-              <div className="mb-6">
-                <label
-                  className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="headcount"
-                >
-                  Expected Headcount
-                </label>
-                <input
-                  type="number"
-                  id="headcount"
-                  name="headcount"
-                  placeholder="Enter the expected headcount"
-                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
-                  min="0"
-                />
-              </div>
-
-              {/* Demographics */}
-              <div className="mb-6">
-                <label
-                  className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="demographics"
-                >
-                  Demographics
-                </label>
-                <select
-                  id="demographics"
-                  name="demographics"
-                  multiple // Allows multi-select
-                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
-                >
-                  {demographics.map((demo, index) => (
-                    <option key={index} value={demo}>
-                      {demo}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-sm text-gray-500 mt-2">
-                  Hold down the Ctrl (Windows) or Command (Mac) key to select multiple options.
-                </p>
-              </div>
-            </div>
-
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
-              {/* Description */}
-              <div className="mb-6">
-                <label
-                  className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="description"
-                >
-                  Event Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  placeholder="Enter the event description"
-                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
-                  rows={4}
-                ></textarea>
-              </div>
-
+              
               {/* Categories */}
               <div className="mb-6">
                 <label
@@ -537,6 +508,88 @@ const CreateApplicationProfile = () => {
                 </select>
               </div>
             </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+              {/* Attendee Type */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="attendeeType"
+                >
+                  Attendee Type
+                </label>
+                <select
+                  id="attendeeType"
+                  name="attendeeType"
+                  multiple // Allows multi-select
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                >
+                  {attendeeTypes.map((demo, index) => (
+                    <option key={index} value={demo}>
+                      {demo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Demographics */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="demographics"
+                >
+                  Demographics
+                </label>
+                <select
+                  id="demographics"
+                  name="demographics"
+                  multiple // Allows multi-select
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
+                >
+                  {demographics.map((demo, index) => (
+                    <option key={index} value={demo}>
+                      {demo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              
+            </div>
+
+            {/* Image */}
+            <div className="mb-6">
+              <label
+                className="block text-xl mb-3 text-center text-black font-semibold"
+                htmlFor="image"
+              >
+                Event Image URL
+              </label>
+              <input
+                type="file"
+                id="image"
+                name="image"
+                accept="image/*" // Restrict to image files only
+                className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
+              />
+            </div>
+
+            {/* Description */}
+            <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="description"
+                >
+                  Event Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Enter the event description"
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                  rows={4}
+                ></textarea>
+              </div>
   
             <div className='mb-10'>
               {/*<h2 className='text-2xl font-semibold mb-6 text-black text-center'>
