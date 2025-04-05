@@ -37,10 +37,6 @@ SEARCH_KEYWORDS = [
 ]
 
 # how eventbrite does url locations
-# EVENTBRITE_LOCATIONS = [
-#     {"city": "New York", "state": "NY", "url_path": "ny--new-york"},
-#     {"city": "Boston", "state": "MA", "url_path": "ma--boston"},
-# ]
 
 EVENTBRITE_LOCATIONS = ["ny--new-york", "ma--boston"]
 
@@ -69,17 +65,6 @@ def scrape_eventeny():
             print(f"eventeny keyword res {keyword}: ", response)
 
             soup = BeautifulSoup(response.content, "html.parser")
-
-            # pre queried search
-            # did not do location because of limited result
-            # response = requests.get(
-            #     "https://www.eventeny.com/events/?l=&q=pop+up&m=",
-            #     headers=headers,
-            #     timeout=13,
-            # )
-            # print("eventeny response: ", response)
-
-            # soup = BeautifulSoup(response.content, "html.parser")
 
             event_main_container = soup.find(
                 "div", {"data-content": "events-list-container"}
@@ -596,14 +581,6 @@ def scrape_zapp():
                             )
                             description_sections.append(event_info_section.text.strip())
                         except:
-                            # another place inside link for description (alt)
-                            # try:
-                            #     event_info_section = driver.find_element(
-                            #         By.CSS_SELECTOR, "div.my-4 div"
-                            #     )
-                            #     description = event_info_section.text.strip()
-                            # except:
-                            #     print(f"Couldn't find description for: {basic_info['name']}")
                             print(
                                 f"Couldn't find event info section for: {basic_info['name']}"
                             )
@@ -780,22 +757,6 @@ def scrape_zapp():
 
             except Exception as e:
                 print(f"Error processing keyword '{keyword}': {e}")
-
-        # for keyword in SEARCH_KEYWORDS:
-        #     basic_event_info = []
-        # try:
-        #     search_box = driver.find_element(By.ID, "keywords")
-        #     search_box.clear()
-        #     search_box.send_keys(keyword)
-        #     search_box.send_keys(Keys.RETURN)
-        #     time.sleep(3)
-        #     print("Scraping Zapp")
-
-        #     event_cards = driver.find_elements(
-        #         By.CSS_SELECTOR, "div[data-v-6ccc3a2c].card.mb-3"
-        #     )
-        # except Exception as e:
-        #     print(f"Error in keyword search: {e}")
 
         driver.quit()
         return events
