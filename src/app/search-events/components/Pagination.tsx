@@ -14,28 +14,6 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Pagination
     gap: theme.spacing.sm,
     marginTop: theme.spacing.xxl
   }}>
-    {/* {Array.from({ length: totalPages }).map((_, index) => (
-      <button
-        key={index}
-        onClick={() => onPageChange(index + 1)}
-        style={{
-          padding: `${theme.spacing.sm} ${theme.spacing.md}`,
-          borderRadius: theme.borderRadius.md,
-          border: 'none',
-          cursor: 'pointer',
-          fontFamily: theme.typography.fontFamily.primary,
-          fontWeight: theme.typography.fontWeight.medium,
-          backgroundColor: currentPage === index + 1 
-            ? theme.colors.primary.sand 
-            : theme.colors.background.white,
-          color: currentPage === index + 1 
-            ? theme.colors.primary.black 
-            : theme.colors.text.primary,
-          transition: 'all 0.2s ease',
-        }}
-      >
-        {index + 1}
-      </button> */}
       {(() => {
       const range: number[] = [];
       const maxVisible = 5;
@@ -50,7 +28,7 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Pagination
 
       const items = [];
 
-      // First page + ellipsis
+      // First page and ellipsis if needed
       if (start > 1) {
         items.push(
           <button
@@ -76,13 +54,16 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Pagination
           </button>
         );
         if (start > 2) {
-          items.push(<span key="start-ellipsis" style={{ color: theme.colors.primary.black }}>
+          items.push(<span key="start-ellipsis" style={{
+            color: theme.colors.primary.black,
+            fontWeight: theme.typography.fontWeight.bold,
+            alignSelf: 'center',
+            lineHeight: 1.5
+          }}>
             ...
           </span>);
         }
       }
-
-      // Main range
       range.forEach((page) => {
         items.push(
           <button
@@ -109,10 +90,15 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Pagination
         );
       });
 
-      // Ellipsis + last page
+      // Last page and ellipsis if needed
       if (end < totalPages) {
         if (end < totalPages - 1) {
-          items.push(<span key="end-ellipsis" style={{ color: theme.colors.primary.black }}>
+          items.push(<span key="end-ellipsis" style={{
+            color: theme.colors.primary.black,
+            fontWeight: theme.typography.fontWeight.bold,
+            alignSelf: 'center',
+            lineHeight: 1.5
+          }}>
             ...
           </span>);
         }
