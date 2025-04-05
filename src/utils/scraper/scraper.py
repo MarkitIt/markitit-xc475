@@ -776,10 +776,10 @@ if __name__ == "__main__":
     all_events = []
 
     # Get and append events from sources
-    # eventeny_events = scrape_eventeny()
-    # all_events.extend(eventeny_events)
-    # eventbrite_events = scrape_eventbrite()
-    # all_events.extend(eventbrite_events)
+    eventeny_events = scrape_eventeny()
+    all_events.extend(eventeny_events)
+    eventbrite_events = scrape_eventbrite()
+    all_events.extend(eventbrite_events)
     zapp_events = scrape_zapp()
     all_events.extend(zapp_events)
 
