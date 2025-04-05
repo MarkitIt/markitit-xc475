@@ -37,10 +37,12 @@ SEARCH_KEYWORDS = [
 ]
 
 # how eventbrite does url locations
-EVENTBRITE_LOCATIONS = [
-    {"city": "New York", "state": "NY", "url_path": "ny--new-york"},
-    {"city": "Boston", "state": "MA", "url_path": "ma--boston"},
-]
+# EVENTBRITE_LOCATIONS = [
+#     {"city": "New York", "state": "NY", "url_path": "ny--new-york"},
+#     {"city": "Boston", "state": "MA", "url_path": "ma--boston"},
+# ]
+
+EVENTBRITE_LOCATIONS = ["ny--new-york", "ma--boston"]
 
 
 def scrape_eventeny():
@@ -229,12 +231,14 @@ def scrape_eventbrite():
     try:
         print("Scraping Eventbrite")
 
-        for location in EVENTBRITE_LOCATIONS:
+        for location_path in EVENTBRITE_LOCATIONS:
             for keyword in SEARCH_KEYWORDS:
                 url_keyword = keyword.replace(" ", "-")
-                for page in range(1, 10):
+                print(f"eventbrite keyword and location: {keyword} {location_path}")
+
+                for page in range(1, 13):
                     response = requests.get(
-                        f"https://www.eventbrite.com/d/{location['url_path']}/{url_keyword}/?page={page}",
+                        f"https://www.eventbrite.com/d/{location_path}/{url_keyword}/?page={page}",
                         headers=headers,
                         timeout=13,
                     )
@@ -288,7 +292,12 @@ def scrape_eventbrite():
                                     "state": state.strip(),
                                 }
                             else:
-                                location = {"city": "New York", "state": "NY"}
+                                if "ny--new-york" in location_path:
+                                    location = {"city": "New York", "state": "NY"}
+                                elif "ma--boston" in location_path:
+                                    location = {"city": "Boston", "state": "MA"}
+                                else:
+                                    location = {"city": "", "state": ""}
 
                             date_elem = card.find(
                                 "p",
@@ -478,302 +487,315 @@ def scrape_zapp():
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
 
-        driver.get("https://www.zapplication.org/participating-events.php")
-        time.sleep(3)
-
         for keyword in SEARCH_KEYWORDS:
-            search_box = driver.find_element(By.ID, "keywords")
-            search_box.clear()
-            search_box.send_keys(keyword)
-            search_box.send_keys(Keys.RETURN)
-            time.sleep(3)
-            print("Scraping Zapp")
+            basic_event_info = []
 
-            # setup chrome for selenium
-            # May need to download chromedriver if u dont have
-            options = Options()
-            options.add_argument("--headless")
-            driver = webdriver.Chrome(options=options)
+            try:
+                driver.get("https://www.zapplication.org/participating-events.php")
+                time.sleep(5)
 
-            driver.get("https://www.zapplication.org/participating-events.php")
-            time.sleep(3)
+                print(f"Searching Zapp for keyword: {keyword}")
+                search_box = driver.find_element(By.ID, "keywords")
+                search_box.clear()
+                search_box.send_keys(keyword)
+                search_box.send_keys(Keys.RETURN)
+                time.sleep(5)
 
-            # search pop up
-            search_box = driver.find_element(By.ID, "keywords")
-            search_box.clear()
-            search_box.send_keys("pop up")
-            search_box.send_keys(Keys.RETURN)
-            time.sleep(3)
+                event_cards = driver.find_elements(
+                    By.CSS_SELECTOR, "div[data-v-6ccc3a2c].card.mb-3"
+                )
 
-            event_cards = driver.find_elements(
-                By.CSS_SELECTOR, "div[data-v-6ccc3a2c].card.mb-3"
-            )
-
-            for card in event_cards:
-                try:
-                    name_element = card.find_element(
-                        By.CSS_SELECTOR, "a.font-weight-bold.text"
-                    )
-                    name = name_element.text.strip()
-
-                    event_link = name_element.get_attribute("href")
-                    event_id = (
-                        event_link.split("ID=")[1] if "ID=" in event_link else None
-                    )
-
-                    if not event_id:
-                        print(f"no ID for: {name}, skipped")
-                        continue
-
+                for card in event_cards:
                     try:
-                        date_div = card.find_element(
-                            By.XPATH, ".//div[contains(., 'Event Dates:')]"
+                        name_element = card.find_element(
+                            By.CSS_SELECTOR, "a.font-weight-bold.text"
                         )
-                        date = date_div.find_element(
-                            By.CSS_SELECTOR, "span.font-weight-bold"
-                        ).text.strip()
-                    except Exception as e:
-                        print(f"Error getting date for {name}: {e}")
-                        date = ""
+                        name = name_element.text.strip()
 
-                    try:
-                        location_column = card.find_element(
-                            By.CSS_SELECTOR, ".col-md.text-left.text-md-right.pr-2"
-                        )
-                        location_text = location_column.find_elements(
-                            By.TAG_NAME, "div"
-                        )[0].text.strip()
-
-                        if "," in location_text:
-                            city, state = location_text.split(",")
-                            location = {"city": city.strip(), "state": state.strip()}
-                        else:
-                            location = {"city": location_text, "state": ""}
-                    except Exception as e:
-                        print(f"Error getting location for {name}: {e}")
-                        location = {"city": "", "state": ""}
-
-                    # get app fee
-                    try:
-                        fee_div = card.find_element(
-                            By.XPATH, ".//div[contains(., 'Fee')]"
-                        )
-                        fee = fee_div.find_element(
-                            By.CSS_SELECTOR, "span.font-weight-bold"
-                        ).text.strip()
-                    except Exception as e:
-                        print(f"Error getting fee for {name}: {e}")
-                        fee = ""
-
-                    # basic info from outside cards
-                    basic_event_info.append(
-                        {
-                            "name": name,
-                            "date": date,
-                            "location": location,
-                            "id": event_id,
-                            # "url": event_link,
-                            # "fee": fee,
-                        }
-                    )
-                except Exception as e:
-                    print(f"Error in first pass for event card: {e}")
-
-            # second loop go into link for description and more info
-            # have a lot of info like process, fee breakdown ect if needed
-            for basic_info in basic_event_info:
-                try:
-                    event_id = basic_info["id"]
-                    driver.get(
-                        f"https://www.zapplication.org/event-info.php?ID={event_id}"
-                    )
-                    time.sleep(2)
-
-                    description_sections = []
-                    try:
-                        event_info_section = driver.find_element(
-                            By.XPATH, "//h2[@id='event-info']/following-sibling::div[1]"
-                        )
-                        description_sections.append(event_info_section.text.strip())
-                    except:
-                        # another place inside link for description (alt)
-                        # try:
-                        #     event_info_section = driver.find_element(
-                        #         By.CSS_SELECTOR, "div.my-4 div"
-                        #     )
-                        #     description = event_info_section.text.strip()
-                        # except:
-                        #     print(f"Couldn't find description for: {basic_info['name']}")
-                        print(
-                            f"Couldn't find event info section for: {basic_info['name']}"
+                        event_link = name_element.get_attribute("href")
+                        event_id = (
+                            event_link.split("ID=")[1] if "ID=" in event_link else None
                         )
 
-                    try:
-                        general_info_section = driver.find_element(
-                            By.XPATH,
-                            "//h2[contains(text(), 'GENERAL INFORMATION')]/following-sibling::div[1]",
-                        )
-                        description_sections.append(general_info_section.text.strip())
-                    except:
-                        pass
+                        if not event_id:
+                            print(f"no ID for: {name}, skipped")
+                            continue
 
-                    try:
-                        booth_info_section = driver.find_element(
-                            By.XPATH,
-                            "//h2[contains(text(), 'BOOTH INFORMATION')]/following-sibling::div[1]",
-                        )
-                        description_sections.append(booth_info_section.text.strip())
-                    except:
-                        pass
-
-                    try:
-                        rules_section = driver.find_element(
-                            By.XPATH,
-                            "//h2[contains(text(), 'RULES/REGULATIONS')]/following-sibling::div[1]",
-                        )
-                        description_sections.append(rules_section.text.strip())
-                    except:
-                        pass
-
-                    # combine all, cuz zapp split them into different div
-                    description = "\n\n".join(description_sections)
-
-                    # use old method
-                    if not description:
                         try:
-                            all_div_elements = driver.find_elements(
-                                By.CSS_SELECTOR, "div.my-4 div"
+                            date_div = card.find_element(
+                                By.XPATH, ".//div[contains(., 'Event Dates:')]"
                             )
-                            description = "\n\n".join(
-                                [
-                                    div.text.strip()
-                                    for div in all_div_elements
-                                    if div.text.strip()
-                                ]
+                            date = date_div.find_element(
+                                By.CSS_SELECTOR, "span.font-weight-bold"
+                            ).text.strip()
+                        except Exception as e:
+                            print(f"Error getting date for {name}: {e}")
+                            date = ""
+
+                        try:
+                            location_column = card.find_element(
+                                By.CSS_SELECTOR, ".col-md.text-left.text-md-right.pr-2"
+                            )
+                            location_text = location_column.find_elements(
+                                By.TAG_NAME, "div"
+                            )[0].text.strip()
+
+                            if "," in location_text:
+                                city, state = location_text.split(",")
+                                location = {
+                                    "city": city.strip(),
+                                    "state": state.strip(),
+                                }
+                            else:
+                                location = {"city": location_text, "state": ""}
+                        except Exception as e:
+                            print(f"Error getting location for {name}: {e}")
+                            location = {"city": "", "state": ""}
+
+                        # get app fee
+                        try:
+                            fee_div = card.find_element(
+                                By.XPATH, ".//div[contains(., 'Fee')]"
+                            )
+                            fee = fee_div.find_element(
+                                By.CSS_SELECTOR, "span.font-weight-bold"
+                            ).text.strip()
+                        except Exception as e:
+                            print(f"Error getting fee for {name}: {e}")
+                            fee = ""
+
+                        # basic info from outside cards
+                        basic_event_info.append(
+                            {
+                                "name": name,
+                                "date": date,
+                                "location": location,
+                                "id": event_id,
+                                # "url": event_link,
+                                # "fee": fee,
+                            }
+                        )
+                    except Exception as e:
+                        print(f"Error in first pass for event card: {e}")
+
+                # second loop go into link for description and more info
+                # have a lot of info like process, fee breakdown ect if needed
+                for basic_info in basic_event_info:
+                    try:
+                        event_id = basic_info["id"]
+                        driver.get(
+                            f"https://www.zapplication.org/event-info.php?ID={event_id}"
+                        )
+                        time.sleep(2)
+
+                        description_sections = []
+                        try:
+                            event_info_section = driver.find_element(
+                                By.XPATH,
+                                "//h2[@id='event-info']/following-sibling::div[1]",
+                            )
+                            description_sections.append(event_info_section.text.strip())
+                        except:
+                            # another place inside link for description (alt)
+                            # try:
+                            #     event_info_section = driver.find_element(
+                            #         By.CSS_SELECTOR, "div.my-4 div"
+                            #     )
+                            #     description = event_info_section.text.strip()
+                            # except:
+                            #     print(f"Couldn't find description for: {basic_info['name']}")
+                            print(
+                                f"Couldn't find event info section for: {basic_info['name']}"
+                            )
+
+                        try:
+                            general_info_section = driver.find_element(
+                                By.XPATH,
+                                "//h2[contains(text(), 'GENERAL INFORMATION')]/following-sibling::div[1]",
+                            )
+                            description_sections.append(
+                                general_info_section.text.strip()
                             )
                         except:
-                            print(
-                                f"Couldn't find any description for: {basic_info['name']}"
+                            pass
+
+                        try:
+                            booth_info_section = driver.find_element(
+                                By.XPATH,
+                                "//h2[contains(text(), 'BOOTH INFORMATION')]/following-sibling::div[1]",
                             )
-                            description = ""
+                            description_sections.append(booth_info_section.text.strip())
+                        except:
+                            pass
 
-                    # price = ""
-                    # try:
-                    #     fee_section = driver.find_element(
-                    #         By.XPATH,
-                    #         "//span[contains(., 'Fee:')]/following-sibling::text()[1]",
-                    #     )
-                    #     price = fee_section.strip()
-                    # except:
-                    #     try:
-                    #         fee_section = driver.find_element(
-                    #             By.XPATH,
-                    #             "//span[contains(@class, 'font-weight-bold')][contains(., 'Fee:')]",
-                    #         )
-                    #         price = fee_section.find_element(
-                    #             By.XPATH, "following-sibling::text()[1]"
-                    #         ).strip()
-                    #     except:
-                    #         try:
-                    #             fee_section = driver.find_element(
-                    #                 By.CSS_SELECTOR,
-                    #                 ".col-md-4 span.font-weight-bold:contains('Fee:')",
-                    #             )
-                    #             price = fee_section.parent.text.replace("Fee:", "").strip()
-                    #         except:
-                    #             print(f"Couldn't find fee for: {basic_info['name']}")
+                        try:
+                            rules_section = driver.find_element(
+                                By.XPATH,
+                                "//h2[contains(text(), 'RULES/REGULATIONS')]/following-sibling::div[1]",
+                            )
+                            description_sections.append(rules_section.text.strip())
+                        except:
+                            pass
 
-                    # price = basic_info.get("fee", "")
-                    # if not price:
-                    #     try:
-                    #         fee_elements = driver.find_elements(
-                    #             By.XPATH,
-                    #             "//*[contains(text(), 'Fee:') or contains(text(), 'fee')]",
-                    #         )
-                    #         for fee_elem in fee_elements:
-                    #             fee_text = fee_elem.text
-                    #             if "Fee:" in fee_text and len(fee_text) < 100:
-                    #                 price = fee_text.replace("Fee:", "").strip()
-                    #                 break
-                    #     except:
-                    #         print(f"Couldn't find fee for: {basic_info['name']}")
+                        # combine all, cuz zapp split them into different div
+                        description = "\n\n".join(description_sections)
 
-                    # full_address = ""
-                    # try:
-                    #     address_elements = driver.find_elements(
-                    #         By.XPATH, "//*[contains(text(), 'Where:')]"
-                    #     )
-                    #     for addr_elem in address_elements:
-                    #         addr_text = addr_elem.text
-                    #         if "Where:" in addr_text:
-                    #             full_address = addr_text.replace("Where:", "").strip()
-                    #             break
-                    # except:
-                    #     print(f"Couldn't find detailed address for: {basic_info['name']}")
+                        # use old method
+                        if not description:
+                            try:
+                                all_div_elements = driver.find_elements(
+                                    By.CSS_SELECTOR, "div.my-4 div"
+                                )
+                                description = "\n\n".join(
+                                    [
+                                        div.text.strip()
+                                        for div in all_div_elements
+                                        if div.text.strip()
+                                    ]
+                                )
+                            except:
+                                print(
+                                    f"Couldn't find any description for: {basic_info['name']}"
+                                )
+                                description = ""
 
-                    # detailed_date = basic_info["date"]
-                    # try:
-                    #     date_elements = driver.find_elements(
-                    #         By.XPATH, "//*[contains(text(), 'When:')]"
-                    #     )
-                    #     for date_elem in date_elements:
-                    #         date_text = date_elem.text
-                    #         if "When:" in date_text:
-                    #             detailed_date = date_text.replace("When:", "").strip()
-                    #             break
-                    # except:
-                    #     print(f"Couldn't find detailed date for: {basic_info['name']}")
+                        # price = ""
+                        # try:
+                        #     fee_section = driver.find_element(
+                        #         By.XPATH,
+                        #         "//span[contains(., 'Fee:')]/following-sibling::text()[1]",
+                        #     )
+                        #     price = fee_section.strip()
+                        # except:
+                        #     try:
+                        #         fee_section = driver.find_element(
+                        #             By.XPATH,
+                        #             "//span[contains(@class, 'font-weight-bold')][contains(., 'Fee:')]",
+                        #         )
+                        #         price = fee_section.find_element(
+                        #             By.XPATH, "following-sibling::text()[1]"
+                        #         ).strip()
+                        #     except:
+                        #         try:
+                        #             fee_section = driver.find_element(
+                        #                 By.CSS_SELECTOR,
+                        #                 ".col-md-4 span.font-weight-bold:contains('Fee:')",
+                        #             )
+                        #             price = fee_section.parent.text.replace("Fee:", "").strip()
+                        #         except:
+                        #             print(f"Couldn't find fee for: {basic_info['name']}")
 
-                    # host = ""
-                    # try:
-                    #     host_elements = driver.find_elements(
-                    #         By.XPATH,
-                    #         "//*[contains(text(), 'Hosted by') or contains(text(), 'Organizer')]",
-                    #     )
-                    #     for host_elem in host_elements:
-                    #         host_text = host_elem.text
-                    #         if "Hosted by" in host_text or "Organizer" in host_text:
-                    #             host = (
-                    #                 host_text.replace("Hosted by", "")
-                    #                 .replace("Organizer:", "")
-                    #                 .strip()
-                    #             )
-                    #             # Limit to reasonable length
-                    #             if len(host) > 50:
-                    #                 host = host[:50] + "..."
-                    #             break
-                    # except:
-                    #     print(f"Couldn't find host for: {basic_info['name']}")
+                        # price = basic_info.get("fee", "")
+                        # if not price:
+                        #     try:
+                        #         fee_elements = driver.find_elements(
+                        #             By.XPATH,
+                        #             "//*[contains(text(), 'Fee:') or contains(text(), 'fee')]",
+                        #         )
+                        #         for fee_elem in fee_elements:
+                        #             fee_text = fee_elem.text
+                        #             if "Fee:" in fee_text and len(fee_text) < 100:
+                        #                 price = fee_text.replace("Fee:", "").strip()
+                        #                 break
+                        #     except:
+                        #         print(f"Couldn't find fee for: {basic_info['name']}")
 
-                    event = {
-                        "name": basic_info["name"],
-                        "description": description,
-                        "location": basic_info["location"],
-                        # "full_address": full_address,
-                        # "vendor_id": "Zapplication",
-                        "type": ["pop up"],
-                        "date": basic_info["date"],
-                        # "detailed_date": detailed_date,
-                        # "price": price,
-                        # "host": host,
-                        "id": event_id,
-                        # "url": basic_info["url"],
-                        "image": "",  # Zapplication don't have images for events
-                        "vendorFee": None,
-                        "totalCost": None,
-                        "attendeeType": [],
-                        "headcount": None,
-                        "demographics": [],
-                        "startDate": {"seconds": 0, "nanoseconds": 0},
-                        "endDate": {"seconds": 0, "nanoseconds": 0},
-                        "score": None,
-                        "scoreBreakdown": None,
-                    }
+                        # full_address = ""
+                        # try:
+                        #     address_elements = driver.find_elements(
+                        #         By.XPATH, "//*[contains(text(), 'Where:')]"
+                        #     )
+                        #     for addr_elem in address_elements:
+                        #         addr_text = addr_elem.text
+                        #         if "Where:" in addr_text:
+                        #             full_address = addr_text.replace("Where:", "").strip()
+                        #             break
+                        # except:
+                        #     print(f"Couldn't find detailed address for: {basic_info['name']}")
 
-                    events.append(event)
+                        # detailed_date = basic_info["date"]
+                        # try:
+                        #     date_elements = driver.find_elements(
+                        #         By.XPATH, "//*[contains(text(), 'When:')]"
+                        #     )
+                        #     for date_elem in date_elements:
+                        #         date_text = date_elem.text
+                        #         if "When:" in date_text:
+                        #             detailed_date = date_text.replace("When:", "").strip()
+                        #             break
+                        # except:
+                        #     print(f"Couldn't find detailed date for: {basic_info['name']}")
 
-                except Exception as e:
-                    print(e)
+                        # host = ""
+                        # try:
+                        #     host_elements = driver.find_elements(
+                        #         By.XPATH,
+                        #         "//*[contains(text(), 'Hosted by') or contains(text(), 'Organizer')]",
+                        #     )
+                        #     for host_elem in host_elements:
+                        #         host_text = host_elem.text
+                        #         if "Hosted by" in host_text or "Organizer" in host_text:
+                        #             host = (
+                        #                 host_text.replace("Hosted by", "")
+                        #                 .replace("Organizer:", "")
+                        #                 .strip()
+                        #             )
+                        #             # Limit to reasonable length
+                        #             if len(host) > 50:
+                        #                 host = host[:50] + "..."
+                        #             break
+                        # except:
+                        #     print(f"Couldn't find host for: {basic_info['name']}")
+
+                        event = {
+                            "name": basic_info["name"],
+                            "description": description,
+                            "location": basic_info["location"],
+                            # "full_address": full_address,
+                            # "vendor_id": "Zapplication",
+                            "type": ["pop up"],
+                            "date": basic_info["date"],
+                            # "detailed_date": detailed_date,
+                            # "price": price,
+                            # "host": host,
+                            "id": event_id,
+                            # "url": basic_info["url"],
+                            "image": "",  # Zapplication don't have images for events
+                            "vendorFee": None,
+                            "totalCost": None,
+                            "attendeeType": [],
+                            "headcount": None,
+                            "demographics": [],
+                            "startDate": {"seconds": 0, "nanoseconds": 0},
+                            "endDate": {"seconds": 0, "nanoseconds": 0},
+                            "score": None,
+                            "scoreBreakdown": None,
+                        }
+
+                        events.append(event)
+
+                    except Exception as e:
+                        print(e)
+                        continue
+
+            except Exception as e:
+                print(f"Error processing keyword '{keyword}': {e}")
+
+        # for keyword in SEARCH_KEYWORDS:
+        #     basic_event_info = []
+        # try:
+        #     search_box = driver.find_element(By.ID, "keywords")
+        #     search_box.clear()
+        #     search_box.send_keys(keyword)
+        #     search_box.send_keys(Keys.RETURN)
+        #     time.sleep(3)
+        #     print("Scraping Zapp")
+
+        #     event_cards = driver.find_elements(
+        #         By.CSS_SELECTOR, "div[data-v-6ccc3a2c].card.mb-3"
+        #     )
+        # except Exception as e:
+        #     print(f"Error in keyword search: {e}")
 
         driver.quit()
         return events
@@ -793,10 +815,10 @@ if __name__ == "__main__":
     all_events = []
 
     # Get and append events from sources
-    eventeny_events = scrape_eventeny()
-    all_events.extend(eventeny_events)
-    eventbrite_events = scrape_eventbrite()
-    all_events.extend(eventbrite_events)
+    # eventeny_events = scrape_eventeny()
+    # all_events.extend(eventeny_events)
+    # eventbrite_events = scrape_eventbrite()
+    # all_events.extend(eventbrite_events)
     zapp_events = scrape_zapp()
     all_events.extend(zapp_events)
 
