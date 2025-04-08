@@ -102,6 +102,7 @@ export function EventCard({ event, rank, showRank, score }: EventProps) {
             </div>
           )}
         </div>
+
         <div style={{ padding: theme.spacing.lg }}>
           <h3 style={{
             fontWeight: theme.typography.fontWeight.semibold,
