@@ -1,7 +1,7 @@
 "use client";
 
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection,doc,setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useBusinessAdjectiveContext } from '../../../context/BusinessAdjectiveContext';
@@ -126,9 +126,11 @@ const BusinessFinished = () => {
     };
 
     try {
-      // Save the data to Firestore
-      const docRef = await addDoc(collection(db, 'vendorProfile'), data);
-      console.log('Document written with ID: ', docRef.id);
+      // Save the data to Firestore with the document ID as user.uid
+      const docRef = doc(db, 'vendorProfile', user.uid); // Specify the document ID as user.uid
+      await setDoc(docRef, data); // Use setDoc to create or overwrite the document
+      console.log('Document written with ID: ', user.uid);
+
 
       // Reload the header to reflect the latest data
       getVendorProfile();

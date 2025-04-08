@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { useApplicationProfileContext } from "../../../context/CreateEventProfileContext";
 import { auth, db } from "../../../lib/firebase";
 import CustomQuestionField from '../../../components/CustomQuestionField';
+import { getStorage, ref,uploadBytes, getDownloadURL } from "firebase/storage";
 import { FiPlus } from 'react-icons/fi';
 import "../../tailwind.css";
 
@@ -22,23 +23,112 @@ const CreateApplicationProfile = () => {
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  const [customQuestions, setCustomQuestions] = useState<number[]>([]);
+  const attendeeTypes = [
+    'Families',
+    'College Students',
+    'Professionals',
+    'High-End Buyers',
+    'Tourists',
+    'Local Shoppers',
+    'Trendsetters & Influencers',
+    'Eco-Conscious Consumers',
+    'Collectors & Hobbyists',
+    'DIY & Handmade Enthusiasts',
+    'Luxury Shoppers',
+    'Tech Enthusiasts',
+    'Foodies & Culinary Enthusiasts'
+  ];
+  
+  const categories = [  
+    "Latin American (Mexican, Caribbean, Peruvian, Brazilian)",  
+    "Fusion (Latin-Asian, Tex-Mex, Mediterranean-Latin)",  
+    "Street Food & Casual Bites",  
+    "Fine Dining & Gourmet",  
+    "Plant-Based & Vegan Cuisine",  
+    "Pop-Up Experiences",  
+    "Themed Pop-Up Dinners",  
+    "Chef Collaborations",  
+    "Seasonal/Flash Pop-Ups",  
+    "Food Trucks & Mobile Kitchens",  
+    "Tasting Menus & Chef’s Table",  
+    "Brunch/Lunch vs. Dinner Events",  
+    "Latin American Heritage (Dia de los Muertos, Carnaval-themed)",  
+    "Regional Specialties (Oaxacan, Andean, Coastal Caribbean)",  
+    "Immersive Cultural Experiences (Live Music, Dance, Art)",  
+    "Gluten-Free & Allergy-Friendly",  
+    "Vegetarian & Vegan Options",  
+    "Low-Carb/Keto-Friendly",  
+    "Family-Style Sharing Plates",  
+    "Tapas/Small Plates",  
+    "Interactive Cooking Stations",  
+    "Grab-and-Go (Food Markets, Festivals)",  
+    "Farm-to-Table/Locally Sourced",  
+    "Zero-Waste Initiatives",  
+    "Ethical Sourcing (Fair Trade, Organic)",  
+    "Holiday Menus (Cinco de Mayo, Christmas Tamales)",  
+    "Summer BBQ/Tropical Themes",  
+    "Winter Comfort Food",  
+    "Latin Cocktails (Margaritas, Pisco Sours)",  
+    "Craft Beer/Wine Pairings",  
+    "Non-Alcoholic (Aguas Frescas, Coffee Blends)"  
+  ];  
+
+
+  const eventTypes = [
+    'Farmers Markets',
+    'Art Fairs',
+    'Festivals',
+    'Small Pop-Ups',
+    'Luxury Pop-Ups',
+    'Craft & Handmade Markets',
+    'Holiday & Seasonal Markets',
+    'Food & Beverage Festivals',
+    'Night Markets',
+    'Vintage & Thrift Markets',
+    'Health & Wellness Events',
+    'Cultural & Heritage Festivals',
+    'Music & Entertainment Events',
+    'Outdoor Adventure & Sporting Events',
+    'Tech & Innovation Expos'
+  ];
+  
+  const demographics = [
+    'Black',
+    'Women',
+    'LGBT',
+    'Young Adults',
+    'Seniors',
+    'Parents',
+    'Hispanic/Latino',
+    'Asian-American',
+    'Indigenous Communities',
+    'Immigrant Communities',
+    'Entrepreneurs & Small Business Owners',
+    'Pet Owners',
+    'Health & Wellness Enthusiasts',
+    'Sustainable & Zero-Waste Shoppers',
+    'Luxury & High-End Consumers'
+  ];
+
+  const [customQuestions, setCustomQuestions] = useState<
+    { title: string; description: string; isRequired: boolean }[]
+  >([]);
 
   // Standard fields that can be selected
-  const standardFields = [
-    { id: 'business-name', label: 'Business Name' },
-    { id: 'business-type', label: 'Business Type' },
-    { id: 'contact-name', label: 'Contact Name' },
-    { id: 'contact-email', label: 'Contact Email' },
-    { id: 'contact-phone', label: 'Contact Phone' },
-    { id: 'social-media', label: 'Social Media Links' },
-    { id: 'product-description', label: 'Product Description' },
-    { id: 'price-range', label: 'Price Range' },
-    { id: 'website', label: 'Website' },
-    { id: 'product-images', label: 'Product Images' },
-    { id: 'past-events', label: 'Past Events Experience' },
-    { id: 'space-requirements', label: 'Space Requirements' },
-  ];
+  // const standardFields = [
+  //   { id: 'business-name', label: 'Business Name' },
+  //   { id: 'business-type', label: 'Business Type' },
+  //   { id: 'contact-name', label: 'Contact Name' },
+  //   { id: 'contact-email', label: 'Contact Email' },
+  //   { id: 'contact-phone', label: 'Contact Phone' },
+  //   { id: 'social-media', label: 'Social Media Links' },
+  //   { id: 'product-description', label: 'Product Description' },
+  //   { id: 'price-range', label: 'Price Range' },
+  //   { id: 'website', label: 'Website' },
+  //   { id: 'product-images', label: 'Product Images' },
+  //   { id: 'past-events', label: 'Past Events Experience' },
+  //   { id: 'space-requirements', label: 'Space Requirements' },
+  // ];
 
   const [selectedFields, setSelectedFields] = useState<string[]>([
     // basic fields selected
@@ -56,7 +146,7 @@ const CreateApplicationProfile = () => {
   };
 
   const addCustomQuestion = () => {
-    setCustomQuestions([...customQuestions, customQuestions.length]);
+    setCustomQuestions([...customQuestions, { title: '', description: '', isRequired: false }]);
   };
 
   const removeCustomQuestion = (indexToRemove: number) => {
@@ -65,6 +155,10 @@ const CreateApplicationProfile = () => {
     );
   };
 
+  const handleUpdateQuestion = (index: number, data: { title: string; description: string; isRequired: boolean }) => {
+    console.log("Updating question at index:", index, "with data:", data);
+    setCustomQuestions(customQuestions.map((q, i) => (i === index ? data : q)));
+  };
 
   useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -92,29 +186,81 @@ const CreateApplicationProfile = () => {
         try {
           // Collect form data
           const name = (document.getElementById("event-name") as HTMLInputElement).value;
-          const date = (document.getElementById("event-date") as HTMLInputElement).value;
-          const applicationDeadline = (document.getElementById("application-deadline") as HTMLInputElement).value;
-          const boothCost = parseFloat((document.getElementById("booth-cost") as HTMLInputElement).value);
+          const startDateInput = (document.getElementById("start-date") as HTMLInputElement).value;
+          const startTimeInput = (document.getElementById("start-time") as HTMLInputElement).value;
+          const endDateInput = (document.getElementById("end-date") as HTMLInputElement).value;
+          const endTimeInput = (document.getElementById("end-time") as HTMLInputElement).value;
+          const totalCost = parseFloat((document.getElementById("booth-cost") as HTMLInputElement).value);
+          const imageFile = (document.getElementById("image") as HTMLInputElement).files?.[0]; // Get the uploaded file
           const location = handlePlaceChanged() || { city: "", state: "" };
+          const type = Array.from(
+            (document.getElementById("type") as HTMLSelectElement).selectedOptions
+          ).map((option) => option.value);
+          const vendorFee = parseFloat((document.getElementById("vendorFee") as HTMLInputElement).value);
+          const attendeeType = Array.from(
+            (document.getElementById("attendeeType") as HTMLSelectElement).selectedOptions
+          ).map((option) => option.value);
+          const headcount = parseInt((document.getElementById("headcount") as HTMLInputElement).value, 10);
+          const demographics = Array.from(
+            (document.getElementById("demographics") as HTMLSelectElement).selectedOptions
+          ).map((option) => option.value);
+          const description = (document.getElementById("description") as HTMLTextAreaElement).value;
+          const categories = Array.from(
+            (document.getElementById("categories") as HTMLSelectElement).selectedOptions
+          ).map((option) => option.value);
 
+          // Validate required fields
           if (!location.city || !location.state) {
             alert("Please select a valid location.");
             return;
           }
+
+          // Combine date and time into a single Date object
+          const startDate = new Date(`${startDateInput}T${startTimeInput}:00`);
+          const endDate = new Date(`${endDateInput}T${endTimeInput}:00`);
+
+          // Validate required fields
+          if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            alert("Please enter valid start and end dates/times.");
+            return;
+          }
+
+          if (startDate > endDate) {
+            alert("Start date/time cannot be after the end date/time.");
+            return;
+          }
           
+          // Upload the image to Firebase Storage (optional)
+          let imageUrl = "";
+          if (imageFile) {
+            const storage = getStorage(); // Initialize Firebase Storage
+            const storageRef = ref(storage); // Use the ref function from Firebase Storage
+            const fileRef = ref(storage, `event-images/${imageFile.name}`); // Create a reference to the file in Firebase Storage
+            // Upload the file to Firebase Storage
+            await uploadBytes(fileRef, imageFile);
+            imageUrl = await getDownloadURL(fileRef);
+          }
+
+          
+          console.log("Custom question",customQuestions);
           // Prepare the event data
           const eventData = {
             uid: user.uid,
             name,
-            date,
-            applicationDeadline,
-            boothCost,
+            image:imageUrl, // Use the uploaded image URL
+            startDate,
+            endDate,
+            totalCost,
             location,
-            selectedFields, // Fields selected by the user
-            customQuestions: customQuestions.map((_, index) => {
-              const questionInput = document.getElementById(`custom-question-${index}`) as HTMLInputElement;
-              return questionInput ? questionInput.value : "";
-            }),
+            type,
+            vendorFee,
+            attendeeType,
+            headcount,
+            demographics,
+            description,
+            categories,
+            // selectedFields, // Fields selected by the user
+            customQuestions, // Custom questions added by the user
             createdAt: new Date().toISOString(),
           };
       
@@ -220,54 +366,80 @@ const CreateApplicationProfile = () => {
                 <div>
                   <label
                     className='block text-xl mb-3 text-center text-black font-semibold'
-                    htmlFor='event-date'
+                    htmlFor='start-date'
                   >
-                    Event Date
+                    Start Date
                   </label>
                   <input
                     type='date'
-                    id='event-date'
-                    name='event-date'
+                    id='start-date'
+                    name='start-date'
                     className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black'
+                    required
+                  />
+                  <label
+                    className="block text-xl mt-3 mb-3 text-center text-black font-semibold"
+                    htmlFor="start-time"
+                  >
+                    Start Time
+                  </label>
+                  <input
+                    type="time"
+                    id="start-time"
+                    name="start-time"
+                    className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
                     required
                   />
                 </div>
                 <div>
                   <label
                     className='block text-xl mb-3 text-center text-black font-semibold'
-                    htmlFor='application-deadline'
+                    htmlFor='end-date'
                   >
-                    Application Deadline
+                    End Date
                   </label>
                   <input
                     type='date'
-                    id='application-deadline'
-                    name='application-deadline'
+                    id='end-date'
+                    name='end-date'
                     className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black'
+                    required
+                  />
+                  <label
+                    className="block text-xl mt-3 mb-3 text-center text-black font-semibold"
+                    htmlFor="end-time"
+                  >
+                    End Time
+                  </label>
+                  <input
+                    type="time"
+                    id="end-time"
+                    name="end-time"
+                    className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
                     required
                   />
                 </div>
               </div>
   
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                <div>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+                {/* Headcount */}
+                <div className="mb-6">
                   <label
-                    className='block text-xl mb-3 text-center text-black font-semibold'
-                    htmlFor='booth-cost'
+                    className="block text-xl mb-3 text-center text-black font-semibold"
+                    htmlFor="headcount"
                   >
-                    Booth Cost ($)
+                    Expected Headcount
                   </label>
                   <input
-                    type='number'
-                    id='booth-cost'
-                    name='booth-cost'
-                    placeholder='0.00'
-                    className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black'
-                    min='0'
-                    step='0.01'
-                    required
+                    type="number"
+                    id="headcount"
+                    name="headcount"
+                    placeholder="Enter the expected headcount"
+                    className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                    min="0"
                   />
                 </div>
+
                 <div>
                   <label
                     className='block text-xl mb-3 text-center text-black font-semibold'
@@ -292,9 +464,178 @@ const CreateApplicationProfile = () => {
                 
               </div>
             </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+              {/* Vendor Fee */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="vendorFee"
+                >
+                  Vendor Fee ($)
+                </label>
+                <input
+                  type="number"
+                  id="vendorFee"
+                  name="vendorFee"
+                  placeholder="Enter the vendor fee"
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+
+              <div>
+                  <label
+                    className='block text-xl mb-3 text-center text-black font-semibold'
+                    htmlFor='booth-cost'
+                  >
+                    Total Cost ($)
+                  </label>
+                  <input
+                    type='number'
+                    id='booth-cost'
+                    name='booth-cost'
+                    placeholder='0.00'
+                    className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black'
+                    min='0'
+                    step='0.01'
+                    required
+                  />
+                </div>
+            </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+              {/* Type */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="type"
+                >
+                  Event Type
+                </label>
+                <select
+                  id="type"
+                  name="type"
+                  multiple // Allows multi-select
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                >
+                  {eventTypes.map((demo, index) => (
+                    <option key={index} value={demo}>
+                      {demo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              
+              {/* Categories */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="categories"
+                >
+                  Event Categories
+                </label>
+                <select
+                  id="categories"
+                  name="categories"
+                  multiple // Allows multi-select
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                >
+                  {categories.map((demo, index) => (
+                    <option key={index} value={demo}>
+                      {demo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+              {/* Attendee Type */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="attendeeType"
+                >
+                  Attendee Type
+                </label>
+                <select
+                  id="attendeeType"
+                  name="attendeeType"
+                  multiple // Allows multi-select
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                >
+                  {attendeeTypes.map((demo, index) => (
+                    <option key={index} value={demo}>
+                      {demo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Demographics */}
+              <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="demographics"
+                >
+                  Demographics
+                </label>
+                <select
+                  id="demographics"
+                  name="demographics"
+                  multiple // Allows multi-select
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
+                >
+                  {demographics.map((demo, index) => (
+                    <option key={index} value={demo}>
+                      {demo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              
+            </div>
+
+            {/* Image */}
+            <div className="mb-6">
+              <label
+                className="block text-xl mb-3 text-center text-black font-semibold"
+                htmlFor="image"
+              >
+                Event Image URL
+              </label>
+              <input
+                type="file"
+                id="image"
+                name="image"
+                accept="image/*" // Restrict to image files only
+                className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
+              />
+            </div>
+
+            {/* Description */}
+            <div className="mb-6">
+                <label
+                  className="block text-xl mb-3 text-center text-black font-semibold"
+                  htmlFor="description"
+                >
+                  Event Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Enter the event description"
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
+                  rows={4}
+                ></textarea>
+              </div>
   
             <div className='mb-10'>
-              <h2 className='text-2xl font-semibold mb-6 text-black text-center'>
+              {/*<h2 className='text-2xl font-semibold mb-6 text-black text-center'>
                 Standard Application Fields
               </h2>
               <p className='text-lg text-gray-700 text-center mb-6'>
@@ -328,8 +669,8 @@ const CreateApplicationProfile = () => {
                     </div>
                   ))}
                 </div>
-              </div>
-            </div>
+              </div>*/}
+            </div> 
   
             <div className='mb-10'>
               <div className='flex flex-col items-center mb-6'>
@@ -368,6 +709,7 @@ const CreateApplicationProfile = () => {
                       key={index}
                       index={index}
                       onDelete={removeCustomQuestion}
+                      onUpdate={handleUpdateQuestion}
                     />
                   ))}
                 </div>

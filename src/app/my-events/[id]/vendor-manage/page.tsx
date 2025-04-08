@@ -130,6 +130,10 @@ export default function ApplicationHostProfile() {
     }
   };
 
+  const viewDetail = async (index: number) => {
+    router.push(`/my-events/${eventId}/vendor-manage/${index}/detail`);
+  }
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -145,9 +149,11 @@ export default function ApplicationHostProfile() {
             <table className="table-auto border-collapse border border-gray-300 w-full text-black">
               <thead>
                 <tr className="bg-gray-200">
+                  <th className="border border-gray-300 px-4 py-2"></th>
                   <th className="border border-gray-300 px-4 py-2">Email</th>
                   <th className="border border-gray-300 px-4 py-2">FirstName</th>
                   <th className="border border-gray-300 px-4 py-2">LastName</th>
+                  <th className="border border-gray-300 px-4 py-2">Detail</th>
                   <th className="border border-gray-300 px-4 py-2">Status</th>
                   <th className="border border-gray-300 px-4 py-2">Action</th>
                 </tr>
@@ -155,9 +161,18 @@ export default function ApplicationHostProfile() {
               <tbody>
                 {vendors.map((vendor, index) => (
                   <tr key={index} className="hover:bg-gray-100">
+                    <td className="border border-gray-300 px-4 py-2">{index+1}</td>
                     <td className="border border-gray-300 px-4 py-2">{vendor.email}</td>
                     <td className="border border-gray-300 px-4 py-2">{vendor.firstName}</td>
                     <td className="border border-gray-300 px-4 py-2">{vendor.lastName}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                    <button
+                        className="bg-red-500 text-white px-3 py-1 rounded mr-2 hover:bg-red-600"
+                        onClick={() => viewDetail(index+1)}
+                      >
+                        Detail
+                      </button>
+                    </td>
                     <td className="border border-gray-300 px-4 py-2">{vendor.status}</td>
                     <td className="border border-gray-300 px-4 py-2">
                       <button

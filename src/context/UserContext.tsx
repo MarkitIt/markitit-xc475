@@ -48,6 +48,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const getVendorProfile = () => {
     if (user) {
+      console.log("vendor exist")
       const vendorProfileCollection = collection(db, 'vendorProfile');
       const q = query(vendorProfileCollection, where('uid', '==', user.uid));
       getDocs(q).then((querySnapshot) => {
@@ -64,7 +65,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const getHostProfile = () => {
     if (user) {
-      
+      console.log("host exist")
       const hostProfileCollection = collection(db, 'hostProfile');
       const q = query(hostProfileCollection, where('uid', '==', user.uid));
       getDocs(q).then((querySnapshot) => {

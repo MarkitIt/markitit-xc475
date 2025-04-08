@@ -3,12 +3,14 @@
 import {ApplicationCard} from './components/ApplicationCard';
 import { useEffect, useState } from 'react';
 import  '@/styles/theme';
+import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { useUserContext } from '@/context/UserContext';
 import { doc, getDoc } from 'firebase/firestore';
 import styles from './styles.module.css';
 
 export default function MyApplicationsPage() {
+  const router = useRouter();
   const { user } = useUserContext(); // Get the logged-in user
   const [applications, setApplications] = useState<any[]>([]); // State to store applications
   const [loading, setLoading] = useState(true);
@@ -77,6 +79,7 @@ export default function MyApplicationsPage() {
   const handleViewDetails = (applicationId: string) => {
     // Implement view details functionality
     console.log('View details for application:', applicationId);
+    router.push(`/my-applications/${applicationId}/detail`); // Navigate to the application details page
   };
 
   const handleNewApplication = () => {
@@ -106,7 +109,7 @@ export default function MyApplicationsPage() {
           eventName={application.eventName}
           status={application.status}
           submissionDate={application.submissionDate}
-          onViewDetails={() => handleViewDetails(application.id)}
+          onViewDetails={() => handleViewDetails(application.eventId)} // Pass the eventId to the view details function
         />
       ))}
       </div>
