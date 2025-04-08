@@ -98,7 +98,11 @@ export function EventCard({ event, rank, showRank, score }: EventProps) {
               color: theme.colors.primary.black,
               fontFamily: theme.typography.fontFamily.primary,
             }}>
-              No Image
+              <img
+                src="/default-popup.svg"
+                alt={event.name || "Event"}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
             </div>
           )}
         </div>
