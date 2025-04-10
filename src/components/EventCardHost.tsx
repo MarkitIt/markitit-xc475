@@ -4,9 +4,11 @@ import { theme } from '@/styles/theme';
 
 interface EventProps {
   event: Event;
+  rank?: number;
+  showRank?: boolean;
 }
 
-export function EventCardHost({ event}: EventProps) {
+export function EventCardHost({ event, rank, showRank }: EventProps) {
 
   // Format date as startDate - endDate
   const formatDate = (timestamp: any) => {
@@ -46,6 +48,27 @@ export function EventCardHost({ event}: EventProps) {
       }}
       className="hover:shadow-lg hover:transform hover:scale-102"
       >
+        {showRank && rank && rank <= 20 && (
+          <div style={{
+            position: 'absolute',
+            top: theme.spacing.sm,
+            right: theme.spacing.sm,
+            backgroundColor: theme.colors.primary.sand,
+            color: theme.colors.primary.black,
+            borderRadius: theme.borderRadius.full,
+            padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+            fontWeight: theme.typography.fontWeight.semibold,
+            fontSize: '0.875rem',
+            zIndex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: '2.5rem',
+            height: '2rem',
+          }}>
+            #{rank}
+          </div>
+        )}
         <div style={{ height: '12rem', backgroundColor: theme.colors.secondary.lightPink }}>
           {event.image ? (
             <img
