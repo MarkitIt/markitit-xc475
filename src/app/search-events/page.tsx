@@ -82,36 +82,60 @@ export default function SearchEvents() {
   }, [user, vendorProfile]);
 
   // Handle search
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
+  const handleSearch = (city: string, startDate: string, endDate: string, keywords: string) => {
+    //setSearchQuery(query);
     setCurrentPage(1);
     
-    if (!query.trim()) {
+    if (!city.trim() && !startDate.trim() && !endDate.trim() && !keywords.trim()) {
       setFilteredEvents(events);
       return;
     }
     
-    const lowercaseQuery = query.toLowerCase();
+    //const lowercaseQuery = query.toLowerCase();
     const filtered = events.filter(event => {
-      // Check name
-      const nameMatch = event.name?.toLowerCase().includes(lowercaseQuery) || false;
+      // // Check name
+      // const nameMatch = event.name?.toLowerCase().includes(lowercaseQuery) || false;
       
-      // Check location with proper type handling
-      let locationMatch = false;
-      if (typeof event.location === 'string') {
-        locationMatch = (event.location as string).toLowerCase().includes(lowercaseQuery);
-      } else if (event.location && typeof event.location === 'object') {
-        const loc = event.location as { city?: string };
-        if (loc.city) {
-          locationMatch = loc.city.toLowerCase().includes(lowercaseQuery);
-        }
-      }
+      // // Check location with proper type handling
+      // let locationMatch = false;
+      // if (typeof event.location === 'string') {
+      //   locationMatch = (event.location as string).toLowerCase().includes(lowercaseQuery);
+      // } else if (event.location && typeof event.location === 'object') {
+      //   const loc = event.location as { city?: string };
+      //   if (loc.city) {
+      //     locationMatch = loc.city.toLowerCase().includes(lowercaseQuery);
+      //   }
+      // }
       
-      // Check description
-      const descriptionMatch = event.description?.toLowerCase().includes(lowercaseQuery) || false;
+      // // Check description
+      // const descriptionMatch = event.description?.toLowerCase().includes(lowercaseQuery) || false;
       
-      return nameMatch || locationMatch || descriptionMatch;
+      // return nameMatch || locationMatch || descriptionMatch;
+
+      // Check city
+      const cityMatch = city
+      ? event.location?.city?.toLowerCase().includes(city.toLowerCase())
+      : true;
+
+      // Check start date
+      // const startDateMatch = startDate
+      //   ? new Date(event.startDate.seconds * 1000) >= new Date(startDate)
+      //   : true;
+
+      // // Check end date
+      // const endDateMatch = endDate
+      //   ? new Date(event.endDate.seconds * 1000) <= new Date(endDate)
+      //   : true;
+
+      // Check keywords in name or description
+      const keywordsMatch = keywords
+        ? event.name?.toLowerCase().includes(keywords.toLowerCase()) ||
+          event.description?.toLowerCase().includes(keywords.toLowerCase())
+        : true;
+
+      return cityMatch  && keywordsMatch;
     });
+    console.log(filtered);
     
     setFilteredEvents(filtered);
   };
