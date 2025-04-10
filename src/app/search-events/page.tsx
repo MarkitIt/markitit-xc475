@@ -26,6 +26,10 @@ export default function SearchEvents() {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
 
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+
   const eventsPerPage = 9;
 
   // Calculate current events to display based on pagination
@@ -98,24 +102,6 @@ export default function SearchEvents() {
 
     //const lowercaseQuery = query.toLowerCase();
     const filtered = events.filter(event => {
-      // // Check name
-      // const nameMatch = event.name?.toLowerCase().includes(lowercaseQuery) || false;
-      
-      // // Check location with proper type handling
-      // let locationMatch = false;
-      // if (typeof event.location === 'string') {
-      //   locationMatch = (event.location as string).toLowerCase().includes(lowercaseQuery);
-      // } else if (event.location && typeof event.location === 'object') {
-      //   const loc = event.location as { city?: string };
-      //   if (loc.city) {
-      //     locationMatch = loc.city.toLowerCase().includes(lowercaseQuery);
-      //   }
-      // }
-      
-      // // Check description
-      // const descriptionMatch = event.description?.toLowerCase().includes(lowercaseQuery) || false;
-      
-      // return nameMatch || locationMatch || descriptionMatch;
 
       // Check city
       const cityMatch = city
@@ -147,6 +133,20 @@ export default function SearchEvents() {
     setFilteredEvents(filtered);
   };
 
+  const handleFilter = () => {
+    const filtered = events.filter((event) => {
+      const typeMatch = selectedType ? event.type?.includes(selectedType) : true;
+      const cityMatch = selectedCity ? event.location?.city === selectedCity : true;
+      const categoryMatch = selectedCategory
+        ? event.categories?.includes(selectedCategory)
+        : true;
+
+      return typeMatch && cityMatch && categoryMatch;
+    });
+
+    setFilteredEvents(filtered);
+  };
+
   // Change page
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -173,6 +173,72 @@ export default function SearchEvents() {
       
       <SearchBar onSearch={handleSearch} />
       
+      {/* Filter Bar */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+        {/* Event Type Dropdown */}
+        <select
+          value={selectedType}
+          onChange={(e) => setSelectedType(e.target.value)}
+          style={{
+            padding: '0.5rem',
+            borderRadius: '4px',
+            border: '1px solid #ccc',
+          }}
+        >
+          <option value="">All Types</option>
+          <option value="Conference">Conference</option>
+          <option value="Workshop">Workshop</option>
+          <option value="Festival">Festival</option>
+        </select>
+
+        {/* City Dropdown */}
+        <select
+          value={selectedCity}
+          onChange={(e) => setSelectedCity(e.target.value)}
+          style={{
+            padding: '0.5rem',
+            borderRadius: '4px',
+            border: '1px solid #ccc',
+          }}
+        >
+          <option value="">All Cities</option>
+          <option value="New York">New York</option>
+          <option value="Los Angeles">Los Angeles</option>
+          <option value="Chicago">Chicago</option>
+        </select>
+
+        {/* Category Dropdown */}
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          style={{
+            padding: '0.5rem',
+            borderRadius: '4px',
+            border: '1px solid #ccc',
+          }}
+        >
+          <option value="">All Categories</option>
+          <option value="Technology">Technology</option>
+          <option value="Art">Art</option>
+          <option value="Music">Music</option>
+        </select>
+
+        {/* Apply Filters Button */}
+        <button
+          onClick={handleFilter}
+          style={{
+            padding: '0.5rem 1rem',
+            borderRadius: '4px',
+            backgroundColor: '#007BFF',
+            color: '#fff',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          Apply Filters
+        </button>
+      </div>
+
       {loading ? (
         <div style={{ 
           textAlign: 'center', 
