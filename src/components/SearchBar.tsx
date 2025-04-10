@@ -71,7 +71,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
       <div style={{ flex: '1 1 150px' }}>
         <input
           type="text"
-          placeholder="mm/dd/yyyy"
+          placeholder="From (mm/dd/yyyy)"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
           style={inputStyle}
@@ -81,7 +81,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
       <div style={{ flex: '1 1 150px' }}>
         <input
           type="text"
-          placeholder="mm/dd/yyyy"
+          placeholder="To (mm/dd/yyyy)"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
           style={inputStyle}

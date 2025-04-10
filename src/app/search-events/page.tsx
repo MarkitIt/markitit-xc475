@@ -91,6 +91,11 @@ export default function SearchEvents() {
       return;
     }
     
+    const formatDate = (timestamp: any) => {
+      if (!timestamp) return null;
+      return new Date(timestamp.seconds * 1000).toLocaleDateString("en-US"); // Format to mm/dd/yyyy
+    };
+
     //const lowercaseQuery = query.toLowerCase();
     const filtered = events.filter(event => {
       // // Check name
@@ -118,14 +123,16 @@ export default function SearchEvents() {
       : true;
 
       // Check start date
-      // const startDateMatch = startDate
-      //   ? new Date(event.startDate.seconds * 1000) >= new Date(startDate)
-      //   : true;
+      const startDateMatch = startDate
+        ? event.startDate?.seconds &&
+          formatDate(event.startDate) && new Date(formatDate(event.startDate)!) >= new Date(startDate)
+        : true;
 
-      // // Check end date
-      // const endDateMatch = endDate
-      //   ? new Date(event.endDate.seconds * 1000) <= new Date(endDate)
-      //   : true;
+      // Check end date
+      const endDateMatch = endDate
+        ? event.endDate?.seconds &&
+          formatDate(event.endDate) && new Date(formatDate(event.endDate)!) <= new Date(endDate)
+        : true;
 
       // Check keywords in name or description
       const keywordsMatch = keywords
@@ -133,7 +140,7 @@ export default function SearchEvents() {
           event.description?.toLowerCase().includes(keywords.toLowerCase())
         : true;
 
-      return cityMatch  && keywordsMatch;
+      return cityMatch && startDateMatch && endDateMatch && keywordsMatch;
     });
     console.log(filtered);
     
