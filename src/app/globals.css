@@ -137,3 +137,29 @@ a {
     color-scheme: dark;
   }
 }
+
+/* Add these rules at the end of your file */
+
+/* Ensure dropdowns are visible */
+[role="button"],
+button {
+  position: relative;
+  z-index: 1;
+}
+
+[role="button"]:hover,
+button:hover {
+  z-index: 2;
+}
+
+/* Override any styles that might hide dropdowns */
+.dropdown-link {
+  display: block !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure absolute positioned elements are visible */
+div[style*="position: absolute"] {
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+}
