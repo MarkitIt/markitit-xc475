@@ -18,6 +18,7 @@ import { eventTypes } from '@/types/EventTypes';
 import { attendeeTypes } from '@/types/AttendeeTypes';
 import { categories } from '@/types/Categories';
 import { demographics } from '@/types/Demographics';
+import { priceRanges } from '@/types/Price';
 
 
 
@@ -38,6 +39,7 @@ export default function SearchEvents() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedAttendeeType, setSelectedAttendeeType] = useState('');
   const [selectedDemographic, setSelectedDemographic] = useState('');
+  const [selectedPrice, setSelectedPrice] = useState('');
 
   const eventsPerPage = 9;
 
@@ -152,8 +154,12 @@ export default function SearchEvents() {
       const demographicMatch = selectedDemographic
         ? event.demographics?.includes(selectedDemographic)
         : true;
+        const priceMatch = selectedPrice
+        ? (event.vendorFee ?? 0) >= priceRanges[Number(selectedPrice)].min &&
+          (event.vendorFee ?? 0) <= priceRanges[Number(selectedPrice)].max
+        : true;
 
-      return eventTypeMatch && categoryMatch && attendeeTypeMatch && demographicMatch;
+      return eventTypeMatch && categoryMatch && attendeeTypeMatch && demographicMatch && priceMatch;
     });
 
     setFilteredEvents(filtered);
@@ -198,6 +204,10 @@ export default function SearchEvents() {
           }}
         >
           {/* Default option */}
+          <option value="" disabled>
+            Select Event Type
+          </option>
+          {/* None option */}
           <option value="">None</option>
           {eventTypes.map((type, index) => (
             <option key={index} value={type}>
@@ -216,6 +226,9 @@ export default function SearchEvents() {
             border: '1px solid #ccc',
           }}
         >
+          <option value="" disabled>
+            Select Attendee Type
+          </option>
           <option value="">None</option>
           {attendeeTypes.map((type, index) => (
             <option key={index} value={type}>
@@ -234,6 +247,9 @@ export default function SearchEvents() {
             border: '1px solid #ccc',
           }}
         >
+          <option value="" disabled>
+            Select Demographic
+          </option>
           <option value="">None</option>
           {demographics.map((demo, index) => (
             <option key={index} value={demo}>
@@ -252,10 +268,34 @@ export default function SearchEvents() {
             border: '1px solid #ccc',
           }}
         >
+          <option value="" disabled>
+            Select Category
+          </option>
           <option value="">None</option>
           {categories.map((category, index) => (
             <option key={index} value={category}>
               {category}
+            </option>
+          ))}
+        </select>
+
+        {/* Price Range Dropdown */}
+        <select
+          value={selectedPrice}
+          onChange={(e) => setSelectedPrice(e.target.value)}
+          style={{
+            padding: '0.5rem',
+            borderRadius: '4px',
+            border: '1px solid #ccc',
+          }}
+        >
+          <option value="" disabled>
+            Select Price Range
+          </option>
+          <option value="">None</option>
+          {priceRanges.map((price, index) => (
+            <option key={index} value={index}>
+              {price.label}
             </option>
           ))}
         </select>
