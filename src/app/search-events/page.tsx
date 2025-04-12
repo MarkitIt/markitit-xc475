@@ -7,7 +7,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { EventCard } from '@/components/EventCard';
 import { SearchBar } from '@/components/SearchBar';
 import { Pagination } from './components/Pagination';
-import { useUserContext } from '@/context/UserContext';
+import { useUserContext } from '../../context/UserContext';
 import { fetchEventRankings } from '@/utils/fetchEventRankings';
 import styles from './styles.module.css';
 import { Event } from '@/types/Event';
@@ -26,7 +26,7 @@ import { priceRanges } from '@/types/Price';
 
 export default function SearchEvents() {
   const { theme } = useTheme();
-  const { user, vendorProfile } = useUserContext();
+  const { user, vendorProfile, getVendorProfile,hostProfile,getHostProfile } = useUserContext();
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,6 +34,7 @@ export default function SearchEvents() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
+  
 
   const [selectedEventType, setSelectedEventType] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -47,6 +48,16 @@ export default function SearchEvents() {
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+
+
+  useEffect(() => {
+      if (user?.role === 'vendor') {
+        getVendorProfile();
+      }
+      else if (user?.role === 'host') {
+        getHostProfile();
+      }
+    }, [user]);
 
   // Fetching events from API if user has vendor profile, otherwise from Firestore
   useEffect(() => {
@@ -172,208 +183,226 @@ export default function SearchEvents() {
   const handleEventClick = (eventId: string) => {
     router.push(`/event-profile/${eventId}`);
   };
-
-  return (
-    <div style={{ 
-      padding: theme.spacing.lg,
-      backgroundColor: theme.colors.background.main,
-      minHeight: '100vh',
-      fontFamily: theme.typography.fontFamily.primary
-    }}>
-      <h1 style={{ 
-        fontSize: '2rem', 
-        marginBottom: theme.spacing.lg,
-        color: theme.colors.primary.black,
-        fontWeight: theme.typography.fontWeight.bold
+  const renderHost = () => {
+    if (hostProfile) return (
+      <div style={{ 
+        textAlign: 'center', 
+        padding: theme.spacing.xl,
+        backgroundColor: theme.colors.background.white,
+        borderRadius: theme.borderRadius.md,
+        color: theme.colors.text.secondary,
+        fontWeight: theme.typography.fontWeight.medium
       }}>
-        Find Events
-      </h1>
-      
-      <SearchBar onSearch={handleSearch} />
-      
-      {/* Filter Bar */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-        {/* Event Type Dropdown */}
-        <select
-          value={selectedEventType}
-          onChange={(e) => setSelectedEventType(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
-        >
-          {/* Default option */}
-          <option value="" disabled>
-            Select Event Type
-          </option>
-          {/* None option */}
-          <option value="">None</option>
-          {eventTypes.map((type, index) => (
-            <option key={index} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
-
-        {/* Attendee Type Dropdown */}
-        <select
-          value={selectedAttendeeType}
-          onChange={(e) => setSelectedAttendeeType(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
-        >
-          <option value="" disabled>
-            Select Attendee Type
-          </option>
-          <option value="">None</option>
-          {attendeeTypes.map((type, index) => (
-            <option key={index} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
-
-        {/* Demographic Dropdown */}
-        <select
-          value={selectedDemographic}
-          onChange={(e) => setSelectedDemographic(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
-        >
-          <option value="" disabled>
-            Select Demographic
-          </option>
-          <option value="">None</option>
-          {demographics.map((demo, index) => (
-            <option key={index} value={demo}>
-              {demo}
-            </option>
-          ))}
-        </select>
-
-        {/* Category Dropdown */}
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
-        >
-          <option value="" disabled>
-            Select Category
-          </option>
-          <option value="">None</option>
-          {categories.map((category, index) => (
-            <option key={index} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-
-        {/* Price Range Dropdown */}
-        <select
-          value={selectedPrice}
-          onChange={(e) => setSelectedPrice(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
-        >
-          <option value="" disabled>
-            Select Price Range
-          </option>
-          <option value="">None</option>
-          {priceRanges.map((price, index) => (
-            <option key={index} value={index}>
-              {price.label}
-            </option>
-          ))}
-        </select>
-
-        {/* Apply Filters Button */}
-        <button
-          onClick={handleFilter}
-          style={{
-            padding: '0.5rem 1rem',
-            borderRadius: '4px',
-            backgroundColor: '#007BFF',
-            color: '#fff',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          Apply Filters
-        </button>
+        Please create a host profile to view events.
       </div>
-
-      {loading ? (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: theme.spacing.xl,
-          color: theme.colors.text.secondary
+    )
+    else return (
+      <div style={{ 
+        padding: theme.spacing.lg,
+        backgroundColor: theme.colors.background.main,
+        minHeight: '100vh',
+        fontFamily: theme.typography.fontFamily.primary
+      }}>
+        <h1 style={{ 
+          fontSize: '2rem', 
+          marginBottom: theme.spacing.lg,
+          color: theme.colors.primary.black,
+          fontWeight: theme.typography.fontWeight.bold
         }}>
-          Loading events...
-        </div>
-      ) : error ? (
-        <div style={{ 
-          color: theme.colors.primary.coral,
-          padding: theme.spacing.lg,
-          backgroundColor: theme.colors.background.white,
-          borderRadius: theme.borderRadius.md,
-          marginBottom: theme.spacing.lg
-        }}>
-          {error}
-        </div>
-      ) : (
-        <>
-          <div style={{ 
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: theme.spacing.lg,
-            marginBottom: theme.spacing.xl
-          }}>
-            {currentEvents.map((event, index) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                score={event.score}
-                showRank={!!user && !!vendorProfile}
-              />
+          Find Events
+        </h1>
+        
+        <SearchBar onSearch={handleSearch} />
+        
+        {/* Filter Bar */}
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+          {/* Event Type Dropdown */}
+          <select
+            value={selectedEventType}
+            onChange={(e) => setSelectedEventType(e.target.value)}
+            style={{
+              padding: '0.5rem',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+            }}
+          >
+            {/* Default option */}
+            <option value="" disabled>
+              Select Event Type
+            </option>
+            {/* None option */}
+            <option value="">None</option>
+            {eventTypes.map((type, index) => (
+              <option key={index} value={type}>
+                {type}
+              </option>
             ))}
+          </select>
+  
+          {/* Attendee Type Dropdown */}
+          <select
+            value={selectedAttendeeType}
+            onChange={(e) => setSelectedAttendeeType(e.target.value)}
+            style={{
+              padding: '0.5rem',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+            }}
+          >
+            <option value="" disabled>
+              Select Attendee Type
+            </option>
+            <option value="">None</option>
+            {attendeeTypes.map((type, index) => (
+              <option key={index} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+  
+          {/* Demographic Dropdown */}
+          <select
+            value={selectedDemographic}
+            onChange={(e) => setSelectedDemographic(e.target.value)}
+            style={{
+              padding: '0.5rem',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+            }}
+          >
+            <option value="" disabled>
+              Select Demographic
+            </option>
+            <option value="">None</option>
+            {demographics.map((demo, index) => (
+              <option key={index} value={demo}>
+                {demo}
+              </option>
+            ))}
+          </select>
+  
+          {/* Category Dropdown */}
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            style={{
+              padding: '0.5rem',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+            }}
+          >
+            <option value="" disabled>
+              Select Category
+            </option>
+            <option value="">None</option>
+            {categories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+  
+          {/* Price Range Dropdown */}
+          <select
+            value={selectedPrice}
+            onChange={(e) => setSelectedPrice(e.target.value)}
+            style={{
+              padding: '0.5rem',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+            }}
+          >
+            <option value="" disabled>
+              Select Price Range
+            </option>
+            <option value="">None</option>
+            {priceRanges.map((price, index) => (
+              <option key={index} value={index}>
+                {price.label}
+              </option>
+            ))}
+          </select>
+  
+          {/* Apply Filters Button */}
+          <button
+            onClick={handleFilter}
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: '4px',
+              backgroundColor: '#007BFF',
+              color: '#fff',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            Apply Filters
+          </button>
+        </div>
+  
+        {loading ? (
+          <div style={{ 
+            textAlign: 'center', 
+            padding: theme.spacing.xl,
+            color: theme.colors.text.secondary
+          }}>
+            Loading events...
           </div>
-          
-          {filteredEvents.length > eventsPerPage && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={Math.ceil(filteredEvents.length / eventsPerPage)}
-              onPageChange={setCurrentPage}
-            />
-          )}
-          
-          {filteredEvents.length === 0 && (
+        ) : error ? (
+          <div style={{ 
+            color: theme.colors.primary.coral,
+            padding: theme.spacing.lg,
+            backgroundColor: theme.colors.background.white,
+            borderRadius: theme.borderRadius.md,
+            marginBottom: theme.spacing.lg
+          }}>
+            {error}
+          </div>
+        ) : (
+          <>
             <div style={{ 
-              textAlign: 'center',
-              padding: theme.spacing.xl,
-              backgroundColor: theme.colors.background.white,
-              borderRadius: theme.borderRadius.md,
-              color: theme.colors.text.secondary,
-              fontWeight: theme.typography.fontWeight.medium
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: theme.spacing.lg,
+              marginBottom: theme.spacing.xl
             }}>
-              No events found matching your criteria.
+              {currentEvents.map((event, index) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  score={event.score}
+                  showRank={!!user && !!vendorProfile}
+                />
+              ))}
             </div>
-          )}
-        </>
-      )}
-    </div>
+            
+            {filteredEvents.length > eventsPerPage && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(filteredEvents.length / eventsPerPage)}
+                onPageChange={setCurrentPage}
+              />
+            )}
+            
+            {filteredEvents.length === 0 && (
+              <div style={{ 
+                textAlign: 'center',
+                padding: theme.spacing.xl,
+                backgroundColor: theme.colors.background.white,
+                borderRadius: theme.borderRadius.md,
+                color: theme.colors.text.secondary,
+                fontWeight: theme.typography.fontWeight.medium
+              }}>
+                No events found matching your criteria.
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    )
+  }
+  return (
+    <>
+      {renderHost()}
+    </>
   );
 }
