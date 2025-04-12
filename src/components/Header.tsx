@@ -224,6 +224,9 @@ export default function Header() {
                 <Link href="/my-events" className="dropdown-link" style={dropdownLinkStyle}>
                   My Events
                 </Link>
+                <Link href="/settings/host" className="dropdown-link" style={dropdownLinkStyle}>
+                  Settings
+                </Link>
               </>
             ) : (
               <>
@@ -233,11 +236,12 @@ export default function Header() {
                 <Link href="/my-applications" className="dropdown-link" style={dropdownLinkStyle}>
                   My Applications
                 </Link>
+                <Link href="/settings" className="dropdown-link" style={dropdownLinkStyle}>
+                  Settings
+                </Link>
               </>
             )}
-            <Link href="/settings" className="dropdown-link" style={dropdownLinkStyle}>
-              Settings
-            </Link>
+            
             <button
               onClick={handleLogout}
               className="dropdown-link text-coral"

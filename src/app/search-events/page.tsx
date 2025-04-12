@@ -183,7 +183,8 @@ export default function SearchEvents() {
   const handleEventClick = (eventId: string) => {
     router.push(`/event-profile/${eventId}`);
   };
-  const renderHost = () => {
+
+  const render = () => {
     if (hostProfile) return (
       <div style={{ 
         textAlign: 'center', 
@@ -402,7 +403,7 @@ export default function SearchEvents() {
   }
   return (
     <>
-      {renderHost()}
+      {render()}
     </>
   );
 }
