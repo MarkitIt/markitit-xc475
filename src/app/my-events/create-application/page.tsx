@@ -12,6 +12,10 @@ import CustomQuestionField from '../../../components/CustomQuestionField';
 import { getStorage, ref,uploadBytes, getDownloadURL } from "firebase/storage";
 import { FiPlus } from 'react-icons/fi';
 import "../../tailwind.css";
+import { eventTypes } from '@/types/EventTypes';
+import { attendeeTypes } from '@/types/AttendeeTypes';
+import { categories } from '@/types/Categories';
+import { demographics } from '@/types/Demographics';
 
 interface Location {
     city: string;
@@ -22,93 +26,6 @@ const CreateApplicationProfile = () => {
   const router = useRouter();
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [user, setUser] = useState<User | null>(null);
-
-  const attendeeTypes = [
-    'Families',
-    'College Students',
-    'Professionals',
-    'High-End Buyers',
-    'Tourists',
-    'Local Shoppers',
-    'Trendsetters & Influencers',
-    'Eco-Conscious Consumers',
-    'Collectors & Hobbyists',
-    'DIY & Handmade Enthusiasts',
-    'Luxury Shoppers',
-    'Tech Enthusiasts',
-    'Foodies & Culinary Enthusiasts'
-  ];
-  
-  const categories = [  
-    "Latin American (Mexican, Caribbean, Peruvian, Brazilian)",  
-    "Fusion (Latin-Asian, Tex-Mex, Mediterranean-Latin)",  
-    "Street Food & Casual Bites",  
-    "Fine Dining & Gourmet",  
-    "Plant-Based & Vegan Cuisine",  
-    "Pop-Up Experiences",  
-    "Themed Pop-Up Dinners",  
-    "Chef Collaborations",  
-    "Seasonal/Flash Pop-Ups",  
-    "Food Trucks & Mobile Kitchens",  
-    "Tasting Menus & Chef’s Table",  
-    "Brunch/Lunch vs. Dinner Events",  
-    "Latin American Heritage (Dia de los Muertos, Carnaval-themed)",  
-    "Regional Specialties (Oaxacan, Andean, Coastal Caribbean)",  
-    "Immersive Cultural Experiences (Live Music, Dance, Art)",  
-    "Gluten-Free & Allergy-Friendly",  
-    "Vegetarian & Vegan Options",  
-    "Low-Carb/Keto-Friendly",  
-    "Family-Style Sharing Plates",  
-    "Tapas/Small Plates",  
-    "Interactive Cooking Stations",  
-    "Grab-and-Go (Food Markets, Festivals)",  
-    "Farm-to-Table/Locally Sourced",  
-    "Zero-Waste Initiatives",  
-    "Ethical Sourcing (Fair Trade, Organic)",  
-    "Holiday Menus (Cinco de Mayo, Christmas Tamales)",  
-    "Summer BBQ/Tropical Themes",  
-    "Winter Comfort Food",  
-    "Latin Cocktails (Margaritas, Pisco Sours)",  
-    "Craft Beer/Wine Pairings",  
-    "Non-Alcoholic (Aguas Frescas, Coffee Blends)"  
-  ];  
-
-
-  const eventTypes = [
-    'Farmers Markets',
-    'Art Fairs',
-    'Festivals',
-    'Small Pop-Ups',
-    'Luxury Pop-Ups',
-    'Craft & Handmade Markets',
-    'Holiday & Seasonal Markets',
-    'Food & Beverage Festivals',
-    'Night Markets',
-    'Vintage & Thrift Markets',
-    'Health & Wellness Events',
-    'Cultural & Heritage Festivals',
-    'Music & Entertainment Events',
-    'Outdoor Adventure & Sporting Events',
-    'Tech & Innovation Expos'
-  ];
-  
-  const demographics = [
-    'Black',
-    'Women',
-    'LGBT',
-    'Young Adults',
-    'Seniors',
-    'Parents',
-    'Hispanic/Latino',
-    'Asian-American',
-    'Indigenous Communities',
-    'Immigrant Communities',
-    'Entrepreneurs & Small Business Owners',
-    'Pet Owners',
-    'Health & Wellness Enthusiasts',
-    'Sustainable & Zero-Waste Shoppers',
-    'Luxury & High-End Consumers'
-  ];
 
   const [customQuestions, setCustomQuestions] = useState<
     { title: string; description: string; isRequired: boolean }[]

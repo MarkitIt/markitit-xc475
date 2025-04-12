@@ -14,6 +14,14 @@ import { Event } from '@/types/Event';
 import { parseEventDate, getCityState } from "@/utils/inferEventData";
 import { useRouter } from 'next/navigation';
 import { theme } from '@/styles/theme';
+import { eventTypes } from '@/types/EventTypes';
+import { attendeeTypes } from '@/types/AttendeeTypes';
+import { categories } from '@/types/Categories';
+import { demographics } from '@/types/Demographics';
+
+
+
+
 
 export default function SearchEvents() {
   const { theme } = useTheme();
@@ -26,9 +34,10 @@ export default function SearchEvents() {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
 
-  const [selectedType, setSelectedType] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedEventType, setSelectedEventType] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedAttendeeType, setSelectedAttendeeType] = useState('');
+  const [selectedDemographic, setSelectedDemographic] = useState('');
 
   const eventsPerPage = 9;
 
@@ -135,13 +144,16 @@ export default function SearchEvents() {
 
   const handleFilter = () => {
     const filtered = events.filter((event) => {
-      const typeMatch = selectedType ? event.type?.includes(selectedType) : true;
-      const cityMatch = selectedCity ? event.location?.city === selectedCity : true;
-      const categoryMatch = selectedCategory
-        ? event.categories?.includes(selectedCategory)
+      const eventTypeMatch = selectedEventType ? event.type?.includes(selectedEventType) : true;
+      const categoryMatch = selectedCategory ? event.categories?.includes(selectedCategory) : true;
+      const attendeeTypeMatch = selectedAttendeeType
+        ? event.attendeeType?.includes(selectedAttendeeType)
+        : true;
+      const demographicMatch = selectedDemographic
+        ? event.demographics?.includes(selectedDemographic)
         : true;
 
-      return typeMatch && cityMatch && categoryMatch;
+      return eventTypeMatch && categoryMatch && attendeeTypeMatch && demographicMatch;
     });
 
     setFilteredEvents(filtered);
@@ -177,34 +189,57 @@ export default function SearchEvents() {
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
         {/* Event Type Dropdown */}
         <select
-          value={selectedType}
-          onChange={(e) => setSelectedType(e.target.value)}
+          value={selectedEventType}
+          onChange={(e) => setSelectedEventType(e.target.value)}
           style={{
             padding: '0.5rem',
             borderRadius: '4px',
             border: '1px solid #ccc',
           }}
         >
-          <option value="">All Types</option>
-          <option value="Conference">Conference</option>
-          <option value="Workshop">Workshop</option>
-          <option value="Festival">Festival</option>
+          {/* Default option */}
+          <option value="">None</option>
+          {eventTypes.map((type, index) => (
+            <option key={index} value={type}>
+              {type}
+            </option>
+          ))}
         </select>
 
-        {/* City Dropdown */}
+        {/* Attendee Type Dropdown */}
         <select
-          value={selectedCity}
-          onChange={(e) => setSelectedCity(e.target.value)}
+          value={selectedAttendeeType}
+          onChange={(e) => setSelectedAttendeeType(e.target.value)}
           style={{
             padding: '0.5rem',
             borderRadius: '4px',
             border: '1px solid #ccc',
           }}
         >
-          <option value="">All Cities</option>
-          <option value="New York">New York</option>
-          <option value="Los Angeles">Los Angeles</option>
-          <option value="Chicago">Chicago</option>
+          <option value="">None</option>
+          {attendeeTypes.map((type, index) => (
+            <option key={index} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
+
+        {/* Demographic Dropdown */}
+        <select
+          value={selectedDemographic}
+          onChange={(e) => setSelectedDemographic(e.target.value)}
+          style={{
+            padding: '0.5rem',
+            borderRadius: '4px',
+            border: '1px solid #ccc',
+          }}
+        >
+          <option value="">None</option>
+          {demographics.map((demo, index) => (
+            <option key={index} value={demo}>
+              {demo}
+            </option>
+          ))}
         </select>
 
         {/* Category Dropdown */}
@@ -217,10 +252,12 @@ export default function SearchEvents() {
             border: '1px solid #ccc',
           }}
         >
-          <option value="">All Categories</option>
-          <option value="Technology">Technology</option>
-          <option value="Art">Art</option>
-          <option value="Music">Music</option>
+          <option value="">None</option>
+          {categories.map((category, index) => (
+            <option key={index} value={category}>
+              {category}
+            </option>
+          ))}
         </select>
 
         {/* Apply Filters Button */}
