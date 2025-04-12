@@ -1,16 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useUserContext } from '@/context/UserContext';
 import { db } from '@/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import { SearchBar } from '@/components/SearchBar';
-import { EventCardHost } from '@/components/EventCardHost';
-import Image from "next/image";
+import "leaflet/dist/leaflet.css";
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import styles from "../../page.module.css";
 import '../../tailwind.css';
-import "leaflet/dist/leaflet.css";
-import { useUserContext } from '@/context/UserContext';
 
 
 

@@ -11,6 +11,7 @@ import { BusinessPastPopupProvider } from '../context/BusinessPastPopupContext';
 import { BusinessProfileProvider } from '../context/BusinessProfileContext';
 import { ApplicationProfileProvider } from '../context/CreateEventProfileContext';
 import { UserProvider } from '../context/UserContext';
+import { HostProvider } from '../context/HostContext';
 import Header from '@/components/Header';
 import { ThemeProvider } from '@/context/ThemeContext';
 import GoogleMapsLoader from '../components/GoogleMapsLoader';
@@ -33,26 +34,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <GoogleMapsLoader>
             <UserProvider>
-              <ApplicationProfileProvider>
-                <BusinessProfileProvider>
-                  <BusinessAdjectiveProvider>
-                    <BusinessLogoProvider>
-                      <BusinessPastPopupProvider>
-                        <BusinessBudgetProvider>
-                          <BusinessCustomerProvider>
-                            <BusinessScheduleProvider>
-                              <BusinessLocationProvider>
-                                <Header />
-                                {children}
-                              </BusinessLocationProvider>
-                            </BusinessScheduleProvider>
-                          </BusinessCustomerProvider>
-                        </BusinessBudgetProvider>
-                      </BusinessPastPopupProvider>
-                    </BusinessLogoProvider>
-                  </BusinessAdjectiveProvider>
-                </BusinessProfileProvider>
-              </ApplicationProfileProvider>
+              <HostProvider>
+                <ApplicationProfileProvider>
+                  <BusinessProfileProvider>
+                    <BusinessAdjectiveProvider>
+                      <BusinessLogoProvider>
+                        <BusinessPastPopupProvider>
+                          <BusinessBudgetProvider>
+                            <BusinessCustomerProvider>
+                              <BusinessScheduleProvider>
+                                <BusinessLocationProvider>
+                                  <Header />
+                                  {children}
+                                </BusinessLocationProvider>
+                              </BusinessScheduleProvider>
+                            </BusinessCustomerProvider>
+                          </BusinessBudgetProvider>
+                        </BusinessPastPopupProvider>
+                      </BusinessLogoProvider>
+                    </BusinessAdjectiveProvider>
+                  </BusinessProfileProvider>
+                </ApplicationProfileProvider>
+              </HostProvider>
             </UserProvider>
           </GoogleMapsLoader>
         </ThemeProvider>

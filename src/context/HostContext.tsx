@@ -3,14 +3,14 @@
 import React, { createContext, useContext, useState } from 'react';
 
 interface HostContextType {
-  hostProfile: boolean;
-  setHostProfile: (value: boolean) => void;
+  hostProfile: any | null;
+  setHostProfile: (value: any) => void;
 }
 
 const HostContext = createContext<HostContextType | undefined>(undefined);
 
 export const HostProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [hostProfile, setHostProfile] = useState<boolean>(false); // Default to false
+  const [hostProfile, setHostProfile] = useState<any | null>(null);
 
   return (
     <HostContext.Provider value={{ hostProfile, setHostProfile }}>
