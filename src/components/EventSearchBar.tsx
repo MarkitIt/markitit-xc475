@@ -1,15 +1,28 @@
 import { theme } from '@/styles/theme';
 import { FiSearch } from 'react-icons/fi';
+import { useState } from 'react';
 
 interface EventSearchBarProps {
   placeholder?: string;
   onSearch?: (query: string) => void;
 }
 
-export const EventSearchBar = ({ 
+export const EventSearchBar = ({
   placeholder = "What event are you searching for?",
-  onSearch 
+  onSearch,
 }: EventSearchBarProps) => {
+  const [inputValue, setInputValue] = useState(''); // State to manage input value
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent form submission
+      const query = inputValue.trim();
+      if (onSearch && query) {
+        onSearch(query); // Trigger the search with the query
+      }
+    }
+  };
+
   return (
     <div
       style={{
@@ -28,17 +41,19 @@ export const EventSearchBar = ({
           padding: `${theme.spacing.sm} ${theme.spacing.md}`,
         }}
       >
-        <FiSearch 
-          size={20} 
-          style={{ 
+        <FiSearch
+          size={20}
+          style={{
             color: theme.colors.text.secondary,
             marginRight: theme.spacing.sm,
-          }} 
+          }}
         />
         <input
           type="text"
           placeholder={placeholder}
-          onChange={(e) => onSearch?.(e.target.value)}
+          value={inputValue} // Bind input value to state
+          onChange={(e) => setInputValue(e.target.value)} // Update state on input change
+          onKeyDown={handleKeyDown} // Trigger search on Enter key
           style={{
             width: '100%',
             border: 'none',
@@ -52,4 +67,4 @@ export const EventSearchBar = ({
       </div>
     </div>
   );
-}; 
+};

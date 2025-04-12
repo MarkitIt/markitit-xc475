@@ -1,22 +1,48 @@
 'use client';
 
-import { useState,useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { theme } from '@/styles/theme';
-import { Autocomplete } from "@react-google-maps/api";
+import { Autocomplete } from '@react-google-maps/api';
 
 interface SearchBarProps {
   onSearch: (city: string, startDate: string, endDate: string, keywords: string) => void;
+  searchQuery: string; // Add searchQuery as a prop
+  setSearchQuery: (query: string) => void; // Add setSearchQuery as a prop
+  events: any[]; // Pass the events array as a prop
 }
 
-export function SearchBar({ onSearch }: SearchBarProps) {
+export function SearchBar({ onSearch, searchQuery, setSearchQuery }: SearchBarProps) {
   const [city, setCity] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [keywords, setKeywords] = useState('');
+  const [isProcessingQuery, setIsProcessingQuery] = useState(false); // Flag to control useEffect
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Handle searchQuery changes
+  useEffect(() => {
+    if (searchQuery !== '' && !isProcessingQuery) {
+      setIsProcessingQuery(true); // Prevent further execution until processing is complete
+      console.log('searchQuery:', searchQuery); // Log the searchQuery
+      setKeywords(searchQuery); // Set keywords to searchQuery
+      handleSubmitPre(searchQuery); // Trigger search with updated city
+      setSearchQuery(''); // Clear searchQuery after using it
+    }
+  }, [searchQuery, isProcessingQuery, setSearchQuery]);
+
+  // Reset the processing flag after searchQuery is cleared
+  useEffect(() => {
+    if (isProcessingQuery && searchQuery === '') {
+      setIsProcessingQuery(false); // Reset the flag
+    }
+  }, [isProcessingQuery, searchQuery]);
+
+  const handleSubmitPre = (query?: string) => {
+    onSearch(city, startDate, endDate, query || keywords); // Use query if provided, otherwise use keywords
+  };
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     onSearch(city, startDate, endDate, keywords);
   };
 
@@ -47,7 +73,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
   };
 
   return (
-    <form 
+    <form
       onSubmit={handleSubmit}
       style={{
         display: 'flex',
@@ -57,34 +83,21 @@ export function SearchBar({ onSearch }: SearchBarProps) {
         backgroundColor: theme.colors.background.white,
         borderRadius: theme.borderRadius.lg,
         boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-        marginBottom: theme.spacing.xl
+        marginBottom: theme.spacing.xl,
       }}
     >
-      {/* <div style={{ flex: '1 1 200px' }}>
-        <input
-          type="text"
-          placeholder="City"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          style={inputStyle}
-        />
-      </div> */}
       <div style={{ flex: '1 1 200px' }}>
-        <Autocomplete 
-          onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-          
-          >
+        <Autocomplete onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}>
           <input
-              type="text"
-              placeholder="City"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              style={inputStyle}
-              
+            type="text"
+            placeholder="City"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            style={inputStyle}
           />
         </Autocomplete>
       </div>
-      
+
       <div style={{ flex: '1 1 150px' }}>
         <input
           type="text"
@@ -94,7 +107,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
           style={inputStyle}
         />
       </div>
-      
+
       <div style={{ flex: '1 1 150px' }}>
         <input
           type="text"
@@ -104,7 +117,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
           style={inputStyle}
         />
       </div>
-      
+
       <div style={{ flex: '1 1 200px' }}>
         <input
           type="text"
@@ -114,15 +127,12 @@ export function SearchBar({ onSearch }: SearchBarProps) {
           style={inputStyle}
         />
       </div>
-      
+
       <div style={{ flex: '0 0 auto' }}>
-        <button 
-          type="submit"
-          style={buttonStyle}
-        >
+        <button type="submit" style={buttonStyle}>
           Search
         </button>
       </div>
     </form>
   );
-} 
+}

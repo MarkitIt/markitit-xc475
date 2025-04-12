@@ -2,6 +2,7 @@
 
 import { signOut } from "firebase/auth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState, useRef } from "react";
 import { useUserContext } from '../context/UserContext';
 import { auth } from "../lib/firebase";
@@ -9,6 +10,7 @@ import './tailwind.css';
 import { theme } from '@/styles/theme';
 import { EventSearchBar } from '@/components/EventSearchBar';
 import Image from 'next/image';
+import { useSearchContext } from '@/context/SearchContext';
 
 const dropdownLinkStyle = {
   display: 'block',
@@ -19,9 +21,11 @@ const dropdownLinkStyle = {
 };
 
 export default function Header() {
+  const router = useRouter();
   const { user, vendorProfile, getVendorProfile,hostProfile,getHostProfile } = useUserContext();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { setSearchQuery } = useSearchContext();
 
   useEffect(() => {
     if (user?.role === 'vendor') {
@@ -49,6 +53,13 @@ export default function Header() {
       setDropdownOpen(false);
     } catch (error) {
       console.error("Error signing out:", error);
+    }
+  };
+
+  const handleSearch = (query: string) => {
+    if (query.trim()) {
+      setSearchQuery(query); // Update the search query in the context
+      router.push('/search-events'); // Navigate to search-events with query
     }
   };
 
@@ -282,7 +293,7 @@ export default function Header() {
             }}
           />
         </Link>
-        <EventSearchBar />
+        <EventSearchBar onSearch={handleSearch}/>
       </div>
       
       <div style={{

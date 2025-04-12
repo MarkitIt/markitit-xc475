@@ -19,6 +19,7 @@ import { attendeeTypes } from '@/types/AttendeeTypes';
 import { categories } from '@/types/Categories';
 import { demographics } from '@/types/Demographics';
 import { priceRanges } from '@/types/Price';
+import { useSearchContext } from '@/context/SearchContext';
 
 
 
@@ -32,7 +33,7 @@ export default function SearchEvents() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const { searchQuery ,setSearchQuery} = useSearchContext(); 
   const router = useRouter();
 
   const [selectedEventType, setSelectedEventType] = useState('');
@@ -41,6 +42,8 @@ export default function SearchEvents() {
   const [selectedDemographic, setSelectedDemographic] = useState('');
   const [selectedPrice, setSelectedPrice] = useState('');
 
+  const [isFetching, setIsFetching] = useState(false);
+
   const eventsPerPage = 9;
 
   // Calculate current events to display based on pagination
@@ -48,12 +51,14 @@ export default function SearchEvents() {
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
+
   // Fetching events from API if user has vendor profile, otherwise from Firestore
   useEffect(() => {
     async function fetchEvents() {
       setLoading(true);
       setError(null);
       
+
       try {
         let eventsList = [];
         
@@ -82,7 +87,6 @@ export default function SearchEvents() {
             ...doc.data()
           }));
         }
-        
         setEvents(eventsList);
         setFilteredEvents(eventsList);
       } catch (err) {
@@ -133,9 +137,7 @@ export default function SearchEvents() {
 
       // Check keywords in name or description
       const keywordsMatch = keywords
-        ? event.name?.toLowerCase().includes(keywords.toLowerCase()) ||
-          event.description?.toLowerCase().includes(keywords.toLowerCase())
-        : true;
+        ? event.name?.toLowerCase().includes(keywords.toLowerCase()) : true;
 
       return cityMatch && startDateMatch && endDateMatch && keywordsMatch;
     });
@@ -189,7 +191,7 @@ export default function SearchEvents() {
         Find Events
       </h1>
       
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar onSearch={handleSearch} searchQuery={searchQuery} setSearchQuery={setSearchQuery}/>
       
       {/* Filter Bar */}
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
