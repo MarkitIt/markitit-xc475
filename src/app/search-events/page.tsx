@@ -50,55 +50,59 @@ export default function SearchEvents() {
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+  const [hasFetched, setHasFetched] = useState(false); 
 
 
   // Fetching events from API if user has vendor profile, otherwise from Firestore
   useEffect(() => {
+    if (hasFetched) return; // Prevent fetching again if already fetched
+
     async function fetchEvents() {
       setLoading(true);
       setError(null);
-      
 
       try {
         let eventsList = [];
-        
+
         if (user && vendorProfile) {
           // Fetch ranked events from API
           const rankingResponse = await fetchEventRankings(user.uid);
-          
+
           if (rankingResponse.error) {
             throw new Error(rankingResponse.error);
           }
-          
+
           // Map the ranked events to include score
           eventsList = rankingResponse.data.rankedEvents.map((event: any) => ({
             ...event,
-            score: event.scoreBreakdown.total * 100 // Convert to percentage
+            score: event.scoreBreakdown.total * 100, // Convert to percentage
           }));
-          
+
           // Sort by score (highest first)
           eventsList.sort((a: any, b: any) => b.score - a.score);
-          
         } else {
           // Fetch from Firestore for non-vendor users
-          const querySnapshot = await getDocs(collection(db, "events"));
-          eventsList = querySnapshot.docs.map(doc => ({
+          const querySnapshot = await getDocs(collection(db, 'events'));
+          eventsList = querySnapshot.docs.map((doc) => ({
             id: doc.id,
-            ...doc.data()
+            ...doc.data(),
           }));
         }
+
         setEvents(eventsList);
         setFilteredEvents(eventsList);
+        setHasFetched(true); // Mark as fetched
       } catch (err) {
-        console.error("Error fetching events: ", err);
-        setError("Failed to load events. Please try again later.");
+        console.error('Error fetching events: ', err);
+        setError('Failed to load events. Please try again later.');
       } finally {
         setLoading(false);
       }
     }
-    
+
     fetchEvents();
-  }, [user, vendorProfile]);
+  }, [hasFetched, user, vendorProfile]);
+
 
   // Handle search
   const handleSearch = (city: string, startDate: string, endDate: string, keywords: string) => {
@@ -191,7 +195,7 @@ export default function SearchEvents() {
         Find Events
       </h1>
       
-      <SearchBar onSearch={handleSearch} searchQuery={searchQuery} setSearchQuery={setSearchQuery}/>
+      <SearchBar onSearch={handleSearch} searchQuery={searchQuery} setSearchQuery={setSearchQuery} events={events}/>
       
       {/* Filter Bar */}
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>

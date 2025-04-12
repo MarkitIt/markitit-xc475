@@ -154,7 +154,6 @@ export default function EventsPage() {
           </div>
         )}
 
-        <SearchBar onSearch={handleSearch} />
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
           {currentEvents.map((event) => (

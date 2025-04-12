@@ -8,34 +8,26 @@ interface SearchBarProps {
   onSearch: (city: string, startDate: string, endDate: string, keywords: string) => void;
   searchQuery: string; // Add searchQuery as a prop
   setSearchQuery: (query: string) => void; // Add setSearchQuery as a prop
-  events: any[]; // Pass the events array as a prop
+  events: any[]; // Add events as a prop
 }
 
-export function SearchBar({ onSearch, searchQuery, setSearchQuery }: SearchBarProps) {
+export function SearchBar({ onSearch, searchQuery, setSearchQuery,events}: SearchBarProps) {
   const [city, setCity] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [keywords, setKeywords] = useState('');
-  const [isProcessingQuery, setIsProcessingQuery] = useState(false); // Flag to control useEffect
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   // Handle searchQuery changes
   useEffect(() => {
-    if (searchQuery !== '' && !isProcessingQuery) {
-      setIsProcessingQuery(true); // Prevent further execution until processing is complete
-      console.log('searchQuery:', searchQuery); // Log the searchQuery
+    if (searchQuery &&  events.length > 0) {
       setKeywords(searchQuery); // Set keywords to searchQuery
       handleSubmitPre(searchQuery); // Trigger search with updated city
-      setSearchQuery(''); // Clear searchQuery after using it
-    }
-  }, [searchQuery, isProcessingQuery, setSearchQuery]);
 
-  // Reset the processing flag after searchQuery is cleared
-  useEffect(() => {
-    if (isProcessingQuery && searchQuery === '') {
-      setIsProcessingQuery(false); // Reset the flag
     }
-  }, [isProcessingQuery, searchQuery]);
+  }, [searchQuery,  setSearchQuery,events]);
+
+
 
   const handleSubmitPre = (query?: string) => {
     onSearch(city, startDate, endDate, query || keywords); // Use query if provided, otherwise use keywords
@@ -44,6 +36,7 @@ export function SearchBar({ onSearch, searchQuery, setSearchQuery }: SearchBarPr
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     onSearch(city, startDate, endDate, keywords);
+    setSearchQuery(''); 
   };
 
   const inputStyle = {
