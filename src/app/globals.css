@@ -163,3 +163,184 @@ div[style*="position: absolute"] {
   z-index: 1000 !important;
   pointer-events: auto !important;
 }
+
+/*****************************************
+  Theme
+*****************************************/
+
+
+
+/* Global Reset & Layout */
+body {
+  margin: 0;
+  font-family: 'Hoss Round', sans-serif;
+  background: linear-gradient(
+    to bottom,
+    #ffffff,
+    #fde9e8,
+    #fbd5d4,
+    #f7acab,
+    #f38482,
+    #f15152
+  );
+  color: #000000;
+}
+
+/* Container Styling */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding-top: 120px;
+  text-align: center;
+}
+
+/* Step Indicator Shapes (just a placeholder class) */
+.step-icons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.step-icons .active {
+  color: #f15152;
+}
+
+/* Page Header */
+h1 {
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  margin-bottom: 32px;
+}
+
+/* Form Fields */
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border: 1px solid #000000;
+  border-radius: 9px;
+  font-size: 16px;
+  font-family: 'Hoss Round', sans-serif;
+}
+
+/* Field Labels */
+label {
+  display: block;
+  text-align: left;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #000;
+}
+
+/* Subtext */
+.subtext {
+  font-size: 12px;
+  color: #000000;
+  text-align: left;
+  margin-top: -12px;
+  margin-bottom: 10px;
+}
+
+/* Button */
+.button-next {
+  background-color: #f15152;
+  color: #ffffff;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-family: 'Hoss Round', sans-serif;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.button-next:hover {
+  background-color: #d94445;
+}
+
+/* Upload Button Container */
+.upload-section {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+/* Label */
+.upload-label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+  color: #000;
+}
+
+/* Upload Button Style */
+.upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1px solid #000;
+  border-radius: 24px;
+  background-color: #ffffff;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: 'Hoss Round', sans-serif;
+  transition: background-color 0.2s ease;
+}
+
+.upload-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.upload-btn-icon {
+  background-color: #000;
+  padding: 8px;
+  border-radius: 50%;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Add Image Link */
+.add-image {
+  font-size: 14px;
+  margin-top: 10px;
+  display: inline-block;
+  border-bottom: 1px solid #000;
+  cursor: pointer;
+}
+
+/* Button Row */
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+/* Pill Button Base Style */
+.pill-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  margin: 6px;
+  border: 1px solid #000;
+  border-radius: 999px;
+  font-family: 'Hoss Round', sans-serif;
+  font-size: 16px;
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Selected State */
+.pill-button.selected {
+  background-color: #f15152;
+  color: #fff;
+  border-color: #f15152;
+}

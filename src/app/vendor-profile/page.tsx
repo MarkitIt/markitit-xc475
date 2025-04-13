@@ -447,9 +447,16 @@ export default function VendorProfilePage() {
               Website
             </label>
             <input
-              type="url"
+              type="text"
+              placeholder="Enter your website URL (e.g., https://www.example.com)"
               value={website}
-              onChange={(e) => setWebsite(e.target.value)}
+              onChange={(e) => {
+                let url = e.target.value;
+                if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+                  url = 'https://' + url;
+                }
+                setWebsite(url);
+              }}
               style={{
                 width: '100%',
                 padding: theme.spacing.md,
@@ -459,6 +466,14 @@ export default function VendorProfilePage() {
                 backgroundColor: theme.colors.background.white,
               }}
             />
+            <span style={{
+              fontSize: '0.875rem',
+              color: theme.colors.text.secondary,
+              marginTop: theme.spacing.xs,
+              display: 'block',
+            }}>
+              Include https:// or http:// in your URL
+            </span>
           </div>
 
           <div>

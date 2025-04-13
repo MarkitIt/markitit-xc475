@@ -243,10 +243,16 @@ export default function HostProfilePage() {
                   Website (Optional)
                 </label>
                 <input
-                  type="url"
-                  placeholder="Enter your website URL"
+                  type="text"
+                  placeholder="Enter your website URL (e.g., https://www.example.com)"
                   value={website}
-                  onChange={(e) => setWebsite(e.target.value)}
+                  onChange={(e) => {
+                    let url = e.target.value;
+                    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+                      url = 'https://' + url;
+                    }
+                    setWebsite(url);
+                  }}
                   style={{
                     width: '100%',
                     padding: theme.spacing.md,
@@ -255,6 +261,14 @@ export default function HostProfilePage() {
                     fontSize: theme.typography.fontSize.body,
                   }}
                 />
+                <span style={{
+                  fontSize: theme.typography.fontSize.small,
+                  color: theme.colors.text.secondary,
+                  marginTop: theme.spacing.xs,
+                  display: 'block',
+                }}>
+                  Include https:// or http:// in your URL
+                </span>
               </div>
             </div>
           </div>

@@ -6,8 +6,6 @@ import styles from './styles.module.css';
 import { RoleCard } from './components/RoleCard';
 import { useUserContext } from '@/context/UserContext';
 import { useState } from 'react';
-import { db } from "../../lib/firebase";
-import { doc, updateDoc } from 'firebase/firestore';
 
 const ROLES = [
   {
@@ -25,65 +23,77 @@ const ROLES = [
 ];
 
 export default function CreateProfilePage() {
-   
   const router = useRouter();
-  const { user } = useUserContext();
-  const [role, setRole] = useState("");
+  const { user, updateUserRole } = useUserContext();
   const [error, setError] = useState("");
 
-
-
-  const handleSubmit = async (role: string) => {
+  const handleRoleSelect = async (selectedRole: 'host' | 'vendor') => {
     try {
-      // Ensure the user is logged in
       if (!user) {
-        alert("You must be logged in to update your role.");
+        setError("You must be logged in to create a profile");
         return;
       }
-  
+
       // Update the user's role in Firestore
-      await updateDoc(doc(db, "users", user.uid), {
-        role, // Update the role property (e.g., "host" or "vendor")
-      });
-  
-      alert(`Your role has been updated to ${role} successfully!`);
-      if (role=="vendor") router.push("/vendor-profile"); // Redirect to the dashboard or appropriate page
-      else router.push('/create-profile/host')
+      await updateUserRole(selectedRole);
+
+      // Redirect based on selected role
+      if (selectedRole === 'host') {
+        router.push('/create-profile/host');
+      } else {
+        router.push('/vendor-profile');
+      }
     } catch (error) {
       console.error("Error updating role:", error);
-      setError((error as Error).message);
+      setError(error instanceof Error ? error.message : "An error occurred");
     }
   };
 
+  if (!user) {
+    router.push('/auth/login');
+    return null;
+  }
 
   return (
     <main style={{
       backgroundColor: theme.colors.background.main,
-    }} className={styles.container}>
-      <h1 style={{
-        fontSize: theme.typography.fontSize.title,
-        color: theme.colors.text.primary,
-      }} className={styles.title}>
-        Choose Your Role
-      </h1>
-      
-      <p style={{
-        fontSize: theme.typography.fontSize.body,
-        color: theme.colors.text.secondary,
-      }} className={styles.description}>
-        Select whether you want to host events or become a vendor. This will determine your experience on MarkitIt.
-      </p>
+      minHeight: 'calc(100vh - 80px)',
+      padding: theme.spacing.xl,
+    }}>
+      <div style={{
+        maxWidth: '800px',
+        margin: '0 auto',
+        textAlign: 'center',
+      }}>
+        <h1 style={{
+          fontSize: theme.typography.fontSize.title,
+          marginBottom: theme.spacing.xl,
+        }}>
+          Choose Your Role
+        </h1>
+        
+        {error && (
+          <div style={{
+            color: theme.colors.primary.coral,
+            marginBottom: theme.spacing.xl,
+          }}>
+            {error}
+          </div>
+        )}
 
-      <div className={styles.cardsContainer}>
-        {ROLES.map(role => (
-          <RoleCard
-            key={role.title}
-            title={role.title}
-            description={role.description}
-            icon={role.icon}
-            onClick={() => handleSubmit(role.role)}
-          />
-        ))}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: theme.spacing.xl,
+        }}>
+          {ROLES.map((role) => (
+            <RoleCard
+              key={role.role}
+              {...role}
+              onClick={() => handleRoleSelect(role.role as 'host' | 'vendor')}
+            />
+          ))}
+        </div>
       </div>
     </main>
   );

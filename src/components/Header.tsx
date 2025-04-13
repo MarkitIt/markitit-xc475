@@ -19,18 +19,23 @@ const dropdownLinkStyle = {
 };
 
 export default function Header() {
-  const { user, vendorProfile, getVendorProfile,hostProfile,getHostProfile } = useUserContext();
+  const { user, vendorProfile, hostProfile, getVendorProfile, getHostProfile } = useUserContext();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (user?.role === 'vendor') {
-      getVendorProfile();
-    }
-    else if (user?.role === 'host') {
-      getHostProfile();
-    }
-  }, [user]);
+    const loadProfile = async () => {
+      if (!user) return;
+      
+      if (user.role === 'vendor') {
+        await getVendorProfile();
+      } else if (user.role === 'host') {
+        await getHostProfile();
+      }
+    };
+    
+    loadProfile();
+  }, [user, user?.role]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -53,6 +58,7 @@ export default function Header() {
   };
 
   const renderProfileSection = () => {
+    // Not signed in
     if (!user) {
       return (
         <Link href="/auth/login" style={{
@@ -70,7 +76,8 @@ export default function Header() {
       );
     }
 
-    if (!vendorProfile && !hostProfile) {
+    // Signed in but no profile (role is 'none' or no profile created yet)
+    if (user.role === 'none' || (!vendorProfile && !hostProfile)) {
       return (
         <div ref={dropdownRef} style={{ position: 'relative' }}>
           <button
@@ -104,84 +111,33 @@ export default function Header() {
               boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
               zIndex: 50,
             }}>
-              {user?.role === 'host' && (
-                 <>
-                   <Link href="/create-profile/host" className="dropdown-link" style={dropdownLinkStyle}>
-                     Create Host Profile
-                   </Link>
-                   <button
-                     onClick={handleLogout}
-                     className="dropdown-link text-coral"
-                     style={{
-                       display: 'block',
-                       width: '100%',
-                       padding: theme.spacing.sm,
-                       color: theme.colors.primary.coral,
-                       background: 'none',
-                       border: 'none',
-                       textAlign: 'left',
-                       cursor: 'pointer',
-                       borderRadius: theme.borderRadius.sm,
-                     }}
-                   >
-                     Logout
-                   </button>
-                 </>
-               )}
-               {user?.role === 'vendor' && (
-                 <>
-                 <Link href="/vendor-profile" className="dropdown-link" style={dropdownLinkStyle}>
-                   Create Vendor Profile
-                 </Link>
-                 <button
-                   onClick={handleLogout}
-                   className="dropdown-link text-coral"
-                   style={{
-                     display: 'block',
-                     width: '100%',
-                     padding: theme.spacing.sm,
-                     color: theme.colors.primary.coral,
-                     background: 'none',
-                     border: 'none',
-                     textAlign: 'left',
-                     cursor: 'pointer',
-                     borderRadius: theme.borderRadius.sm,
-                   }}
-                 >
-                   Logout
-                 </button>
-               </>
-               )}
-               {user?.role === "" && (
-                 <>
-                 <Link href="/create-profile" className="dropdown-link" style={dropdownLinkStyle}>
-                   Create Profile
-                 </Link>
-                 <button
-                   onClick={handleLogout}
-                   className="dropdown-link text-coral"
-                   style={{
-                     display: 'block',
-                     width: '100%',
-                     padding: theme.spacing.sm,
-                     color: theme.colors.primary.coral,
-                     background: 'none',
-                     border: 'none',
-                     textAlign: 'left',
-                     cursor: 'pointer',
-                     borderRadius: theme.borderRadius.sm,
-                   }}
-                 >
-                   Logout
-                 </button>
-               </>
-               )}
+              <Link href="/create-profile" className="dropdown-link" style={dropdownLinkStyle}>
+                Create Profile
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="dropdown-link text-coral"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: theme.spacing.sm,
+                  color: theme.colors.primary.coral,
+                  background: 'none',
+                  border: 'none',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  borderRadius: theme.borderRadius.sm,
+                }}
+              >
+                Logout
+              </button>
             </div>
           )}
         </div>
       );
     }
 
+    // Has a profile (either vendor or host)
     return (
       <div ref={dropdownRef} style={{ position: 'relative' }}>
         <button
@@ -216,7 +172,7 @@ export default function Header() {
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
             zIndex: 50,
           }}>
-            {hostProfile ? (
+            {user.role === 'host' ? (
               <>
                 <Link href="/host-dashboard" className="dropdown-link" style={dropdownLinkStyle}>
                   Dashboard
