@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { theme } from '@/styles/theme';
-import Image from 'next/image';
+import { getUserChats, Conversation } from '@/lib/firebaseChat';
+import CreateCommunityModal from './CreateCommunityModal';
+import JoinCommunityModal from './JoinCommunityModal';
 
 interface ConversationListProps {
-  selectedConversation: any | null;
-  setSelectedConversation: (conversation: any) => void;
+  selectedConversation: Conversation | null;
+  setSelectedConversation: (conversation: Conversation) => void;
   activeTab: 'personal' | 'community';
   setActiveTab: (tab: 'personal' | 'community') => void;
+  userId: string;
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({
@@ -14,114 +17,102 @@ const ConversationList: React.FC<ConversationListProps> = ({
   setSelectedConversation,
   activeTab,
   setActiveTab,
+  userId,
 }) => {
-  const [showDropdown, setShowDropdown] = useState(false);
-  
-  // mock, TODO
-  const mockCommunityConversations = [
-    {
-      id: 'comm1',
-      name: 'Brooklyn Candle Makers',
-      memberCount: 30,
-      lastMessageTimestamp: new Date(),
-      image: '/placeholder.png',
-    },
-    {
-      id: 'comm2',
-      name: 'Pop-Up Print Club',
-      memberCount: 80,
-      lastMessageTimestamp: new Date(Date.now() - 3600000),
-      image: '/placeholder.png',
-    },
-    {
-      id: 'comm3',
-      name: 'Jewelry Making Vendors',
-      memberCount: 5,
-      lastMessageTimestamp: new Date(Date.now() - 7200000),
-      image: '/placeholder.png',
-    },
-    {
-      id: 'comm4',
-      name: 'Boston Clothing Sellers',
-      memberCount: 100,
-      lastMessageTimestamp: new Date(Date.now() - 10800000), 
-      image: '/placeholder.png',
-    },
-    {
-      id: 'comm5',
-      name: 'Sticker-Making Group',
-      memberCount: 45,
-      lastMessageTimestamp: new Date(Date.now() - 14400000), // 4 hours ago
-      image: '/placeholder.png',
-    },
-  ];
-  
-  const mockPersonalConversations = [
-    {
-      id: 'pers1',
-      name: 'Sarah Johnson',
-      role: 'Host of Brooklyn Pop-Up',
-      lastMessage: 'Looking forward to seeing your work!',
-      lastMessageTimestamp: new Date(),
-      image: '/placeholder.png',
-    },
-    {
-      id: 'pers2',
-      name: 'Al Smith',
-      lastMessage: 'When is the next event?',
-      lastMessageTimestamp: new Date(Date.now() - 3600000), 
-      image: '/placeholder.png',
-    },
-    {
-      id: 'pers3',
-      name: 'Claire Boola',
-      lastMessage: 'Great talking to you!',
-      lastMessageTimestamp: new Date(Date.now() - 7200000),
-      image: '/placeholder.png',
-    },
-  ];
-  
-  const conversations = activeTab === 'personal' ? mockPersonalConversations : mockCommunityConversations;
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    setLoading(true);
+
+    const unsubscribe = getUserChats(userId, (chats) => {
+      const filteredChats = chats.filter((chat) => chat.type === activeTab);
+      setConversations(filteredChats);
+      setLoading(false);
+
+      if (filteredChats.length > 0 && !selectedConversation) {
+        setSelectedConversation(filteredChats[0]);
+      } else if (selectedConversation) {
+        const stillExists = filteredChats.some(
+          (chat) => chat.id === selectedConversation.id
+        );
+        if (!stillExists && filteredChats.length > 0) {
+          setSelectedConversation(filteredChats[0]);
+        } else if (!stillExists) {
+          setSelectedConversation(null);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, [userId, activeTab, selectedConversation, setSelectedConversation]);
+
+  const handleCommunitySuccess = () => {
+    setShowCreateModal(false);
+    setShowJoinModal(false);
+  };
 
   return (
-    <div style={{
-      width: '300px',
-      borderRight: '1px solid rgba(0,0,0,0.1)',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
-      <div style={{
-        padding: theme.spacing.md,
-        borderBottom: '1px solid rgba(0,0,0,0.1)',
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          marginBottom: theme.spacing.md,
-        }}>
-          <div style={{
-            backgroundColor: theme.colors.background.main,
-            borderRadius: theme.borderRadius.full,
-            padding: `${theme.spacing.xs} ${theme.spacing.md}`,
-            width: '100%',
+    <div
+      style={{
+        width: '300px',
+        borderRight: '1px solid rgba(0,0,0,0.1)',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <div
+        style={{
+          padding: theme.spacing.md,
+          borderBottom: '1px solid rgba(0,0,0,0.1)',
+        }}
+      >
+        <div
+          style={{
             display: 'flex',
             alignItems: 'center',
-          }}>
+            marginBottom: theme.spacing.md,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: theme.colors.background.main,
+              borderRadius: theme.borderRadius.full,
+              padding: `${theme.spacing.xs} ${theme.spacing.md}`,
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             <span style={{ marginRight: theme.spacing.sm }}>🔍</span>
-            <span style={{ color: theme.colors.text.secondary }}>Search...</span>
+            <span style={{ color: theme.colors.text.secondary }}>
+              Search...
+            </span>
           </div>
         </div>
 
-        <div style={{
-          display: 'flex',
-          marginBottom: theme.spacing.sm,
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            marginBottom: theme.spacing.sm,
+          }}
+        >
           <button
             onClick={() => setActiveTab('community')}
             style={{
-              backgroundColor: activeTab === 'community' ? theme.colors.primary.coral : 'transparent',
-              color: activeTab === 'community' ? theme.colors.background.white : theme.colors.text.secondary,
+              backgroundColor:
+                activeTab === 'community'
+                  ? theme.colors.primary.coral
+                  : 'transparent',
+              color:
+                activeTab === 'community'
+                  ? theme.colors.background.white
+                  : theme.colors.text.secondary,
               border: 'none',
               borderRadius: theme.borderRadius.full,
               padding: `${theme.spacing.xs} ${theme.spacing.md}`,
@@ -132,44 +123,15 @@ const ConversationList: React.FC<ConversationListProps> = ({
             }}
           >
             Communities
-            {activeTab === 'community' && showDropdown && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                backgroundColor: theme.colors.background.white,
-                borderRadius: theme.borderRadius.md,
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                padding: theme.spacing.sm,
-                zIndex: 10,
-                width: '100px',
-              }}>
-                <div 
-                  style={{
-                    padding: theme.spacing.xs,
-                    cursor: 'pointer',
-                    color: theme.colors.text.primary,
-                  }}
-                >
-                  Join
-                </div>
-                <div 
-                  style={{
-                    padding: theme.spacing.xs,
-                    cursor: 'pointer',
-                    color: theme.colors.text.primary,
-                  }}
-                >
-                  Create
-                </div>
-              </div>
-            )}
           </button>
-          
+
           <button
             onClick={() => setActiveTab('personal')}
             style={{
-              backgroundColor: activeTab === 'personal' ? theme.colors.background.main : 'transparent',
+              backgroundColor:
+                activeTab === 'personal'
+                  ? theme.colors.background.main
+                  : 'transparent',
               color: theme.colors.text.secondary,
               border: 'none',
               borderRadius: theme.borderRadius.full,
@@ -183,13 +145,15 @@ const ConversationList: React.FC<ConversationListProps> = ({
         </div>
 
         {activeTab === 'community' && (
-          <div style={{
-            display: 'flex',
-            gap: theme.spacing.md,
-            marginTop: theme.spacing.sm,
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: theme.spacing.md,
+              marginTop: theme.spacing.sm,
+            }}
+          >
             <button
-              onClick={() => setShowDropdown(!showDropdown)}
+              onClick={() => setShowJoinModal(true)}
               style={{
                 backgroundColor: theme.colors.background.white,
                 color: theme.colors.text.primary,
@@ -203,6 +167,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
               Join
             </button>
             <button
+              onClick={() => setShowCreateModal(true)}
               style={{
                 backgroundColor: theme.colors.background.white,
                 color: theme.colors.text.primary,
@@ -219,82 +184,123 @@ const ConversationList: React.FC<ConversationListProps> = ({
         )}
       </div>
 
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-      }}>
-        {conversations.map((conversation) => (
-          <div
-            key={conversation.id}
-            onClick={() => setSelectedConversation(conversation)}
-            style={{
-              padding: theme.spacing.md,
-              borderBottom: '1px solid rgba(0,0,0,0.05)',
-              backgroundColor: selectedConversation?.id === conversation.id
-                ? 'rgba(0,0,0,0.05)'
-                : 'transparent',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              backgroundColor: theme.colors.primary.beige,
-              marginRight: theme.spacing.md,
-              overflow: 'hidden',
-              flexShrink: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '16px',
-              fontWeight: theme.typography.fontWeight.bold,
-              color: theme.colors.background.white,
-            }}>
-              {conversation.name?.charAt(0)}
-            </div>
-            
-            <div style={{ flex: 1 }}>
-              <div style={{
-                fontSize: '16px',
-                fontWeight: theme.typography.fontWeight.medium,
-                color: theme.colors.text.primary,
-                marginBottom: '2px',
-              }}>
-                {conversation.name}
-              </div>
-              
-              <div style={{
-                fontSize: '14px',
-                color: theme.colors.text.secondary,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}>
-                {activeTab === 'community' ? (
-                  <span>{conversation.memberCount} people</span>
-                ) : (
-                  <span>{conversation.role || conversation.lastMessage}</span>
-                )}
-              </div>
-            </div>
-            
-            <div style={{
-              fontSize: '12px',
-              color: theme.colors.text.secondary,
-              alignSelf: 'flex-start',
-              marginLeft: theme.spacing.sm,
-            }}>
-              {conversation.lastMessageTimestamp.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </div>
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+        }}
+      >
+        {loading ? (
+          <div style={{ padding: theme.spacing.md, textAlign: 'center' }}>
+            Loading conversations...
           </div>
-        ))}
+        ) : conversations.length === 0 ? (
+          <div style={{ padding: theme.spacing.md, textAlign: 'center' }}>
+            No {activeTab} chats found
+          </div>
+        ) : (
+          conversations.map((conversation) => (
+            <div
+              key={conversation.id}
+              onClick={() => setSelectedConversation(conversation)}
+              style={{
+                padding: theme.spacing.md,
+                borderBottom: '1px solid rgba(0,0,0,0.05)',
+                backgroundColor:
+                  selectedConversation?.id === conversation.id
+                    ? 'rgba(0,0,0,0.05)'
+                    : 'transparent',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  backgroundColor: theme.colors.primary.beige,
+                  marginRight: theme.spacing.md,
+                  overflow: 'hidden',
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '16px',
+                  fontWeight: theme.typography.fontWeight.bold,
+                  color: theme.colors.background.white,
+                }}
+              >
+                {conversation.name?.charAt(0) || 'U'}
+              </div>
+
+              <div style={{ flex: 1 }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: theme.typography.fontWeight.medium,
+                    color: theme.colors.text.primary,
+                    marginBottom: '2px',
+                  }}
+                >
+                  {conversation.name || 'Chat'}
+                </div>
+
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: theme.colors.text.secondary,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {activeTab === 'community' ? (
+                    <span>{conversation.memberCount || 0} people</span>
+                  ) : (
+                    <span>{conversation.lastMessage || 'Start chatting!'}</span>
+                  )}
+                </div>
+              </div>
+
+              {conversation.lastMessageTimestamp && (
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: theme.colors.text.secondary,
+                    alignSelf: 'flex-start',
+                    marginLeft: theme.spacing.sm,
+                  }}
+                >
+                  {new Date(
+                    conversation.lastMessageTimestamp.seconds * 1000
+                  ).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </div>
+              )}
+            </div>
+          ))
+        )}
       </div>
+
+      {showCreateModal && (
+        <CreateCommunityModal
+          userId={userId}
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={handleCommunitySuccess}
+        />
+      )}
+
+      {showJoinModal && (
+        <JoinCommunityModal
+          userId={userId}
+          onClose={() => setShowJoinModal(false)}
+          onSuccess={handleCommunitySuccess}
+        />
+      )}
     </div>
   );
 };

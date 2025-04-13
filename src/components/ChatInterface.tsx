@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { theme } from '@/styles/theme';
 import ConversationList from './ConversationList';
 import MessageArea from './MessageArea';
+import { Conversation } from '@/lib/firebaseChat';
 
 interface ChatInterfaceProps {
   userId: string;
@@ -14,9 +15,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   activeTab,
   setActiveTab,
 }) => {
-  const [selectedConversation, setSelectedConversation] = useState<any | null>(
-    null
-  );
+  const [selectedConversation, setSelectedConversation] =
+    useState<Conversation | null>(null);
 
   return (
     <div
@@ -34,6 +34,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         setSelectedConversation={setSelectedConversation}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        userId={userId}
       />
 
       <MessageArea conversation={selectedConversation} userId={userId} />
