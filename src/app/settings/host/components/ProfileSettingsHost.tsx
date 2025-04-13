@@ -38,11 +38,11 @@ export const ProfileSettingsHost = ({ initialData, onSave }: ProfileSettingsHost
     onSave(formData);
   };
 
-  const handleEventTypesChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const updatedEventTypes = [...formData.eventTypes];
-    updatedEventTypes[index] = e.target.value;
-    setFormData((prev) => ({ ...prev, eventTypes: updatedEventTypes }));
+  const handleEventTypesChange = (selectedOptions: string[]) => {
+    setFormData((prev) => ({ ...prev, eventTypes: selectedOptions }));
   };
+
+
 
   return (
     <div className={styles.content}>
@@ -109,44 +109,73 @@ export const ProfileSettingsHost = ({ initialData, onSave }: ProfileSettingsHost
           />
         </div>
 
+        {/* Event Capacity Dropdown */}
         <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="eventCapacity">
-            Event Capacity
+          <label
+            style={{
+              display: 'block',
+              fontSize: '1rem',
+              color: '#333',
+              marginBottom: '0.5rem',
+            }}
+          >
+            Typical Event Capacity*
           </label>
-          <input
-            id="eventCapacity"
-            type="text"
-            placeholder="Event capacity (e.g., small, medium, large)"
-            className={styles.input}
+          <select
+            required
             value={formData.eventCapacity}
-            onChange={(e) => setFormData((prev) => ({ ...prev, eventCapacity: e.target.value }))}
-          />
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, eventCapacity: e.target.value }))
+            }
+            style={{
+              width: '100%',
+              padding: '0.5rem',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              fontSize: '1rem',
+            }}
+          >
+            <option value="">Select capacity range</option>
+            <option value="small">Small (1-20 vendors)</option>
+            <option value="medium">Medium (21-50 vendors)</option>
+            <option value="large">Large (51-100 vendors)</option>
+            <option value="xlarge">Extra Large (100+ vendors)</option>
+          </select>
         </div>
 
+        {/* Event Types Dropdown */}
         <div className={styles.formGroup}>
-          <label className={styles.label}>Event Types</label>
-          {formData.eventTypes.map((type, index) => (
-            <input
-              key={index}
-              type="text"
-              placeholder={`Event type ${index + 1}`}
-              className={styles.input}
-              value={type}
-              onChange={(e) => handleEventTypesChange(e, index)}
-            />
-          ))}
-          <button
-            type="button"
-            className={styles.addButton}
-            onClick={() =>
-              setFormData((prev) => ({
-                ...prev,
-                eventTypes: [...prev.eventTypes, ''],
-              }))
-            }
+          <label
+            style={{
+              display: 'block',
+              fontSize: '1rem',
+              color: '#333',
+              marginBottom: '0.5rem',
+            }}
           >
-            Add Event Type
-          </button>
+            Event Types*
+          </label>
+          <select
+            required
+            multiple
+            value={formData.eventTypes}
+            onChange={(e) =>
+              handleEventTypesChange(Array.from(e.target.selectedOptions, (option) => option.value))
+            }
+            style={{
+              width: '100%',
+              padding: '0.5rem',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              fontSize: '1rem',
+            }}
+          >
+            <option value="market">Markets</option>
+            <option value="fair">Fairs</option>
+            <option value="festival">Festivals</option>
+            <option value="popup">Pop-up Events</option>
+            <option value="other">Other</option>
+          </select>
         </div>
 
         <div className={styles.formGroup}>
