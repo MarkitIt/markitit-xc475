@@ -1,5 +1,17 @@
-interface Vendor {
+export interface Vendor {
     uid?: string;
+    //p1
+
+    businessName?: string;
+    contactName?: string;
+    email?: string;
+    phoneNumber?: string;
+    website?: string;
+    instagram?: string;
+    facebook?: string;
+    etsy?: string;
+    //p2
+    vendorType?: string;
     eventPreference?: string[];
     travelRadius?: number;
     coordinates: { lat: number; lng: number };
@@ -18,5 +30,4 @@ interface Vendor {
     schedule?: {
       preferredDays?: string[];
     };
-    description?: string;
-  }
+}

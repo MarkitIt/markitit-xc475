@@ -8,7 +8,7 @@ import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import Image from "next/image";
 import Link from "next/link";
-import styles from './page.module.css';
+import styles from '../auth.module.css';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function LoginPage() {
@@ -23,7 +23,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push('/events');
+      router.push('/search-events');
     } catch (err) {
       setError('Invalid email or password');
     }
@@ -91,9 +91,9 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className={styles.signupText}>
+          <div className={styles.authText}>
             Don't have an account?{' '}
-            <Link href="/auth/signup" className={styles.signupLink}>
+            <Link href="/auth/signup" className={styles.authLink}>
               Sign up here
             </Link>
           </div>

@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
   /* Colors */
   --primary-black: #3A2E39;
@@ -171,20 +172,7 @@ div[style*="position: absolute"] {
 
 
 /* Global Reset & Layout */
-body {
-  margin: 0;
-  font-family: 'Hoss Round', sans-serif;
-  background: linear-gradient(
-    to bottom,
-    #ffffff,
-    #fde9e8,
-    #fbd5d4,
-    #f7acab,
-    #f38482,
-    #f15152
-  );
-  color: #000000;
-}
+
 
 /* Container Styling */
 .container {
@@ -223,7 +211,7 @@ textarea {
   border: 1px solid #000000;
   border-radius: 9px;
   font-size: 16px;
-  font-family: 'Hoss Round', sans-serif;
+  font-family: 'Manrope', sans-serif;
 }
 
 /* Field Labels */
@@ -250,7 +238,7 @@ label {
   color: #ffffff;
   padding: 12px 24px;
   font-size: 16px;
-  font-family: 'Hoss Round', sans-serif;
+  font-family: 'Manrope', sans-serif;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -286,7 +274,7 @@ label {
   background-color: #ffffff;
   cursor: pointer;
   font-size: 16px;
-  font-family: 'Hoss Round', sans-serif;
+  font-family: 'Manrope', sans-serif;
   transition: background-color 0.2s ease;
 }
 
@@ -330,7 +318,7 @@ label {
   margin: 6px;
   border: 1px solid #000;
   border-radius: 999px;
-  font-family: 'Hoss Round', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 16px;
   background-color: #fff;
   color: #000;

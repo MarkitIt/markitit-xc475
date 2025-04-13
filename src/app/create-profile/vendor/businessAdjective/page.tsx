@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useBusinessAdjectiveContext } from '../../../context/BusinessAdjectiveContext';
-import { useBusinessProfileContext } from '../../../context/BusinessProfileContext';
+import { useBusinessAdjectiveContext } from '../../../../context/BusinessAdjectiveContext';
+import { useBusinessProfileContext } from '../../../../context/BusinessProfileContext';
 import { VendorTypeSelector } from './components/VendorTypeSelector';
 import { CategorySelector } from './components/CategorySelector';
 import { SocialMediaForm } from './components/SocialMediaForm';

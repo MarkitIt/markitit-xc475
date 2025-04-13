@@ -41,7 +41,7 @@ export default function CreateProfilePage() {
       if (selectedRole === 'host') {
         router.push('/create-profile/host');
       } else {
-        router.push('/vendor-profile');
+        router.push('/create-profile/vendor');
       }
     } catch (error) {
       console.error("Error updating role:", error);

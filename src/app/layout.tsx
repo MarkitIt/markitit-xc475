@@ -15,6 +15,7 @@ import { HostProvider } from '../context/HostContext';
 import Header from '@/components/Header';
 import { ThemeProvider } from '@/context/ThemeContext';
 import GoogleMapsLoader from '../components/GoogleMapsLoader';
+import { VendorProvider } from '@/context/VendorContext';
 
 import "./globals.css";
 
@@ -45,7 +46,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                               <BusinessScheduleProvider>
                                 <BusinessLocationProvider>
                                   <Header />
-                                  {children}
+                                  <VendorProvider>
+                                    {children}
+                                  </VendorProvider>
                                 </BusinessLocationProvider>
                               </BusinessScheduleProvider>
                             </BusinessCustomerProvider>
