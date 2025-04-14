@@ -3,7 +3,6 @@
 import { signOut } from "firebase/auth";
 import Link from "next/link";
 import React, { useEffect, useState, useRef } from "react";
-import { useHostContext } from '../context/HostContext';
 import { useUserContext } from '../context/UserContext';
 import { auth } from "../lib/firebase";
 import './tailwind.css';
@@ -20,16 +19,23 @@ const dropdownLinkStyle = {
 };
 
 export default function Header() {
-  const { user, vendorProfile, getVendorProfile } = useUserContext();
-  const { hostProfile } = useHostContext();
+  const { user, vendorProfile, hostProfile, getVendorProfile, getHostProfile } = useUserContext();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (user) {
-      getVendorProfile();
-    }
-  }, [user]);
+    const loadProfile = async () => {
+      if (!user) return;
+      
+      if (user.role === 'vendor') {
+        await getVendorProfile();
+      } else if (user.role === 'host') {
+        await getHostProfile();
+      }
+    };
+    
+    loadProfile();
+  }, [user, user?.role]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -52,6 +58,7 @@ export default function Header() {
   };
 
   const renderProfileSection = () => {
+    // Not signed in
     if (!user) {
       return (
         <Link href="/auth/login" style={{
@@ -69,7 +76,8 @@ export default function Header() {
       );
     }
 
-    if (!vendorProfile && !hostProfile) {
+    // Signed in but no profile (role is 'none' or no profile created yet)
+    if (user.role === 'none' || (!vendorProfile && !hostProfile)) {
       return (
         <div ref={dropdownRef} style={{ position: 'relative' }}>
           <button
@@ -129,6 +137,7 @@ export default function Header() {
       );
     }
 
+    // Has a profile (either vendor or host)
     return (
       <div ref={dropdownRef} style={{ position: 'relative' }}>
         <button
@@ -163,7 +172,7 @@ export default function Header() {
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
             zIndex: 50,
           }}>
-            {hostProfile ? (
+            {user.role === 'host' ? (
               <>
                 <Link href="/host-dashboard" className="dropdown-link" style={dropdownLinkStyle}>
                   Dashboard
