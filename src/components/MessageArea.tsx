@@ -6,17 +6,58 @@ import {
   getConversationMessages,
   sendMessage,
 } from '@/lib/firebaseChat';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface MessageAreaProps {
   conversation: Conversation | null;
   userId: string;
 }
 
+interface UserInfo {
+  [key: string]: {
+    name: string;
+    avatar?: string;
+  };
+}
+
 const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserInfo>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const fetchUserInfo = async (userIds: string[]) => {
+    const uniqueUserIds = [...new Set(userIds)];
+    const userInfoTemp: UserInfo = {};
+
+    for (const uid of uniqueUserIds) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          userInfoTemp[uid] = {
+            name: userData.firstName || (uid === userId ? 'You' : 'User'),
+            avatar: userData.photoURL,
+          };
+        } else {
+          userInfoTemp[uid] = {
+            name: uid === userId ? 'You' : 'User',
+            avatar: undefined,
+          };
+        }
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+        userInfoTemp[uid] = {
+          name: uid === userId ? 'You' : 'User',
+          avatar: undefined,
+        };
+      }
+    }
+
+    setUserInfo(userInfoTemp);
+  };
 
   useEffect(() => {
     if (!conversation?.id) {
@@ -28,6 +69,9 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
     const unsubscribe = getConversationMessages(conversation.id, (msgs) => {
       setMessages(msgs);
       setLoading(false);
+
+      const userIds = msgs.map((msg) => msg.senderId);
+      fetchUserInfo(userIds);
     });
 
     return () => unsubscribe();
@@ -49,6 +93,10 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
     }
   };
 
+  const getUserName = (senderId: string) => {
+    return userInfo[senderId]?.name || (senderId === userId ? 'You' : 'User');
+  };
+
   if (!conversation) {
     return (
       <div
@@ -61,6 +109,8 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
           alignItems: 'center',
           backgroundColor: 'rgba(229, 229, 229, 0.21)',
           borderRadius: '10px',
+          position: 'relative',
+          zIndex: 0,
         }}
       >
         <p
@@ -85,9 +135,9 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
         borderRadius: '10px',
         overflow: 'hidden',
         backgroundColor: 'rgba(229, 229, 229, 0.21)',
+        zIndex: 0,
       }}
     >
-      {/* Header */}
       <div
         style={{
           height: '110px',
@@ -148,7 +198,6 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
         </div>
       </div>
 
-      {/* Message Area */}
       <div
         style={{
           position: 'absolute',
@@ -158,6 +207,8 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
           bottom: '79px',
           overflowY: 'auto',
           padding: '15px',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {loading ? (
@@ -193,54 +244,83 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
             </p>
           </div>
         ) : (
-          messages.map((message) => (
-            <div
-              key={message.id}
-              style={{
-                alignSelf:
-                  message.senderId === userId ? 'flex-end' : 'flex-start',
-                backgroundColor:
-                  message.senderId === userId
-                    ? theme.colors.primary.coral
-                    : theme.colors.background.white,
-                color:
-                  message.senderId === userId
-                    ? theme.colors.background.white
-                    : theme.colors.text.primary,
-                padding: '15px',
-                borderRadius: '10px',
-                marginBottom: '15px',
-                maxWidth: '70%',
-                display: 'inline-block',
-                marginLeft: message.senderId === userId ? 'auto' : '0',
-                marginRight: message.senderId === userId ? '0' : 'auto',
-              }}
-            >
-              {message.text}
+          messages.map((message, index) => {
+            const isCurrentUser = message.senderId === userId;
+            const isFirstMessageOfGroup =
+              index === 0 || messages[index - 1].senderId !== message.senderId;
+
+            return (
               <div
-                style={{
-                  fontSize: '12px',
-                  marginTop: '4px',
-                  opacity: 0.8,
-                  textAlign: 'right',
-                }}
+                key={message.id}
+                style={{ width: '100%', marginBottom: '8px' }}
               >
-                {message.timestamp &&
-                  new Date(message.timestamp.seconds * 1000).toLocaleTimeString(
-                    [],
-                    {
+                {isFirstMessageOfGroup && (
+                  <div
+                    style={{
+                      textAlign: isCurrentUser ? 'right' : 'left',
+                      fontSize: '12px',
+                      fontWeight: theme.typography.fontWeight.medium,
+                      color: 'rgba(0, 0, 0, 0.6)',
+                      marginBottom: '4px',
+                      paddingLeft: isCurrentUser ? 0 : '15px',
+                      paddingRight: isCurrentUser ? '15px' : 0,
+                    }}
+                  >
+                    {getUserName(message.senderId)}
+                  </div>
+                )}
+
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: isCurrentUser ? 'flex-end' : 'flex-start',
+                    width: '100%',
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: isCurrentUser
+                        ? theme.colors.primary.coral
+                        : theme.colors.background.white,
+                      color: isCurrentUser
+                        ? theme.colors.background.white
+                        : theme.colors.text.primary,
+                      padding: '10px 15px',
+                      borderRadius: '10px',
+                      maxWidth: '70%',
+                      marginBottom: '4px',
+                      wordBreak: 'break-word',
+                    }}
+                  >
+                    {message.text}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    fontSize: '10px',
+                    color: 'rgba(0, 0, 0, 0.5)',
+                    textAlign: isCurrentUser ? 'right' : 'left',
+                    paddingLeft: isCurrentUser ? 0 : '15px',
+                    paddingRight: isCurrentUser ? '15px' : 0,
+                    marginBottom: '8px',
+                  }}
+                >
+                  {message.timestamp &&
+                    new Date(
+                      message.timestamp.seconds * 1000
+                    ).toLocaleTimeString([], {
                       hour: '2-digit',
                       minute: '2-digit',
-                    }
-                  )}
+                    })}
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
       <form
         onSubmit={handleSendMessage}
         style={{
@@ -257,7 +337,7 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
         <div
           style={{
             width: '100%',
-            height: '79px',
+            height: '59px',
             backgroundColor: 'rgba(0, 0, 0, 0.1)',
             borderRadius: '18px',
             display: 'flex',

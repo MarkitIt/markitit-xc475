@@ -25,6 +25,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         justifyContent: 'center',
         width: '100%',
         backgroundColor: 'white',
+        position: 'relative',
       }}
     >
       <div
@@ -47,8 +48,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <div
             style={{
               width: '436px',
-              position: 'relative',
-              zIndex: 9999,
+              position: 'static',
             }}
           >
             <ConversationList
@@ -63,6 +63,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <div
             style={{
               width: '541px',
+              position: 'relative',
             }}
           >
             <MessageArea conversation={selectedConversation} userId={userId} />

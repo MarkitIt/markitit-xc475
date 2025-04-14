@@ -86,6 +86,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
         flexDirection: 'column',
         backgroundColor: 'rgba(229, 229, 229, 0.21)',
         borderRadius: '10px',
+        position: 'static',
       }}
     >
       <div
@@ -97,7 +98,6 @@ const ConversationList: React.FC<ConversationListProps> = ({
           padding: '15px',
         }}
       >
-        {/* Search icon */}
         <div
           style={{
             width: '24px',
@@ -113,7 +113,6 @@ const ConversationList: React.FC<ConversationListProps> = ({
           🔍
         </div>
 
-        {/* Tabs */}
         <div
           style={{
             display: 'flex',
@@ -177,7 +176,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
                   backgroundColor: theme.colors.background.white,
                   borderRadius: '10px',
                   boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-                  zIndex: 999,
+                  zIndex: 100,
                 }}
               >
                 <button
@@ -255,6 +254,8 @@ const ConversationList: React.FC<ConversationListProps> = ({
         style={{
           flex: 1,
           overflowY: 'auto',
+          position: 'relative',
+          zIndex: 1,
         }}
       >
         {loading ? (
