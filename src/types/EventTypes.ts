@@ -1,0 +1,17 @@
+export const eventTypes = [
+    'Farmers Markets',
+    'Art Fairs',
+    'Festivals',
+    'Small Pop-Ups',
+    'Luxury Pop-Ups',
+    'Craft & Handmade Markets',
+    'Holiday & Seasonal Markets',
+    'Food & Beverage Festivals',
+    'Night Markets',
+    'Vintage & Thrift Markets',
+    'Health & Wellness Events',
+    'Cultural & Heritage Festivals',
+    'Music & Entertainment Events',
+    'Outdoor Adventure & Sporting Events',
+    'Tech & Innovation Expos',
+  ];

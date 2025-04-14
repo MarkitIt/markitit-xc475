@@ -116,16 +116,14 @@ export default function ApplicationHostProfile() {
 
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          {currentEvents.map((event) => (
-            <Link href={`/application/host/${event.id}/vendor-manage`}>
-              <EventCardHost 
-                key={event.id} 
-                event={event}
-                rank={rankedEvents.findIndex(e => e.id === event.id) + 1}
-                showRank={!!user && !!vendorProfile}
-              />
-            </Link>
-          ))}
+          {/* {currentEvents.map((event) => (
+            <EventCardHost 
+              key={event.id} 
+              event={event}
+              rank={rankedEvents.findIndex(e => e.id === event.id) + 1}
+              showRank={!!user && !!vendorProfile}
+            />
+          ))} */}
         </div>
 
         {/* Pagination */}
