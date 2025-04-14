@@ -117,9 +117,12 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
             style={{
               flex: 1,
               padding: theme.spacing.md,
+              margin: 0,
               borderRadius: `${theme.borderRadius.md} 0 0 ${theme.borderRadius.md}`,
               border: '1px solid rgba(0,0,0,0.1)',
               borderRight: 'none',
+              backgroundColor: '#f5f5f5',
+              color: 'black',
               fontSize: theme.typography.fontSize.body,
               fontFamily: theme.typography.fontFamily.primary,
             }}
@@ -134,14 +137,17 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
             disabled={loading || !searchQuery.trim()}
             style={{
               padding: theme.spacing.md,
+              margin: 0,
               borderRadius: `0 ${theme.borderRadius.md} ${theme.borderRadius.md} 0`,
               border: '1px solid rgba(0,0,0,0.1)',
               borderLeft: 'none',
-              backgroundColor: theme.colors.primary.coral,
+              backgroundColor: '#F16261',
               color: theme.colors.background.white,
               cursor: loading || !searchQuery.trim() ? 'default' : 'pointer',
               opacity: loading || !searchQuery.trim() ? 0.7 : 1,
               fontFamily: theme.typography.fontFamily.primary,
+              display: 'flex',
+              alignItems: 'center',
             }}
           >
             {loading ? 'Searching...' : 'Search'}
@@ -213,15 +219,11 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
                   onClick={() => handleJoin(community.id!)}
                   disabled={joining || community.participants?.includes(userId)}
                   style={{
-                    padding: `${theme.spacing.xs} ${theme.spacing.md}`,
+                    padding: theme.spacing.xs,
                     borderRadius: theme.borderRadius.md,
                     border: 'none',
-                    backgroundColor: community.participants?.includes(userId)
-                      ? theme.colors.background.main
-                      : theme.colors.primary.coral,
-                    color: community.participants?.includes(userId)
-                      ? theme.colors.text.secondary
-                      : theme.colors.background.white,
+                    backgroundColor: '#F16261',
+                    color: theme.colors.background.white,
                     cursor:
                       joining || community.participants?.includes(userId)
                         ? 'default'
@@ -231,6 +233,8 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
                         ? 0.7
                         : 1,
                     fontFamily: theme.typography.fontFamily.primary,
+                    minWidth: '80px',
+                    textAlign: 'center',
                   }}
                 >
                   {community.participants?.includes(userId) ? 'Joined' : 'Join'}

@@ -110,7 +110,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
             justifyContent: 'center',
           }}
         >
-          🔍
+          {/* 🔍 */}
         </div>
 
         <div

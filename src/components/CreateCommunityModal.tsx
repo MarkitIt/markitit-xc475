@@ -93,6 +93,8 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
                 padding: theme.spacing.md,
                 borderRadius: theme.borderRadius.md,
                 border: '1px solid rgba(0,0,0,0.1)',
+                backgroundColor: '#f5f5f5',
+                color: 'black',
                 fontSize: theme.typography.fontSize.body,
                 fontFamily: theme.typography.fontFamily.primary,
               }}
@@ -139,7 +141,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
                 padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
                 borderRadius: theme.borderRadius.md,
                 border: 'none',
-                backgroundColor: theme.colors.primary.coral,
+                backgroundColor: '#F16261',
                 color: theme.colors.background.white,
                 cursor: loading ? 'default' : 'pointer',
                 opacity: loading ? 0.7 : 1,
