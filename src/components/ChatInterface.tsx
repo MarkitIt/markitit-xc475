@@ -15,8 +15,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   activeTab,
   setActiveTab,
 }) => {
-  const [selectedConversation, setSelectedConversation] =
-    useState<Conversation | null>(null);
+    const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
 
   return (
     <div

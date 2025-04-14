@@ -6,7 +6,7 @@ import JoinCommunityModal from './JoinCommunityModal';
 
 interface ConversationListProps {
   selectedConversation: Conversation | null;
-  setSelectedConversation: (conversation: Conversation) => void;
+  setSelectedConversation: (conversation: Conversation | null) => void;
   activeTab: 'personal' | 'community';
   setActiveTab: (tab: 'personal' | 'community') => void;
   userId: string;
@@ -33,23 +33,25 @@ const ConversationList: React.FC<ConversationListProps> = ({
       const filteredChats = chats.filter((chat) => chat.type === activeTab);
       setConversations(filteredChats);
       setLoading(false);
-
-      if (filteredChats.length > 0 && !selectedConversation) {
-        setSelectedConversation(filteredChats[0]);
-      } else if (selectedConversation) {
-        const stillExists = filteredChats.some(
-          (chat) => chat.id === selectedConversation.id
-        );
-        if (!stillExists && filteredChats.length > 0) {
-          setSelectedConversation(filteredChats[0]);
-        } else if (!stillExists) {
-          setSelectedConversation(null);
-        }
-      }
     });
 
     return () => unsubscribe();
-  }, [userId, activeTab, selectedConversation, setSelectedConversation]);
+  }, [userId, activeTab]);
+
+  useEffect(() => {
+    if (conversations.length > 0 && !selectedConversation) {
+      setSelectedConversation(conversations[0]);
+    } else if (selectedConversation) {
+      const stillExists = conversations.some(
+        (chat) => chat.id === selectedConversation.id
+      );
+      if (!stillExists && conversations.length > 0) {
+        setSelectedConversation(conversations[0]);
+      } else if (!stillExists) {
+        setSelectedConversation(null);
+      }
+    }
+  }, [conversations, selectedConversation, setSelectedConversation]);
 
   const handleCommunitySuccess = () => {
     setShowCreateModal(false);
