@@ -53,18 +53,21 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
     return (
       <div
         style={{
-          flex: 1,
+          width: '541px',
+          height: '781px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          padding: theme.spacing.xl,
+          backgroundColor: 'rgba(229, 229, 229, 0.21)',
+          borderRadius: '10px',
         }}
       >
         <p
           style={{
-            fontSize: theme.typography.fontSize.body,
-            color: theme.colors.text.secondary,
+            fontSize: '16px',
+            color: 'rgba(0, 0, 0, 0.79)',
+            textAlign: 'center',
           }}
         >
           Select a conversation to start chatting
@@ -76,33 +79,42 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
   return (
     <div
       style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
+        width: '541px',
+        height: '781px',
+        position: 'relative',
+        borderRadius: '10px',
+        overflow: 'hidden',
+        backgroundColor: 'rgba(229, 229, 229, 0.21)',
       }}
     >
+      {/* Header */}
       <div
         style={{
-          padding: theme.spacing.md,
-          borderBottom: '1px solid rgba(0,0,0,0.1)',
+          height: '110px',
+          backgroundColor: '#f3f3f3',
+          width: '100%',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          borderRadius: '10px 10px 0 0',
           display: 'flex',
           alignItems: 'center',
+          padding: '0 25px',
         }}
       >
         <div
           style={{
-            width: '40px',
-            height: '40px',
+            width: '68px',
+            height: '68px',
             borderRadius: '50%',
             backgroundColor: theme.colors.primary.beige,
-            marginRight: theme.spacing.md,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '16px',
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.background.white,
+            fontSize: '24px',
+            fontWeight: theme.typography.fontWeight.semibold,
+            color: 'white',
+            marginRight: '15px',
           }}
         >
           {conversation.name?.charAt(0) || 'U'}
@@ -111,9 +123,11 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
         <div>
           <div
             style={{
-              fontSize: theme.typography.fontSize.header,
-              fontWeight: theme.typography.fontWeight.medium,
-              color: theme.colors.text.primary,
+              fontFamily: theme.typography.fontFamily.primary,
+              fontWeight: theme.typography.fontWeight.semibold,
+              fontSize: '16px',
+              color: 'rgba(0, 0, 0, 0.79)',
+              marginBottom: '4px',
             }}
           >
             {conversation.name || 'Chat'}
@@ -122,8 +136,10 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
           {conversation.type === 'community' && (
             <div
               style={{
-                fontSize: '14px',
-                color: theme.colors.text.secondary,
+                fontFamily: theme.typography.fontFamily.primary,
+                fontWeight: theme.typography.fontWeight.regular,
+                fontSize: '13px',
+                color: 'rgba(0, 0, 0, 0.79)',
               }}
             >
               {conversation.memberCount || 0} people
@@ -132,37 +148,40 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
         </div>
       </div>
 
+      {/* Message Area */}
       <div
         style={{
-          flex: 1,
-          padding: theme.spacing.md,
+          position: 'absolute',
+          top: '110px',
+          left: 0,
+          right: 0,
+          bottom: '79px',
           overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: theme.colors.background.main,
-          opacity: 0.6,
+          padding: '15px',
         }}
       >
         {loading ? (
-          <div style={{ textAlign: 'center', padding: theme.spacing.md }}>
+          <div style={{ textAlign: 'center', padding: '15px' }}>
             Loading messages...
           </div>
         ) : messages.length === 0 ? (
           <div
             style={{
-              flex: 1,
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
               textAlign: 'center',
+              height: '100%',
             }}
           >
             <p
               style={{
-                fontSize: theme.typography.fontSize.body,
-                color: theme.colors.text.secondary,
-                marginBottom: theme.spacing.md,
+                fontFamily: theme.typography.fontFamily.primary,
+                fontWeight: theme.typography.fontWeight.regular,
+                fontSize: '13px',
+                color: 'rgba(0, 0, 0, 0.79)',
+                marginBottom: '15px',
               }}
             >
               This is the start of your
@@ -188,11 +207,13 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
                   message.senderId === userId
                     ? theme.colors.background.white
                     : theme.colors.text.primary,
-                padding: theme.spacing.md,
-                borderRadius: theme.borderRadius.md,
-                marginBottom: theme.spacing.md,
+                padding: '15px',
+                borderRadius: '10px',
+                marginBottom: '15px',
                 maxWidth: '70%',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                display: 'inline-block',
+                marginLeft: message.senderId === userId ? 'auto' : '0',
+                marginRight: message.senderId === userId ? '0' : 'auto',
               }}
             >
               {message.text}
@@ -219,20 +240,30 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Input Area */}
       <form
         onSubmit={handleSendMessage}
         style={{
-          padding: theme.spacing.md,
-          borderTop: '1px solid rgba(0,0,0,0.1)',
-          backgroundColor: theme.colors.background.white,
+          position: 'absolute',
+          bottom: '0',
+          left: '0',
+          right: '0',
+          height: '79px',
+          padding: '0 26px',
+          display: 'flex',
+          alignItems: 'center',
         }}
       >
         <div
           style={{
+            width: '100%',
+            height: '79px',
+            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            borderRadius: '18px',
             display: 'flex',
-            backgroundColor: theme.colors.background.main,
-            borderRadius: theme.borderRadius.md,
-            padding: theme.spacing.sm,
+            alignItems: 'center',
+            paddingLeft: '15px',
+            paddingRight: '15px',
           }}
         >
           <input
@@ -245,26 +276,30 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
               border: 'none',
               outline: 'none',
               backgroundColor: 'transparent',
-              padding: theme.spacing.sm,
-              fontSize: theme.typography.fontSize.body,
               fontFamily: theme.typography.fontFamily.primary,
+              fontWeight: theme.typography.fontWeight.medium,
+              fontSize: '13px',
+              color: 'rgba(0, 0, 0, 0.79)',
             }}
           />
           <button
             type='submit'
             disabled={!newMessage.trim()}
             style={{
-              backgroundColor: theme.colors.primary.coral,
+              backgroundColor: '#F16261',
               color: theme.colors.background.white,
               border: 'none',
-              borderRadius: theme.borderRadius.full,
-              padding: `${theme.spacing.xs} ${theme.spacing.md}`,
+              borderRadius: '50%',
+              width: '36px',
+              height: '36px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               cursor: newMessage.trim() ? 'pointer' : 'default',
               opacity: newMessage.trim() ? 1 : 0.5,
-              fontFamily: theme.typography.fontFamily.primary,
             }}
           >
-            Send
+            ➤
           </button>
         </div>
       </form>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { theme } from '@/styles/theme';
 import { getUserChats, Conversation } from '@/lib/firebaseChat';
 import CreateCommunityModal from './CreateCommunityModal';
@@ -23,6 +23,8 @@ const ConversationList: React.FC<ConversationListProps> = ({
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!userId) return;
@@ -53,6 +55,22 @@ const ConversationList: React.FC<ConversationListProps> = ({
     }
   }, [conversations, selectedConversation, setSelectedConversation]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleCommunitySuccess = () => {
     setShowCreateModal(false);
     setShowJoinModal(false);
@@ -61,129 +79,176 @@ const ConversationList: React.FC<ConversationListProps> = ({
   return (
     <div
       style={{
-        width: '300px',
-        borderRight: '1px solid rgba(0,0,0,0.1)',
-        overflow: 'hidden',
+        width: '436px',
+        height: '781px',
+        overflow: 'visible',
         display: 'flex',
         flexDirection: 'column',
+        backgroundColor: 'rgba(229, 229, 229, 0.21)',
+        borderRadius: '10px',
       }}
     >
       <div
         style={{
-          padding: theme.spacing.md,
-          borderBottom: '1px solid rgba(0,0,0,0.1)',
+          height: '110px',
+          backgroundColor: 'rgba(229, 229, 229, 0.33)',
+          borderRadius: '10px 10px 0 0',
+          position: 'relative',
+          padding: '15px',
         }}
       >
+        {/* Search icon */}
         <div
           style={{
+            width: '24px',
+            height: '24px',
+            position: 'absolute',
+            top: '23px',
+            left: '15px',
             display: 'flex',
             alignItems: 'center',
-            marginBottom: theme.spacing.md,
+            justifyContent: 'center',
           }}
         >
-          <div
-            style={{
-              backgroundColor: theme.colors.background.main,
-              borderRadius: theme.borderRadius.full,
-              padding: `${theme.spacing.xs} ${theme.spacing.md}`,
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <span style={{ marginRight: theme.spacing.sm }}>🔍</span>
-            <span style={{ color: theme.colors.text.secondary }}>
-              Search...
-            </span>
-          </div>
+          🔍
         </div>
 
+        {/* Tabs */}
         <div
           style={{
             display: 'flex',
-            marginBottom: theme.spacing.sm,
+            position: 'absolute',
+            bottom: '15px',
           }}
         >
-          <button
-            onClick={() => setActiveTab('community')}
-            style={{
-              backgroundColor:
-                activeTab === 'community'
-                  ? theme.colors.primary.coral
-                  : 'transparent',
-              color:
-                activeTab === 'community'
-                  ? theme.colors.background.white
-                  : theme.colors.text.secondary,
-              border: 'none',
-              borderRadius: theme.borderRadius.full,
-              padding: `${theme.spacing.xs} ${theme.spacing.md}`,
-              marginRight: theme.spacing.sm,
-              cursor: 'pointer',
-              fontFamily: theme.typography.fontFamily.primary,
-              position: 'relative',
-            }}
-          >
-            Communities
-          </button>
+          <div style={{ position: 'relative' }} ref={dropdownRef}>
+            <button
+              onClick={() => {
+                setActiveTab('community');
+                setShowDropdown(!showDropdown);
+              }}
+              style={{
+                backgroundColor:
+                  activeTab === 'community' ? '#F16261' : 'transparent',
+                color:
+                  activeTab === 'community'
+                    ? theme.colors.primary.beige
+                    : 'rgba(0, 0, 0, 0.79)',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '5px 15px',
+                marginRight: '12px',
+                cursor: 'pointer',
+                fontFamily: theme.typography.fontFamily.primary,
+                fontWeight: theme.typography.fontWeight.medium,
+                fontSize: '13px',
+                width: '123px',
+                height: '30px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+              }}
+            >
+              Communities
+              {activeTab === 'community' && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    right: '11px',
+                    top: '13px',
+                    width: '12px',
+                    height: '7px',
+                  }}
+                >
+                  ▼
+                </span>
+              )}
+            </button>
+
+            {showDropdown && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '35px',
+                  left: '4px',
+                  width: '133px',
+                  height: '70px',
+                  backgroundColor: theme.colors.background.white,
+                  borderRadius: '10px',
+                  boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+                  zIndex: 999,
+                }}
+              >
+                <button
+                  onClick={() => {
+                    setShowJoinModal(true);
+                    setShowDropdown(false);
+                  }}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: theme.colors.text.primary,
+                    border: 'none',
+                    padding: '11px 0 0 26px',
+                    width: '100%',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    fontFamily: theme.typography.fontFamily.primary,
+                    fontWeight: theme.typography.fontWeight.medium,
+                    fontSize: '13px',
+                  }}
+                >
+                  Join
+                </button>
+                <button
+                  onClick={() => {
+                    setShowCreateModal(true);
+                    setShowDropdown(false);
+                  }}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: theme.colors.text.primary,
+                    border: 'none',
+                    padding: '11px 0 0 26px',
+                    width: '100%',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    fontFamily: theme.typography.fontFamily.primary,
+                    fontWeight: theme.typography.fontWeight.medium,
+                    fontSize: '13px',
+                  }}
+                >
+                  Create
+                </button>
+              </div>
+            )}
+          </div>
 
           <button
             onClick={() => setActiveTab('personal')}
             style={{
               backgroundColor:
                 activeTab === 'personal'
-                  ? theme.colors.background.main
+                  ? 'rgba(229, 229, 229, 0.72)'
                   : 'transparent',
-              color: theme.colors.text.secondary,
+              color: 'rgba(0, 0, 0, 0.79)',
               border: 'none',
-              borderRadius: theme.borderRadius.full,
-              padding: `${theme.spacing.xs} ${theme.spacing.md}`,
+              borderRadius: '10px',
+              padding: '5px 15px',
               cursor: 'pointer',
               fontFamily: theme.typography.fontFamily.primary,
+              fontWeight: theme.typography.fontWeight.medium,
+              fontSize: '13px',
+              width: '89px',
+              height: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             Personal
           </button>
         </div>
-
-        {activeTab === 'community' && (
-          <div
-            style={{
-              display: 'flex',
-              gap: theme.spacing.md,
-              marginTop: theme.spacing.sm,
-            }}
-          >
-            <button
-              onClick={() => setShowJoinModal(true)}
-              style={{
-                backgroundColor: theme.colors.background.white,
-                color: theme.colors.text.primary,
-                border: '1px solid rgba(0,0,0,0.1)',
-                borderRadius: theme.borderRadius.md,
-                padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
-                cursor: 'pointer',
-                fontFamily: theme.typography.fontFamily.primary,
-              }}
-            >
-              Join
-            </button>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              style={{
-                backgroundColor: theme.colors.background.white,
-                color: theme.colors.text.primary,
-                border: '1px solid rgba(0,0,0,0.1)',
-                borderRadius: theme.borderRadius.md,
-                padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
-                cursor: 'pointer',
-                fontFamily: theme.typography.fontFamily.primary,
-              }}
-            >
-              Create
-            </button>
-          </div>
-        )}
       </div>
 
       <div
@@ -193,11 +258,11 @@ const ConversationList: React.FC<ConversationListProps> = ({
         }}
       >
         {loading ? (
-          <div style={{ padding: theme.spacing.md, textAlign: 'center' }}>
+          <div style={{ padding: '15px', textAlign: 'center' }}>
             Loading conversations...
           </div>
         ) : conversations.length === 0 ? (
-          <div style={{ padding: theme.spacing.md, textAlign: 'center' }}>
+          <div style={{ padding: '15px', textAlign: 'center' }}>
             No {activeTab} chats found
           </div>
         ) : (
@@ -206,73 +271,83 @@ const ConversationList: React.FC<ConversationListProps> = ({
               key={conversation.id}
               onClick={() => setSelectedConversation(conversation)}
               style={{
-                padding: theme.spacing.md,
-                borderBottom: '1px solid rgba(0,0,0,0.05)',
+                height: '121px',
                 backgroundColor:
                   selectedConversation?.id === conversation.id
-                    ? 'rgba(0,0,0,0.05)'
-                    : 'transparent',
+                    ? 'rgba(250, 250, 250, 1)'
+                    : 'rgba(250, 250, 250, 1)',
+                borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
                 cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
+                position: 'relative',
+                width: '100%',
               }}
             >
               <div
                 style={{
-                  width: '40px',
-                  height: '40px',
+                  width: '68px',
+                  height: '68px',
                   borderRadius: '50%',
                   backgroundColor: theme.colors.primary.beige,
-                  marginRight: theme.spacing.md,
-                  overflow: 'hidden',
-                  flexShrink: 0,
+                  position: 'absolute',
+                  left: '12px',
+                  top: '22px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '16px',
-                  fontWeight: theme.typography.fontWeight.bold,
-                  color: theme.colors.background.white,
+                  fontSize: '24px',
+                  fontWeight: theme.typography.fontWeight.semibold,
+                  color: 'white',
                 }}
               >
                 {conversation.name?.charAt(0) || 'U'}
               </div>
 
-              <div style={{ flex: 1 }}>
-                <div
-                  style={{
-                    fontSize: '16px',
-                    fontWeight: theme.typography.fontWeight.medium,
-                    color: theme.colors.text.primary,
-                    marginBottom: '2px',
-                  }}
-                >
-                  {conversation.name || 'Chat'}
-                </div>
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '96px',
+                  top: '39px',
+                  fontFamily: theme.typography.fontFamily.primary,
+                  fontWeight: theme.typography.fontWeight.semibold,
+                  fontSize: '16px',
+                  color: 'rgba(0, 0, 0, 0.79)',
+                  width: '192px',
+                }}
+              >
+                {conversation.name || 'Chat'}
+              </div>
 
-                <div
-                  style={{
-                    fontSize: '14px',
-                    color: theme.colors.text.secondary,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {activeTab === 'community' ? (
-                    <span>{conversation.memberCount || 0} people</span>
-                  ) : (
-                    <span>{conversation.lastMessage || 'Start chatting!'}</span>
-                  )}
-                </div>
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '96px',
+                  top: '62px',
+                  fontFamily: theme.typography.fontFamily.primary,
+                  fontWeight: theme.typography.fontWeight.regular,
+                  fontSize: '13px',
+                  color: 'rgba(0, 0, 0, 0.79)',
+                  width: '121px',
+                }}
+              >
+                {activeTab === 'community' ? (
+                  <span>{conversation.memberCount || 0} people</span>
+                ) : (
+                  <span>{conversation.lastMessage || 'Start chatting!'}</span>
+                )}
               </div>
 
               {conversation.lastMessageTimestamp && (
                 <div
                   style={{
-                    fontSize: '12px',
-                    color: theme.colors.text.secondary,
-                    alignSelf: 'flex-start',
-                    marginLeft: theme.spacing.sm,
+                    position: 'absolute',
+                    right: '14px',
+                    top: '42px',
+                    fontFamily: theme.typography.fontFamily.primary,
+                    fontWeight: theme.typography.fontWeight.regular,
+                    fontSize: '13px',
+                    color: 'rgba(0, 0, 0, 0.79)',
+                    textAlign: 'right',
+                    width: '68px',
                   }}
                 >
                   {new Date(

@@ -15,28 +15,60 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   activeTab,
   setActiveTab,
 }) => {
-    const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+  const [selectedConversation, setSelectedConversation] =
+    useState<Conversation | null>(null);
 
   return (
     <div
       style={{
         display: 'flex',
-        height: 'calc(100vh - 200px)',
-        backgroundColor: theme.colors.background.white,
-        borderRadius: theme.borderRadius.lg,
-        overflow: 'hidden',
-        border: '1px solid rgba(0,0,0,0.1)',
+        justifyContent: 'center',
+        width: '100%',
+        backgroundColor: 'white',
       }}
     >
-      <ConversationList
-        selectedConversation={selectedConversation}
-        setSelectedConversation={setSelectedConversation}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        userId={userId}
-      />
+      <div
+        style={{
+          width: '1440px',
+          position: 'relative',
+          backgroundColor: 'white',
+          paddingBottom: theme.spacing.xl,
+        }}
+      >
+        <div
+          style={{
+            position: 'relative',
+            display: 'flex',
+            gap: theme.spacing.xl,
+            justifyContent: 'center',
+            padding: `0 ${theme.spacing.xl}`,
+          }}
+        >
+          <div
+            style={{
+              width: '436px',
+              position: 'relative',
+              zIndex: 9999,
+            }}
+          >
+            <ConversationList
+              selectedConversation={selectedConversation}
+              setSelectedConversation={setSelectedConversation}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              userId={userId}
+            />
+          </div>
 
-      <MessageArea conversation={selectedConversation} userId={userId} />
+          <div
+            style={{
+              width: '541px',
+            }}
+          >
+            <MessageArea conversation={selectedConversation} userId={userId} />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
