@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '../styles.module.css';
+import { useVendor } from '@/context/VendorContext';
 /*
 * Business Name
 * Contact Name
@@ -13,31 +14,45 @@ import styles from '../styles.module.css';
 */
 export default function VendorProfilePage() {
   const router = useRouter();
-  const [businessName, setBusinessName] = useState('');
-  const [contactName, setContactName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [website, setWebsite] = useState('');
-  const [instagram, setInstagram] = useState('');
-  const [etsy, setEtsy] = useState('');
-  const [facebook, setFacebook] = useState('');
-  /*
-  const [category, setCategory] = useState('');
-  const [shortDescription, setShortDescription] = useState('');
-  const [fullDescription, setFullDescription] = useState('');
-  */
+  const { vendor, updateVendor } = useVendor();
+  const [isExiting, setIsExiting] = useState(false);
+  const [formData, setFormData] = useState({
+    businessName: vendor?.businessName || '',
+    contactName: vendor?.contactName || '',
+    email: vendor?.email || '',
+    phoneNumber: vendor?.phoneNumber || '',
+    website: vendor?.website || '',
+    instagram: vendor?.instagram || '',
+    etsy: vendor?.etsy || '',
+    facebook: vendor?.facebook || ''
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (businessName && contactName && email && phoneNumber && website && instagram) {
-      router.push('/create-profile/vendor/businessProducts/businessType');
+    if (formData.businessName && formData.contactName && formData.email && 
+        formData.phoneNumber && formData.website && formData.instagram) {
+      
+      // Update vendor context
+      updateVendor(formData);
+
+      setIsExiting(true);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      router.push('/create-profile/vendor/type');
     } else {
       alert('Please fill in all required fields');
     }
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${isExiting ? styles.slideOut : styles.slideIn}`}>
       <div className={styles.stepIndicator}>
         <span className={`${styles.stepIcon} ${styles.active}`}>▲</span>
         <span className={styles.stepIcon}>★</span>
@@ -46,7 +61,7 @@ export default function VendorProfilePage() {
         <span className={styles.stepIcon}>⟶</span>
       </div>
 
-      <p className={styles.stepText}>Step 01/05</p>
+      <p className={styles.stepText}>Step 01/08</p>
       <h1 className={styles.title}>Create Business Profile</h1>
 
       <form onSubmit={handleSubmit} className={styles.form}>
@@ -54,9 +69,10 @@ export default function VendorProfilePage() {
           <label className={styles.label}>Business Name*</label>
           <input
             type="text"
+            name="businessName"
             className={styles.input}
-            value={businessName}
-            onChange={(e) => setBusinessName(e.target.value)}
+            value={formData.businessName}
+            onChange={handleChange}
             required
           />
         </div>
@@ -65,9 +81,10 @@ export default function VendorProfilePage() {
           <label className={styles.label}>Contact Name*</label>
           <input
             type="text"
+            name="contactName"
             className={styles.input}
-            value={contactName}
-            onChange={(e) => setContactName(e.target.value)}
+            value={formData.contactName}
+            onChange={handleChange}
             required
           />
         </div>
@@ -75,69 +92,79 @@ export default function VendorProfilePage() {
         <div className={styles.formGroup}>
           <label className={styles.label}>Email*</label>
           <input
-            type="text"
+            type="email"
+            name="email"
             className={styles.input}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email}
+            onChange={handleChange}
             required
           />
         </div>
+
         <div className={styles.formGroup}>
           <label className={styles.label}>Phone Number*</label>
           <input
-            type="text"
+            type="tel"
+            name="phoneNumber"
             className={styles.input}
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            value={formData.phoneNumber}
+            onChange={handleChange}
             required
           />
         </div>
+
         <div className={styles.formGroup}>
           <label className={styles.label}>Website*</label>
           <input
-            type="text"
+            type="url"
+            name="website"
             className={styles.input}
-            value={website}
-            onChange={(e) => setWebsite(e.target.value)}
+            value={formData.website}
+            onChange={handleChange}
             required
           />
         </div>
+
         <div className={styles.formGroup}>
           <label className={styles.label}>Instagram Link*</label>
           <p className={styles.description}>Enter your Instagram Profile link</p>
           <input
-            type="text"
+            type="url"
+            name="instagram"
             className={styles.input}
-            value={instagram}
-            onChange={(e) => setInstagram(e.target.value)}
+            value={formData.instagram}
+            onChange={handleChange}
             required
           />
         </div>
+
         <div className={styles.formGroup}>
           <label className={styles.label}>Facebook Link</label>
           <p className={styles.description}>Enter your Facebook Profile link</p>
           <input
-            type="text"
+            type="url"
+            name="facebook"
             className={styles.input}
-            value={facebook}
-            onChange={(e) => setFacebook(e.target.value)}
+            value={formData.facebook}
+            onChange={handleChange}
           />
         </div>
+
         <div className={styles.formGroup}>
           <label className={styles.label}>Etsy Link</label>
           <p className={styles.description}>Enter your Etsy Profile link</p>
           <input
-            type="text"
+            type="url"
+            name="etsy"
             className={styles.input}
-            value={etsy}
-            onChange={(e) => setEtsy(e.target.value)}
+            value={formData.etsy}
+            onChange={handleChange}
           />
         </div>
 
-
         <div className={styles.buttonContainer}>
-          <button type="submit" className={styles.button}>
-            Next Steps
+          <button type="submit" className={styles.nextButton}>
+            Next Step
           </button>
         </div>
       </form>

@@ -1,0 +1,20 @@
+.input {
+  width: 100%;
+  padding: 16px;
+  border: 1.5px solid #3A2E39;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+  background-color: white;
+  color: #1A1A1A;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #F15152;
+  box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
+}
+
+.input::placeholder {
+  color: #64748B;
+} 

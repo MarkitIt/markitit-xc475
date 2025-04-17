@@ -24,7 +24,7 @@ const ROLES = [
 
 export default function CreateProfilePage() {
   const router = useRouter();
-  const { user, updateUserRole } = useUserContext();
+  const { user } = useUserContext();
   const [error, setError] = useState("");
 
   const handleRoleSelect = async (selectedRole: 'host' | 'vendor') => {
@@ -34,17 +34,14 @@ export default function CreateProfilePage() {
         return;
       }
 
-      // Update the user's role in Firestore
-      await updateUserRole(selectedRole);
-
-      // Redirect based on selected role
+      // Just redirect based on selected role
       if (selectedRole === 'host') {
         router.push('/create-profile/host');
       } else {
         router.push('/create-profile/vendor');
       }
     } catch (error) {
-      console.error("Error updating role:", error);
+      console.error("Error:", error);
       setError(error instanceof Error ? error.message : "An error occurred");
     }
   };

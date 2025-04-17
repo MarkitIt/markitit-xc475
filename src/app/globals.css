@@ -169,7 +169,55 @@ div[style*="position: absolute"] {
   Theme
 *****************************************/
 
+/* Upload Image Styles */
+.upload-image-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border: 1.5px solid #3A2E39;
+  border-radius: 24px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: fit-content;
+}
 
+.upload-image-container:hover {
+  border-color: #F15152;
+  background-color: #FDE9E9;
+}
+
+.upload-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: #F15152;
+  border-radius: 50%;
+  color: white;
+}
+
+.upload-text {
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  color: #3A2E39;
+}
+
+.add-more-images {
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  color: #F15152;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 12px;
+  display: inline-block;
+}
+
+.add-more-images:hover {
+  color: #E04142;
+}
 
 /* Global Reset & Layout */
 

@@ -3,30 +3,31 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useVendor } from '@/context/VendorContext';
-import styles from '../../../styles.module.css';
+import styles from '../../styles.module.css';
 
-export default function BusinessTypePage() {
+export default function typePage() {
   const router = useRouter();
-  const { vendor, setVendor } = useVendor();
-  const [selectedType, setSelectedType] = useState<string | null>(null);
+  //const { vendor, setVendor } = useVendor();
+  const { vendor, updateVendor } = useVendor();
+  const [selectedType, setSelectedType] = useState<'food' | 'market' | null>(null);
   const [isExiting, setIsExiting] = useState(false);
 
   const handleNext = async () => {
     if (!selectedType) return;
 
-    setVendor({
+    updateVendor({
       ...vendor,
-      vendorType: selectedType
+      type: selectedType
     });
 
     setIsExiting(true);
     await new Promise(resolve => setTimeout(resolve, 500));
-    router.push('/create-profile/vendor/businessProducts/products');
+    router.push('/create-profile/vendor/category');
   };
 
   return (
     <div className={`${styles.container} ${isExiting ? styles.slideOut : styles.slideIn}`}>
-      <div className={styles.stepText}>Step 02 of 05</div>
+      <div className={styles.stepText}>Step 02/08</div>
       <h1 className={`${styles.title} ${styles.centeredTitle}`}>
         What type of vendor are you?
       </h1>

@@ -57,17 +57,37 @@ export default function Header() {
       );
     }
 
-    if (user.role === 'none' || (!vendorProfile && !hostProfile)) {
+    if (user.role && user.role !== 'none') {
       return (
         <div ref={dropdownRef} className={styles.profile}>
           <button onClick={() => setDropdownOpen(!isDropdownOpen)} className={styles.profileButton}>
-            <span>Create Profile</span>
+            <Image src="/icons/profile.svg" alt="Profile" width={24} height={24} />
+            <span>Profile</span>
           </button>
 
           {isDropdownOpen && (
             <div className={styles.dropdown}>
-              <Link href="/create-profile" className={styles.dropdownLink}>
-                Create Profile
+              {user.role === 'host' ? (
+                <>
+                  <Link href="/host-dashboard" className={styles.dropdownLink}>
+                    Dashboard
+                  </Link>
+                  <Link href="/my-events" className={styles.dropdownLink}>
+                    My Events
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/vendor-dashboard" className={styles.dropdownLink}>
+                    Dashboard
+                  </Link>
+                  <Link href="/my-applications" className={styles.dropdownLink}>
+                    My Applications
+                  </Link>
+                </>
+              )}
+              <Link href="/settings" className={styles.dropdownLink}>
+                Settings
               </Link>
               <button onClick={handleLogout} className={`${styles.dropdownLink} ${styles.logoutButton}`}>
                 Logout
@@ -81,33 +101,13 @@ export default function Header() {
     return (
       <div ref={dropdownRef} className={styles.profile}>
         <button onClick={() => setDropdownOpen(!isDropdownOpen)} className={styles.profileButton}>
-          <Image src="/icons/profile.svg" alt="Profile" width={24} height={24} />
-          <span>Profile</span>
+          <span>Create Profile</span>
         </button>
 
         {isDropdownOpen && (
           <div className={styles.dropdown}>
-            {user.role === 'host' ? (
-              <>
-                <Link href="/host-dashboard" className={styles.dropdownLink}>
-                  Dashboard
-                </Link>
-                <Link href="/my-events" className={styles.dropdownLink}>
-                  My Events
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link href="/vendor-dashboard" className={styles.dropdownLink}>
-                  Dashboard
-                </Link>
-                <Link href="/my-applications" className={styles.dropdownLink}>
-                  My Applications
-                </Link>
-              </>
-            )}
-            <Link href="/settings" className={styles.dropdownLink}>
-              Settings
+            <Link href="/create-profile" className={styles.dropdownLink}>
+              Create Profile
             </Link>
             <button onClick={handleLogout} className={`${styles.dropdownLink} ${styles.logoutButton}`}>
               Logout

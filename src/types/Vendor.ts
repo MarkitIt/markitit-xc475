@@ -1,7 +1,5 @@
 export interface Vendor {
     uid?: string;
-    //p1
-
     businessName?: string;
     contactName?: string;
     email?: string;
@@ -11,23 +9,40 @@ export interface Vendor {
     facebook?: string;
     etsy?: string;
     //p2
-    vendorType?: string;
-    eventPreference?: string[];
+    type: 'food' | 'market';
+    //p3
+    categories: string[];
+    ethnicFoodCategories?: string[];
+    description: string;
+    //p4
+    priceRange: {
+      min: number;
+      max: number;
+    };
+    createOwnProducts: boolean;
+    eventPreference: string[];
+    cities: string[];
+    hasOwnSetup: boolean | 'depends';
+    schedule: {
+      preferredDays: string[];
+    };
+    preferredEventSize: string;
+    demographic: string[];
     travelRadius?: number;
     coordinates: { lat: number; lng: number };
-    categories: string[];
+    //p5
     budget?: {
       maxVendorFee?: number;
       totalCostEstimate?: number;
     };
     idealCustomer?: string;
-    demographic?: string[];
     selectedPastPopups?: string[];
-    preferredEventSize?: {
-      min?: number;
-      max?: number;
-    };
-    schedule?: {
-      preferredDays?: string[];
-    };
+    //media - can be either File objects during upload or URLs after storage
+    logo?: File | string;
+    images?: Array<File | string>;
+    //optional
+    additionalInfo?: string;
+    //metadata
+    createdAt?: Date;
+    updatedAt?: Date;
 }
