@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
   /* Colors */
   --primary-black: #3A2E39;
@@ -168,23 +169,58 @@ div[style*="position: absolute"] {
   Theme
 *****************************************/
 
+/* Upload Image Styles */
+.upload-image-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border: 1.5px solid #3A2E39;
+  border-radius: 24px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: fit-content;
+}
 
+.upload-image-container:hover {
+  border-color: #F15152;
+  background-color: #FDE9E9;
+}
+
+.upload-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: #F15152;
+  border-radius: 50%;
+  color: white;
+}
+
+.upload-text {
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  color: #3A2E39;
+}
+
+.add-more-images {
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  color: #F15152;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 12px;
+  display: inline-block;
+}
+
+.add-more-images:hover {
+  color: #E04142;
+}
 
 /* Global Reset & Layout */
-body {
-  margin: 0;
-  font-family: 'Hoss Round', sans-serif;
-  background: linear-gradient(
-    to bottom,
-    #ffffff,
-    #fde9e8,
-    #fbd5d4,
-    #f7acab,
-    #f38482,
-    #f15152
-  );
-  color: #000000;
-}
+
 
 /* Container Styling */
 .container {
@@ -223,7 +259,7 @@ textarea {
   border: 1px solid #000000;
   border-radius: 9px;
   font-size: 16px;
-  font-family: 'Hoss Round', sans-serif;
+  font-family: 'Manrope', sans-serif;
 }
 
 /* Field Labels */
@@ -250,7 +286,7 @@ label {
   color: #ffffff;
   padding: 12px 24px;
   font-size: 16px;
-  font-family: 'Hoss Round', sans-serif;
+  font-family: 'Manrope', sans-serif;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -286,7 +322,7 @@ label {
   background-color: #ffffff;
   cursor: pointer;
   font-size: 16px;
-  font-family: 'Hoss Round', sans-serif;
+  font-family: 'Manrope', sans-serif;
   transition: background-color 0.2s ease;
 }
 
@@ -330,7 +366,7 @@ label {
   margin: 6px;
   border: 1px solid #000;
   border-radius: 999px;
-  font-family: 'Hoss Round', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 16px;
   background-color: #fff;
   color: #000;

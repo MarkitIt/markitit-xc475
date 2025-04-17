@@ -65,7 +65,7 @@ export default function EmailValidatorPage() {
         </ul>
         
         <p style={{ marginTop: '1.5rem' }}>
-          <Link href="/vendor-profile" style={{
+          <Link href="/create-profile/vendor" style={{
             color: theme.colors.primary.coral,
             textDecoration: 'underline',
           }}>

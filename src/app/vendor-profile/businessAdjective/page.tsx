@@ -20,7 +20,7 @@ const BusinessAdjective = () => {
   } = useBusinessProfileContext();
 
   const handleNextStepClick = () => {
-    router.push('/vendor-profile/businessLocation');
+    router.push('/create-profile/vendor/businessLocation');
   };
 
   return (

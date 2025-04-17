@@ -7,7 +7,7 @@ import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import styles from './page.module.css';
+import styles from '../auth.module.css';
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
@@ -38,7 +38,7 @@ export default function SignupPage() {
       });
 
       alert("Account created successfully!");
-      router.push("/events");
+      router.push("/search-events");
     } catch (err) {
       setError('Failed to create account');
     }
@@ -110,9 +110,9 @@ export default function SignupPage() {
             </button>
           </div>
 
-          <div className={styles.loginText}>
+          <div className={styles.authText}>
             Already have an account?{' '}
-            <Link href="/auth/login" className={styles.loginLink}>
+            <Link href="/auth/login" className={styles.authLink}>
               Log in here
             </Link>
           </div>

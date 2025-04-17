@@ -31,7 +31,7 @@ const BusinessSchedule = () => {
   };
 
   const handleNextStepClick = () => {
-    router.push('/vendor-profile/businessLogo');
+    router.push('/create-profile/vendor/businessLogo');
   };
 
   return (

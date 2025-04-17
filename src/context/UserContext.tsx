@@ -113,10 +113,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const extendedUser = user as ExtendedUser;
         setUser(extendedUser);
         await fetchUserRole(user.uid);
-        if (extendedUser.role === 'vendor') {
-          await getVendorProfile();
-        } else if (extendedUser.role === 'host') {
-          await getHostProfile();
+        
+        // Get the latest user data after role is fetched
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          if (userData.role === 'vendor') {
+            await getVendorProfile();
+          } else if (userData.role === 'host') {
+            await getHostProfile();
+          }
         }
       } else {
         setUser(null);

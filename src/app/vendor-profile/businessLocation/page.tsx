@@ -50,7 +50,7 @@ const LocationPreferences = () => {
   }, []);
 
   const handleNextStepClick = () => {
-    router.push("/vendor-profile/businessBudget");
+    router.push("/create-profile/vendor/businessBudget");
   };
 
   return (

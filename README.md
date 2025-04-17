@@ -112,7 +112,7 @@ npm run dev
         /applications.tsx  # Applications page
         /login.tsx         # Login/Signup page
         /settings.tsx      # Settings page
-        /vendor-profile
+        /create-profile/vendor
           /index.tsx       # Vendor profile main page
           /questionnaires.tsx  # Vendor questionnaires
           /review.tsx          # Vendor review page

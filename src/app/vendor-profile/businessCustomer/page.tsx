@@ -72,7 +72,7 @@ const BusinessCustomer = () => {
   };
 
   const handleNextStepClick = () => {
-    router.push('/vendor-profile/businessSchedule');
+    router.push('/create-profile/vendor/businessSchedule');
   };
 
   return (

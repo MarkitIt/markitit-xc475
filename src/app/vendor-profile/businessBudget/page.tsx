@@ -12,7 +12,7 @@ const BusinessBudget = () => {
 
 
   const handleNextStepClick = () => {
-    router.push('/vendor-profile/businessCustomer');
+    router.push('/create-profile/vendor/businessCustomer');
 
   };
 

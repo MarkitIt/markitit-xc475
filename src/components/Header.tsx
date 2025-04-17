@@ -5,18 +5,9 @@ import Link from "next/link";
 import React, { useEffect, useState, useRef } from "react";
 import { useUserContext } from '../context/UserContext';
 import { auth } from "../lib/firebase";
-import './tailwind.css';
-import { theme } from '@/styles/theme';
+import styles from './Header.module.css';
 import { EventSearchBar } from '@/components/EventSearchBar';
 import Image from 'next/image';
-
-const dropdownLinkStyle = {
-  display: 'block',
-  padding: theme.spacing.sm,
-  color: theme.colors.text.primary,
-  textDecoration: 'none',
-  borderRadius: theme.borderRadius.sm,
-};
 
 export default function Header() {
   const { user, vendorProfile, hostProfile, getVendorProfile, getHostProfile } = useUserContext();
@@ -58,77 +49,47 @@ export default function Header() {
   };
 
   const renderProfileSection = () => {
-    // Not signed in
     if (!user) {
       return (
-        <Link href="/auth/login" style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: theme.spacing.xs,
-          textDecoration: 'none',
-          color: theme.colors.text.primary,
-          padding: `${theme.spacing.sm} ${theme.spacing.md}`,
-          border: `1px solid ${theme.colors.primary.black}`,
-          borderRadius: theme.borderRadius.md,
-        }}>
+        <Link href="/auth/login" className={styles.loginButton}>
           <span>Login / Sign Up</span>
         </Link>
       );
     }
 
-    // Signed in but no profile (role is 'none' or no profile created yet)
-    if (user.role === 'none' || (!vendorProfile && !hostProfile)) {
+    if (user.role && user.role !== 'none') {
       return (
-        <div ref={dropdownRef} style={{ position: 'relative' }}>
-          <button
-            onClick={() => setDropdownOpen(!isDropdownOpen)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: theme.spacing.xs,
-              color: theme.colors.text.primary,
-              padding: `${theme.spacing.sm} ${theme.spacing.md}`,
-              border: `1px solid ${theme.colors.primary.black}`,
-              borderRadius: theme.borderRadius.md,
-              background: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            <span>Create Profile</span>
+        <div ref={dropdownRef} className={styles.profile}>
+          <button onClick={() => setDropdownOpen(!isDropdownOpen)} className={styles.profileButton}>
+            <Image src="/icons/profile.svg" alt="Profile" width={24} height={24} />
+            <span>Profile</span>
           </button>
 
           {isDropdownOpen && (
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              right: 0,
-              marginTop: theme.spacing.xs,
-              backgroundColor: theme.colors.background.white,
-              border: `1px solid ${theme.colors.primary.black}`,
-              borderRadius: theme.borderRadius.md,
-              padding: theme.spacing.sm,
-              minWidth: '200px',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-              zIndex: 50,
-            }}>
-              <Link href="/create-profile" className="dropdown-link" style={dropdownLinkStyle}>
-                Create Profile
+            <div className={styles.dropdown}>
+              {user.role === 'host' ? (
+                <>
+                  <Link href="/host-dashboard" className={styles.dropdownLink}>
+                    Dashboard
+                  </Link>
+                  <Link href="/my-events" className={styles.dropdownLink}>
+                    My Events
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/vendor-dashboard" className={styles.dropdownLink}>
+                    Dashboard
+                  </Link>
+                  <Link href="/my-applications" className={styles.dropdownLink}>
+                    My Applications
+                  </Link>
+                </>
+              )}
+              <Link href="/settings" className={styles.dropdownLink}>
+                Settings
               </Link>
-              <button
-                onClick={handleLogout}
-                className="dropdown-link text-coral"
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: theme.spacing.sm,
-                  color: theme.colors.primary.coral,
-                  background: 'none',
-                  border: 'none',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  borderRadius: theme.borderRadius.sm,
-                }}
-              >
+              <button onClick={handleLogout} className={`${styles.dropdownLink} ${styles.logoutButton}`}>
                 Logout
               </button>
             </div>
@@ -137,78 +98,18 @@ export default function Header() {
       );
     }
 
-    // Has a profile (either vendor or host)
     return (
-      <div ref={dropdownRef} style={{ position: 'relative' }}>
-        <button
-          onClick={() => setDropdownOpen(!isDropdownOpen)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: theme.spacing.xs,
-            color: theme.colors.text.primary,
-            padding: `${theme.spacing.sm} ${theme.spacing.md}`,
-            border: `1px solid ${theme.colors.primary.black}`,
-            borderRadius: theme.borderRadius.md,
-            background: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          <Image src="/icons/profile.svg" alt="Profile" width={24} height={24} />
-          <span>Profile</span>
+      <div ref={dropdownRef} className={styles.profile}>
+        <button onClick={() => setDropdownOpen(!isDropdownOpen)} className={styles.profileButton}>
+          <span>Create Profile</span>
         </button>
 
         {isDropdownOpen && (
-          <div style={{
-            position: 'absolute',
-            top: '100%',
-            right: 0,
-            marginTop: theme.spacing.xs,
-            backgroundColor: theme.colors.background.white,
-            border: `1px solid ${theme.colors.primary.black}`,
-            borderRadius: theme.borderRadius.md,
-            padding: theme.spacing.sm,
-            minWidth: '200px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            zIndex: 50,
-          }}>
-            {user.role === 'host' ? (
-              <>
-                <Link href="/host-dashboard" className="dropdown-link" style={dropdownLinkStyle}>
-                  Dashboard
-                </Link>
-                <Link href="/my-events" className="dropdown-link" style={dropdownLinkStyle}>
-                  My Events
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link href="/vendor-dashboard" className="dropdown-link" style={dropdownLinkStyle}>
-                  Dashboard
-                </Link>
-                <Link href="/my-applications" className="dropdown-link" style={dropdownLinkStyle}>
-                  My Applications
-                </Link>
-              </>
-            )}
-            <Link href="/settings" className="dropdown-link" style={dropdownLinkStyle}>
-              Settings
+          <div className={styles.dropdown}>
+            <Link href="/create-profile" className={styles.dropdownLink}>
+              Create Profile
             </Link>
-            <button
-              onClick={handleLogout}
-              className="dropdown-link text-coral"
-              style={{
-                display: 'block',
-                width: '100%',
-                padding: theme.spacing.sm,
-                color: theme.colors.primary.coral,
-                background: 'none',
-                border: 'none',
-                textAlign: 'left',
-                cursor: 'pointer',
-                borderRadius: theme.borderRadius.sm,
-              }}
-            >
+            <button onClick={handleLogout} className={`${styles.dropdownLink} ${styles.logoutButton}`}>
               Logout
             </button>
           </div>
@@ -218,69 +119,38 @@ export default function Header() {
   };
 
   return (
-    <nav style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: theme.spacing.xxl,
-      backgroundColor: theme.colors.background.main,
-      borderBottom: `1px solid ${theme.colors.primary.black}`,
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing.md }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
+    <header className={styles.header}>
+      <div className={styles.leftSection}>
+        <Link href="/" className={styles.brand}>
           <Image
             src="/images/logo.png"
             alt="MarkitIt Logo"
             width={250}
             height={50}
-            style={{
-              objectFit: 'contain'
-            }}
+            style={{ objectFit: 'contain' }}
           />
         </Link>
         <EventSearchBar />
       </div>
       
-      <div style={{
-        display: 'flex',
-        gap: theme.spacing.xl,
-        alignItems: 'center',
-      }}>
-        <Link href="/search-events" style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: theme.spacing.xs,
-          textDecoration: 'none',
-          color: theme.colors.text.primary,
-        }}>
+      <div className={styles.rightSection}>
+        <Link href="/search-events" className={styles.navLink}>
           <Image src="/icons/home.svg" alt="Home" width={24} height={24} />
           Home
         </Link>
         
-        <Link href="/community" style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: theme.spacing.xs,
-          textDecoration: 'none',
-          color: theme.colors.text.primary,
-        }}>
+        <Link href="/community" className={styles.navLink}>
           <Image src="/icons/community.svg" alt="Community" width={24} height={24} />
           <span>Community</span>
         </Link>
         
-        <Link href="/notifications" style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: theme.spacing.xs,
-          textDecoration: 'none',
-          color: theme.colors.text.primary,
-        }}>
+        <Link href="/notifications" className={styles.navLink}>
           <Image src="/icons/bell.svg" alt="Notifications" width={24} height={24} />
           <span>Notifications</span>
         </Link>
         
         {renderProfileSection()}
       </div>
-    </nav>
+    </header>
   );
 }
