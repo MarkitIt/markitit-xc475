@@ -104,25 +104,60 @@ npm run dev
 ```
 #### Pages Directory 
 
-```
-/src
-  /pages
-    /app         # API routes
-      /profile     # User profile-related pages
-        /applications.tsx  # Applications page
-        /login.tsx         # Login/Signup page
-        /settings.tsx      # Settings page
-        /create-profile/vendor
-          /index.tsx       # Vendor profile main page
-          /questionnaires.tsx  # Vendor questionnaires
-          /review.tsx          # Vendor review page
-      /community
-        /dms.tsx       # Direct messages
-        /groups.tsx    # Groups page
-      /notifications.tsx  # Notifications page
-      /index.tsx      # Home page
-      /event.tsx      # Event details page
-```
+## Pages Directory
+
+### Authentication
+- `/auth/login` - User login and signup page
+- `/auth/signup` - New user registration page
+
+### Profile Creation
+- `/create-profile` - Initial role selection (Vendor or Host)
+  
+#### Vendor Profile Creation Flow
+- `/create-profile/vendor` - Basic business information
+- `/create-profile/vendor/type` - Select vendor type (Food or Market)
+- `/create-profile/vendor/category` - Business category selection
+- `/create-profile/vendor/product` - Product information
+- `/create-profile/vendor/budget` - Budget preferences
+- `/create-profile/vendor/preferences` - Event and schedule preferences
+- `/create-profile/vendor/media` - Upload logo and product images
+- `/create-profile/vendor/optional` - Additional business information
+- `/create-profile/vendor/review` - Review and complete profile
+
+#### Host Profile Creation Flow
+- `/create-profile/host` - Organization information and event preferences
+
+### Dashboards
+- `/vendor-dashboard` - Vendor's main dashboard
+  - View applications
+  - Manage profile
+  - Track events
+- `/host-dashboard` - Host's main dashboard
+  - Manage events
+  - View vendor applications
+  - Track event metrics
+
+### Events
+- `/search-events` - Browse and search available events
+- `/event-profile/[id]` - Individual event details
+- `/event-profile/[id]/apply` - Vendor application for an event
+- `/my-events` - List of events (for hosts)
+- `/my-applications` - List of event applications (for vendors)
+
+### Community
+- `/community` - Community feed and interactions
+- `/notifications` - User notifications center
+
+### Settings
+- `/settings` - User account and profile settings
+  - Profile management
+  - Account preferences
+  - Notification settings
+
+### Additional Pages
+- `/` - Home/Landing page
+- `/search-events` - Event discovery page
+
 ## Contributing
 - Clone the repository
 - Create a feature branch (git checkout -b feature-name)
