@@ -4,6 +4,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import stringSimilarity from 'string-similarity';
 import { getLatLongFromCityState, getCityState, parseEventDate } from "@/utils/inferEventData";
 import { Event } from '@/types/Event';
+import { Vendor } from '@/types/Vendor';
 
 interface ScoreBreakdown {
   eventTypeScore: number;
