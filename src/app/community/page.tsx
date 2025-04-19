@@ -1,70 +1,53 @@
 'use client';
 
+import { useState } from 'react';
 import { theme } from '@/styles/theme';
+import { useUserContext } from '@/context/UserContext';
+import ChatInterface from '@/components/ChatInterface';
 
-export default function CommunityPage() {
-  return (
-    <main style={{
-      backgroundColor: theme.colors.background.main,
-      minHeight: 'calc(100vh - 80px)',
-      padding: theme.spacing.xl,
-    }}>
-      <h1 style={{
-        fontSize: theme.typography.fontSize.title,
-        color: theme.colors.text.primary,
-        marginBottom: theme.spacing.xl,
-      }}>
-        Vendor Community
-      </h1>
-      
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        gap: theme.spacing.xl,
-      }}>
-        {/* Example Community Cards */}
-        <div style={{
-          backgroundColor: theme.colors.background.white,
-          borderRadius: theme.borderRadius.lg,
-          padding: theme.spacing.xl,
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        }}>
-          <h2 style={{
-            fontSize: theme.typography.fontSize.header,
-            color: theme.colors.text.primary,
-            marginBottom: theme.spacing.md,
-          }}>
-            Upcoming Events
-          </h2>
-          <p style={{
-            fontSize: theme.typography.fontSize.body,
-            color: theme.colors.text.secondary,
-          }}>
-            Connect with other vendors and discover upcoming events in your area.
-          </p>
-        </div>
+export default function ChatPage() {
+  const { user } = useUserContext();
+  const [activeTab, setActiveTab] = useState<'personal' | 'community'>(
+    'community'
+  );
 
-        <div style={{
-          backgroundColor: theme.colors.background.white,
-          borderRadius: theme.borderRadius.lg,
+  if (!user) {
+    return (
+      <div
+        style={{
+          backgroundColor: theme.colors.background.main,
+          minHeight: 'calc(100vh - 80px)',
           padding: theme.spacing.xl,
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        }}>
-          <h2 style={{
-            fontSize: theme.typography.fontSize.header,
-            color: theme.colors.text.primary,
-            marginBottom: theme.spacing.md,
-          }}>
-            Discussion Forum
-          </h2>
-          <p style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <p
+          style={{
             fontSize: theme.typography.fontSize.body,
-            color: theme.colors.text.secondary,
-          }}>
-            Share experiences and get advice from other vendors.
-          </p>
-        </div>
+            color: theme.colors.text.primary,
+          }}
+        >
+          Please sign in to access your chats
+        </p>
       </div>
+    );
+  }
+
+  return (
+    <main
+      style={{
+        backgroundColor: 'white',
+        minHeight: 'calc(100vh - 80px)',
+        padding: 0,
+      }}
+    >
+      <ChatInterface
+        userId={user.uid}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
     </main>
   );
-} 
+}
