@@ -32,6 +32,7 @@ export interface Conversation {
   name?: string;
   memberCount?: number;
   createdBy?: string;
+  imageUrl?: string;
 }
 
 export interface UserChat {
@@ -89,7 +90,8 @@ export const createPersonalChat = async (user1Id: string, user2Id: string) => {
 export const createCommunityChat = async (
   name: string,
   creatorId: string,
-  initialMembers: string[] = []
+  initialMembers: string[] = [],
+  imageUrl?: string | null
 ) => {
   try {
     const members = [creatorId, ...initialMembers];
@@ -101,6 +103,7 @@ export const createCommunityChat = async (
       memberCount: members.length,
       createdBy: creatorId,
       lastMessageTimestamp: serverTimestamp(),
+      imageUrl: imageUrl || null,
     };
 
     const communityRef = await addDoc(

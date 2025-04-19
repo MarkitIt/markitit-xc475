@@ -76,6 +76,40 @@ const ConversationList: React.FC<ConversationListProps> = ({
     setShowJoinModal(false);
   };
 
+  const renderConversationAvatar = (conversation: Conversation) => {
+    if (conversation.imageUrl) {
+      return (
+        <img
+          src={conversation.imageUrl}
+          alt={conversation.name || 'Chat'}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            borderRadius: theme.borderRadius.full,
+          }}
+        />
+      );
+    } else {
+      return (
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: theme.typography.fontSize.header,
+            fontWeight: theme.typography.fontWeight.semibold,
+            color: theme.colors.background.white,
+          }}
+        >
+          {conversation.name?.charAt(0) || 'U'}
+        </div>
+      );
+    }
+  };
+
   return (
     <div
       style={{
@@ -300,7 +334,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
                   color: theme.colors.background.white,
                 }}
               >
-                {conversation.name?.charAt(0) || 'U'}
+                {renderConversationAvatar(conversation)}
               </div>
 
               <div

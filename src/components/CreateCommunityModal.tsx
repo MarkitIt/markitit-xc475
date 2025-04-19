@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { theme } from '@/styles/theme';
 import { createCommunityChat } from '@/lib/firebaseChat';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 interface CreateCommunityModalProps {
   userId: string;
@@ -16,6 +17,9 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const [communityName, setCommunityName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +32,20 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
     setError('');
 
     try {
-      await createCommunityChat(communityName, userId);
+      let imageUrl = null;
+
+      if (imageFile) {
+        const storage = getStorage();
+        const storageRef = ref(
+          storage,
+          `community-images/${Date.now()}-${imageFile.name}`
+        );
+
+        await uploadBytes(storageRef, imageFile);
+        imageUrl = await getDownloadURL(storageRef);
+      }
+
+      await createCommunityChat(communityName, userId, [], imageUrl);
       onSuccess();
     } catch (err) {
       console.error('Error creating community:', err);
@@ -36,6 +53,30 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      if (!file.type.startsWith('image/')) {
+        setError('Please select an image file');
+        return;
+      }
+
+      if (file.size > 10 * 1024 * 1024) {
+        setError('Image size should be less than 10MB');
+        return;
+      }
+
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+      setError('');
+    }
+  };
+
+  const handleClickUpload = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -99,6 +140,80 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
                 fontFamily: theme.typography.fontFamily.primary,
               }}
             />
+          </div>
+
+          <div style={{ marginBottom: theme.spacing.lg }}>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: theme.spacing.sm,
+                color: theme.colors.text.primary,
+              }}
+            >
+              Community Image
+            </label>
+
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '150px',
+                borderRadius: theme.borderRadius.md,
+                border: '1px dashed rgba(0,0,0,0.1)',
+                backgroundColor: theme.colors.background.main,
+                marginBottom: theme.spacing.md,
+                cursor: 'pointer',
+                overflow: 'hidden',
+              }}
+              onClick={handleClickUpload}
+            >
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt='Community preview'
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              ) : (
+                <div style={{ textAlign: 'center' }}>
+                  <div
+                    style={{
+                      marginBottom: theme.spacing.sm,
+                      fontSize: '24px',
+                      color: theme.colors.text.secondary,
+                    }}
+                  >
+                    +
+                  </div>
+                  <div style={{ color: theme.colors.text.secondary }}>
+                    Click to upload image
+                  </div>
+                </div>
+              )}
+
+              <input
+                type='file'
+                ref={fileInputRef}
+                onChange={handleImageChange}
+                accept='image/*'
+                style={{ display: 'none' }}
+              />
+            </div>
+
+            <div
+              style={{
+                fontSize: theme.typography.fontSize.small,
+                color: theme.colors.text.secondary,
+              }}
+            >
+              Recommended: Square image, max 10MB
+            </div>
           </div>
 
           {error && (

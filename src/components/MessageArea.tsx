@@ -97,6 +97,40 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
     return userInfo[senderId]?.name || (senderId === userId ? 'You' : 'User');
   };
 
+  const renderConversationAvatar = () => {
+    if (conversation?.imageUrl) {
+      return (
+        <img
+          src={conversation.imageUrl}
+          alt={conversation.name || 'Chat'}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            borderRadius: theme.borderRadius.full,
+          }}
+        />
+      );
+    } else {
+      return (
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: theme.typography.fontSize.header,
+            fontWeight: theme.typography.fontWeight.semibold,
+            color: theme.colors.background.white,
+          }}
+        >
+          {conversation?.name?.charAt(0) || 'U'}
+        </div>
+      );
+    }
+  };
+
   if (!conversation) {
     return (
       <div
@@ -167,7 +201,7 @@ const MessageArea: React.FC<MessageAreaProps> = ({ conversation, userId }) => {
             marginRight: theme.spacing.md,
           }}
         >
-          {conversation.name?.charAt(0) || 'U'}
+          {renderConversationAvatar()}
         </div>
 
         <div>
