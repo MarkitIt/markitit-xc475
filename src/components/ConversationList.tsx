@@ -84,18 +84,18 @@ const ConversationList: React.FC<ConversationListProps> = ({
         overflow: 'visible',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: 'rgba(229, 229, 229, 0.21)',
-        borderRadius: '10px',
+        backgroundColor: `${theme.colors.background.main}36`,
+        borderRadius: theme.borderRadius.lg,
         position: 'static',
       }}
     >
       <div
         style={{
           height: '110px',
-          backgroundColor: 'rgba(229, 229, 229, 0.33)',
-          borderRadius: '10px 10px 0 0',
+          backgroundColor: `${theme.colors.background.main}54`,
+          borderRadius: `${theme.borderRadius.lg} ${theme.borderRadius.lg} 0 0`,
           position: 'relative',
-          padding: '15px',
+          padding: theme.spacing.md,
         }}
       >
         <div
@@ -103,8 +103,8 @@ const ConversationList: React.FC<ConversationListProps> = ({
             width: '24px',
             height: '24px',
             position: 'absolute',
-            top: '23px',
-            left: '15px',
+            top: theme.spacing.md,
+            left: theme.spacing.md,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -117,7 +117,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
           style={{
             display: 'flex',
             position: 'absolute',
-            bottom: '15px',
+            bottom: theme.spacing.md,
           }}
         >
           <div style={{ position: 'relative' }} ref={dropdownRef}>
@@ -128,19 +128,21 @@ const ConversationList: React.FC<ConversationListProps> = ({
               }}
               style={{
                 backgroundColor:
-                  activeTab === 'community' ? '#F16261' : 'transparent',
+                  activeTab === 'community'
+                    ? theme.colors.primary.coral
+                    : 'transparent',
                 color:
                   activeTab === 'community'
                     ? theme.colors.primary.beige
-                    : 'rgba(0, 0, 0, 0.79)',
+                    : theme.colors.text.primary,
                 border: 'none',
-                borderRadius: '10px',
-                padding: '5px 15px',
-                marginRight: '12px',
+                borderRadius: theme.borderRadius.lg,
+                padding: `${theme.spacing.xs} ${theme.spacing.md}`,
+                marginRight: theme.spacing.sm,
                 cursor: 'pointer',
                 fontFamily: theme.typography.fontFamily.primary,
                 fontWeight: theme.typography.fontWeight.medium,
-                fontSize: '13px',
+                fontSize: theme.typography.fontSize.small,
                 width: '123px',
                 height: '30px',
                 display: 'flex',
@@ -149,13 +151,14 @@ const ConversationList: React.FC<ConversationListProps> = ({
                 position: 'relative',
               }}
             >
-              Communities
+              <span style={{ marginRight: theme.spacing.md }}>Communities</span>
               {activeTab === 'community' && (
                 <span
                   style={{
                     position: 'absolute',
-                    right: '11px',
-                    top: '13px',
+                    right: theme.spacing.sm,
+                    top: '50%',
+                    transform: 'translateY(-100%)',
                     width: '12px',
                     height: '7px',
                   }}
@@ -174,7 +177,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
                   width: '133px',
                   height: '70px',
                   backgroundColor: theme.colors.background.white,
-                  borderRadius: '10px',
+                  borderRadius: theme.borderRadius.lg,
                   boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
                   zIndex: 100,
                 }}
@@ -188,13 +191,13 @@ const ConversationList: React.FC<ConversationListProps> = ({
                     backgroundColor: 'transparent',
                     color: theme.colors.text.primary,
                     border: 'none',
-                    padding: '11px 0 0 26px',
+                    padding: `${theme.spacing.sm} 0 0 ${theme.spacing.lg}`,
                     width: '100%',
                     textAlign: 'left',
                     cursor: 'pointer',
                     fontFamily: theme.typography.fontFamily.primary,
                     fontWeight: theme.typography.fontWeight.medium,
-                    fontSize: '13px',
+                    fontSize: theme.typography.fontSize.small,
                   }}
                 >
                   Join
@@ -208,13 +211,13 @@ const ConversationList: React.FC<ConversationListProps> = ({
                     backgroundColor: 'transparent',
                     color: theme.colors.text.primary,
                     border: 'none',
-                    padding: '11px 0 0 26px',
+                    padding: `${theme.spacing.sm} 0 0 ${theme.spacing.lg}`,
                     width: '100%',
                     textAlign: 'left',
                     cursor: 'pointer',
                     fontFamily: theme.typography.fontFamily.primary,
                     fontWeight: theme.typography.fontWeight.medium,
-                    fontSize: '13px',
+                    fontSize: theme.typography.fontSize.small,
                   }}
                 >
                   Create
@@ -228,16 +231,16 @@ const ConversationList: React.FC<ConversationListProps> = ({
             style={{
               backgroundColor:
                 activeTab === 'personal'
-                  ? 'rgba(229, 229, 229, 0.72)'
+                  ? `${theme.colors.background.main}B8`
                   : 'transparent',
-              color: 'rgba(0, 0, 0, 0.79)',
+              color: theme.colors.text.primary,
               border: 'none',
-              borderRadius: '10px',
-              padding: '5px 15px',
+              borderRadius: theme.borderRadius.lg,
+              padding: `${theme.spacing.xs} ${theme.spacing.md}`,
               cursor: 'pointer',
               fontFamily: theme.typography.fontFamily.primary,
               fontWeight: theme.typography.fontWeight.medium,
-              fontSize: '13px',
+              fontSize: theme.typography.fontSize.small,
               width: '89px',
               height: '30px',
               display: 'flex',
@@ -259,11 +262,11 @@ const ConversationList: React.FC<ConversationListProps> = ({
         }}
       >
         {loading ? (
-          <div style={{ padding: '15px', textAlign: 'center' }}>
+          <div style={{ padding: theme.spacing.md, textAlign: 'center' }}>
             Loading conversations...
           </div>
         ) : conversations.length === 0 ? (
-          <div style={{ padding: '15px', textAlign: 'center' }}>
+          <div style={{ padding: theme.spacing.md, textAlign: 'center' }}>
             No {activeTab} chats found
           </div>
         ) : (
@@ -273,10 +276,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
               onClick={() => setSelectedConversation(conversation)}
               style={{
                 height: '121px',
-                backgroundColor:
-                  selectedConversation?.id === conversation.id
-                    ? 'rgba(250, 250, 250, 1)'
-                    : 'rgba(250, 250, 250, 1)',
+                backgroundColor: theme.colors.background.white,
                 borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
                 cursor: 'pointer',
                 position: 'relative',
@@ -287,17 +287,17 @@ const ConversationList: React.FC<ConversationListProps> = ({
                 style={{
                   width: '68px',
                   height: '68px',
-                  borderRadius: '50%',
+                  borderRadius: theme.borderRadius.full,
                   backgroundColor: theme.colors.primary.beige,
                   position: 'absolute',
-                  left: '12px',
-                  top: '22px',
+                  left: theme.spacing.sm,
+                  top: theme.spacing.lg,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '24px',
+                  fontSize: theme.typography.fontSize.header,
                   fontWeight: theme.typography.fontWeight.semibold,
-                  color: 'white',
+                  color: theme.colors.background.white,
                 }}
               >
                 {conversation.name?.charAt(0) || 'U'}
@@ -310,8 +310,8 @@ const ConversationList: React.FC<ConversationListProps> = ({
                   top: '39px',
                   fontFamily: theme.typography.fontFamily.primary,
                   fontWeight: theme.typography.fontWeight.semibold,
-                  fontSize: '16px',
-                  color: 'rgba(0, 0, 0, 0.79)',
+                  fontSize: theme.typography.fontSize.body,
+                  color: theme.colors.text.primary,
                   width: '192px',
                 }}
               >
@@ -325,8 +325,8 @@ const ConversationList: React.FC<ConversationListProps> = ({
                   top: '62px',
                   fontFamily: theme.typography.fontFamily.primary,
                   fontWeight: theme.typography.fontWeight.regular,
-                  fontSize: '13px',
-                  color: 'rgba(0, 0, 0, 0.79)',
+                  fontSize: theme.typography.fontSize.small,
+                  color: theme.colors.text.primary,
                   width: '121px',
                 }}
               >
@@ -341,12 +341,12 @@ const ConversationList: React.FC<ConversationListProps> = ({
                 <div
                   style={{
                     position: 'absolute',
-                    right: '14px',
+                    right: theme.spacing.md,
                     top: '42px',
                     fontFamily: theme.typography.fontFamily.primary,
                     fontWeight: theme.typography.fontWeight.regular,
-                    fontSize: '13px',
-                    color: 'rgba(0, 0, 0, 0.79)',
+                    fontSize: theme.typography.fontSize.small,
+                    color: theme.colors.text.primary,
                     textAlign: 'right',
                     width: '68px',
                   }}

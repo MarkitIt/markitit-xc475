@@ -38,9 +38,10 @@ export default function ChatPage() {
   return (
     <main
       style={{
-        backgroundColor: 'white',
-        minHeight: 'calc(100vh - 80px)',
+        backgroundColor: theme.colors.background.white,
+        height: 'calc(100vh - 80px)',
         padding: 0,
+        overflow: 'hidden',
       }}
     >
       <ChatInterface

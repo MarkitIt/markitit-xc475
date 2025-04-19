@@ -24,16 +24,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         display: 'flex',
         justifyContent: 'center',
         width: '100%',
-        backgroundColor: 'white',
+        backgroundColor: theme.colors.background.white,
         position: 'relative',
+        paddingTop: theme.spacing.xl,
+        overflow: 'hidden',
       }}
     >
       <div
         style={{
           width: '1440px',
           position: 'relative',
-          backgroundColor: 'white',
-          paddingBottom: theme.spacing.xl,
+          backgroundColor: theme.colors.background.white,
+          paddingBottom: 0,
         }}
       >
         <div
