@@ -110,7 +110,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
             justifyContent: 'center',
           }}
         >
-          {/* 🔍 */}
+          <img src='icons/mag.svg' alt='Search' width='24' height='24' />
         </div>
 
         <div
