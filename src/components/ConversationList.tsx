@@ -25,6 +25,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [showCreateOption, setShowCreateOption] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
@@ -209,7 +210,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
                   top: '35px',
                   left: '4px',
                   width: '133px',
-                  height: '70px',
+                  height: showCreateOption ? '70px' : '35px',
                   backgroundColor: theme.colors.background.white,
                   borderRadius: theme.borderRadius.lg,
                   boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
@@ -236,7 +237,8 @@ const ConversationList: React.FC<ConversationListProps> = ({
                 >
                   Join
                 </button>
-                <button
+                {/* uncomment to test */}
+                {/* <button
                   onClick={() => {
                     setShowCreateModal(true);
                     setShowDropdown(false);
@@ -255,7 +257,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
                   }}
                 >
                   Create
-                </button>
+                </button> */}
               </div>
             )}
           </div>
