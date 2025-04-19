@@ -7,17 +7,23 @@ import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import styles from '../auth.module.css';
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -32,115 +38,85 @@ export default function SignupPage() {
       });
 
       alert("Account created successfully!");
-      router.push("/auth/login"); // Redirect to login page
-    } catch (error) {
-      setError((error as Error).message);
+      router.push("/search-events");
+    } catch (err) {
+      setError('Failed to create account');
     }
   };
 
   return (
-    <div className="w-screen h-screen flex">
-      {/* Left Section - Welcome Message */}
-      <div className="w-[40%] h-full bg-[#1f555c] flex items-center justify-center">
-        <h1 className="text-white text-5xl font-bold">Join us!</h1>
+    <div className={styles.container}>
+      <div className={styles.leftPanel}>
+        <div className={styles.logo}>DM</div>
+        <h1 className={styles.welcomeText}>Welcome!</h1>
       </div>
-
-      {/* Right Section - Signup Form */}
-      <div className="flex flex-col items-center justify-center w-[60%]">
-        <h2 className="text-2xl font-extrabold tracking-wide text-black">SIGN UP</h2>
-
-        {/* Login Redirect */}
-        <p className="mt-2 text-sm text-black">
-          Create a Markitit account. Already have one?{" "}
-          <Link href="/auth/login" className="text-[#f15152] font-bold">
-            Log in.
-          </Link>
-        </p>
-
-        {/* Email Field */}
-        <div className="mt-6 w-[404px]">
-          <label className="block text-xl font-normal text-black tracking-wide">Email Address</label>
-          <input
-            type="email"
-            className="w-full h-[47px] mt-1 px-4 border border-black rounded-[10px]"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-          />
-        </div>
-
-        {/* Password Field */}
-        <div className="mt-6 w-[404px]">
-          <label className="block text-xl font-normal text-black tracking-wide">Password</label>
-          <input
-            type="password"
-            className="w-full h-[47px] mt-1 px-4 border border-black rounded-[10px]"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Create a password"
-            required
-          />
-        </div>
-
-        {/* First & Last Name Fields */}
-        <div className="mt-6 flex gap-4 w-[404px]">
-          <div className="w-[50%]">
-            <label className="block text-xl font-normal text-black tracking-wide">First Name</label>
+      
+      <div className={styles.rightPanel}>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <h2 className={styles.title}>SIGN UP</h2>
+          
+          {error && <div className={styles.error}>{error}</div>}
+          
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Email Address</label>
             <input
-              type="text"
-              className="w-full h-[47px] mt-1 px-4 border border-black rounded-[10px]"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder="First Name"
+              type="email"
+              className={styles.input}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-          <div className="w-[50%]">
-            <label className="block text-xl font-normal text-black tracking-wide">Last Name</label>
+
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Password</label>
             <input
-              type="text"
-              className="w-full h-[47px] mt-1 px-4 border border-black rounded-[10px]"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder="Last Name"
+              type="password"
+              className={styles.input}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-        </div>
 
-        {/* Signup Button */}
-        <button
-          onClick={handleSignUp}
-          className="mt-6 w-[404px] h-[47px] bg-[#f15152] text-white text-xl font-bold rounded-[10px] hover:bg-[#d43f40]"
-        >
-          SIGN UP
-        </button>
-
-        {/* OR Divider */}
-        <div className="relative flex items-center w-[404px] mt-6">
-          <div className="flex-grow border-t border-black border-opacity-70"></div>
-          <span className="px-4 text-xl text-black text-opacity-70">OR</span>
-          <div className="flex-grow border-t border-black border-opacity-70"></div>
-        </div>
-
-        {/* Social Logins */}
-        <div className="flex gap-6 mt-6">
-          {/* Facebook */}
-          <div className="w-[53px] h-[53px] bg-[#0866ff] rounded-full flex items-center justify-center">
-            <Image src="/icons/facebook.png" alt="Facebook" width={24} height={24} />
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Confirm Password</label>
+            <input
+              type="password"
+              className={styles.input}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
           </div>
 
-          {/* Google */}
-          <div className="w-[53px] h-[53px] border border-black rounded-full flex items-center justify-center">
-            <Image src="/icons/google.png" alt="Google" width={24} height={24} />
+          <button type="submit" className={styles.button}>
+            SIGN UP
+          </button>
+
+          <div className={styles.divider}>
+            <span className={styles.dividerText}>OR</span>
           </div>
 
-          {/* Apple */}
-          <div className="w-[53px] h-[53px] border border-black rounded-full flex items-center justify-center">
-            <Image src="/icons/apple.png" alt="Apple" width={24} height={24} />
+          <div className={styles.socialButtons}>
+            <button type="button" className={styles.socialButton}>
+              f
+            </button>
+            <button type="button" className={styles.socialButton}>
+              G
+            </button>
+            <button type="button" className={styles.socialButton}>
+              
+            </button>
           </div>
-        </div>
+
+          <div className={styles.authText}>
+            Already have an account?{' '}
+            <Link href="/auth/login" className={styles.authLink}>
+              Log in here
+            </Link>
+          </div>
+        </form>
       </div>
     </div>
   );

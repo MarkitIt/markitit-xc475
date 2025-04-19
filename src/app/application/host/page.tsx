@@ -1,17 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useUserContext } from '@/context/UserContext';
 import { db } from '@/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import { SearchBar } from '@/components/SearchBar';
-import { EventCardHost } from '@/components/EventCardHost';
-import Image from "next/image";
+import "leaflet/dist/leaflet.css";
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import styles from "../../page.module.css";
 import '../../tailwind.css';
-import "leaflet/dist/leaflet.css";
-import { useUserContext } from '@/context/UserContext';
-import Link from 'next/link';
 
 
 
@@ -116,16 +112,14 @@ export default function ApplicationHostProfile() {
 
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          {currentEvents.map((event) => (
-            <Link href={`/application/host/${event.id}/vendor-manage`}>
-              <EventCardHost 
-                key={event.id} 
-                event={event}
-                rank={rankedEvents.findIndex(e => e.id === event.id) + 1}
-                showRank={!!user && !!vendorProfile}
-              />
-            </Link>
-          ))}
+          {/* {currentEvents.map((event) => (
+            <EventCardHost 
+              key={event.id} 
+              event={event}
+              rank={rankedEvents.findIndex(e => e.id === event.id) + 1}
+              showRank={!!user && !!vendorProfile}
+            />
+          ))} */}
         </div>
 
         {/* Pagination */}

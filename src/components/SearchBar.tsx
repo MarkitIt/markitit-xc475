@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState,useRef } from 'react';
 import { theme } from '@/styles/theme';
+import { Autocomplete } from "@react-google-maps/api";
 
 interface SearchBarProps {
   onSearch: (city: string, startDate: string, endDate: string, keywords: string) => void;
@@ -12,6 +13,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [keywords, setKeywords] = useState('');
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +60,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
         marginBottom: theme.spacing.xl
       }}
     >
-      <div style={{ flex: '1 1 200px' }}>
+      {/* <div style={{ flex: '1 1 200px' }}>
         <input
           type="text"
           placeholder="City"
@@ -66,12 +68,27 @@ export function SearchBar({ onSearch }: SearchBarProps) {
           onChange={(e) => setCity(e.target.value)}
           style={inputStyle}
         />
+      </div> */}
+      <div style={{ flex: '1 1 200px' }}>
+        <Autocomplete 
+          onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+          
+          >
+          <input
+              type="text"
+              placeholder="City"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              style={inputStyle}
+              
+          />
+        </Autocomplete>
       </div>
       
       <div style={{ flex: '1 1 150px' }}>
         <input
           type="text"
-          placeholder="mm/dd/yyyy"
+          placeholder="From (mm/dd/yyyy)"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
           style={inputStyle}
@@ -81,7 +98,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
       <div style={{ flex: '1 1 150px' }}>
         <input
           type="text"
-          placeholder="mm/dd/yyyy"
+          placeholder="To (mm/dd/yyyy)"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
           style={inputStyle}

@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
   /* Colors */
   --primary-black: #3A2E39;
@@ -162,4 +163,220 @@ button:hover {
 div[style*="position: absolute"] {
   z-index: 1000 !important;
   pointer-events: auto !important;
+}
+
+/*****************************************
+  Theme
+*****************************************/
+
+/* Upload Image Styles */
+.upload-image-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border: 1.5px solid #3A2E39;
+  border-radius: 24px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: fit-content;
+}
+
+.upload-image-container:hover {
+  border-color: #F15152;
+  background-color: #FDE9E9;
+}
+
+.upload-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: #F15152;
+  border-radius: 50%;
+  color: white;
+}
+
+.upload-text {
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  color: #3A2E39;
+}
+
+.add-more-images {
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  color: #F15152;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 12px;
+  display: inline-block;
+}
+
+.add-more-images:hover {
+  color: #E04142;
+}
+
+/* Global Reset & Layout */
+
+
+/* Container Styling */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding-top: 120px;
+  text-align: center;
+}
+
+/* Step Indicator Shapes (just a placeholder class) */
+.step-icons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.step-icons .active {
+  color: #f15152;
+}
+
+/* Page Header */
+h1 {
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  margin-bottom: 32px;
+}
+
+/* Form Fields */
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border: 1px solid #000000;
+  border-radius: 9px;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Field Labels */
+label {
+  display: block;
+  text-align: left;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #000;
+}
+
+/* Subtext */
+.subtext {
+  font-size: 12px;
+  color: #000000;
+  text-align: left;
+  margin-top: -12px;
+  margin-bottom: 10px;
+}
+
+/* Button */
+.button-next {
+  background-color: #f15152;
+  color: #ffffff;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.button-next:hover {
+  background-color: #d94445;
+}
+
+/* Upload Button Container */
+.upload-section {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+/* Label */
+.upload-label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+  color: #000;
+}
+
+/* Upload Button Style */
+.upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1px solid #000;
+  border-radius: 24px;
+  background-color: #ffffff;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+  transition: background-color 0.2s ease;
+}
+
+.upload-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.upload-btn-icon {
+  background-color: #000;
+  padding: 8px;
+  border-radius: 50%;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Add Image Link */
+.add-image {
+  font-size: 14px;
+  margin-top: 10px;
+  display: inline-block;
+  border-bottom: 1px solid #000;
+  cursor: pointer;
+}
+
+/* Button Row */
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+/* Pill Button Base Style */
+.pill-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  margin: 6px;
+  border: 1px solid #000;
+  border-radius: 999px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Selected State */
+.pill-button.selected {
+  background-color: #f15152;
+  color: #fff;
+  border-color: #f15152;
 }
