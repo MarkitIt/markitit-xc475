@@ -8,13 +8,14 @@ import { useUserContext } from '../context/UserContext';
 import { auth } from "../lib/firebase";
 import styles from './Header.module.css';
 import { EventSearchBar } from '@/components/EventSearchBar';
+import { useSearchContext } from "@/context/SearchContext";
 import Image from 'next/image';
 
 export default function Header() {
   const { user, vendorProfile, hostProfile, getVendorProfile, getHostProfile } = useUserContext();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { setSearchQuery } = useSearchContext();
+  // const { setSearchQuery } = useSearchContext();
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -50,12 +51,12 @@ export default function Header() {
     }
   };
 
-  const handleSearch = (query: string) => {
-    if (query.trim()) {
-      setSearchQuery(query); // Update the search query in the context
-      router.push('/search-events'); // Navigate to search-events with query
-    }
-  };
+  // const handleSearch = (query: string) => {
+  //   if (query.trim()) {
+  //     setSearchQuery(query); // Update the search query in the context
+  //     router.push('/search-events'); // Navigate to search-events with query
+  //   }
+  // };
 
   const renderProfileSection = () => {
     if (!user) {
@@ -139,7 +140,7 @@ export default function Header() {
             style={{ objectFit: 'contain' }}
           />
         </Link>
-        <EventSearchBar onSearch={handleSearch}/>
+        {/* <EventSearchBar onSearch={handleSearch}/> */}
       </div>
       
       <div className={styles.rightSection}>
