@@ -1,6 +1,6 @@
 /* General header styles */
 .header {
-    background-color: white;
+    background-color: #f6e2de;
     padding: 15px 40px;
     display: flex;
     align-items: center;
@@ -24,49 +24,48 @@
     justify-content: flex-end;
   }
   
-  /* Centered brand */
+  /* Brand logo */
   .brand {
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    color: black; /* Ensuring black text */
+    text-decoration: none;
   }
   
   /* Navigation links */
-  .navLinks {
+  .navLink {
     display: flex;
-    gap: 40px; /* Ensures even spacing */
-  }
-  
-  .navLinks a {
+    align-items: center;
+    gap: 8px;
     text-decoration: none;
-    color: black; /* Black text */
+    color: #3A2E39;
     font-weight: 500;
   }
   
-  /* Hamburger menu */
-  .hamburger {
-    font-size: 24px;
-    cursor: pointer;
-    color: black; /* Black text */
-  }
-  
-  /* Profile dropdown */
-  .profile {
-    position: relative;
+  /* Login button */
+  .loginButton {
     display: flex;
     align-items: center;
-    cursor: pointer;
-    color: black; /* Black text */
-    font-weight: bold;
+    gap: 8px;
+    text-decoration: none;
+    color: #3A2E39;
+    padding: 8px 16px;
+    border: 1px solid #3A2E39;
+    border-radius: 8px;
   }
   
-  .profile span {
-    margin-left: 8px;
-    color: black; /* Black text */
+  /* Profile section */
+  .profile {
+    position: relative;
+  }
+  
+  .profileButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #3A2E39;
+    padding: 8px 16px;
+    border: 1px solid #3A2E39;
+    border-radius: 8px;
+    background: none;
+    cursor: pointer;
   }
   
   /* Dropdown menu */
@@ -74,27 +73,37 @@
     position: absolute;
     top: 100%;
     right: 0;
-    background: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    border-radius: 5px;
-    display: none;
-    flex-direction: column;
-    width: 200px;
-  }
-  
-  .profile:hover .dropdown {
+    margin-top: 4px;
+    background-color: white;
+    border: 1px solid #3A2E39;
+    border-radius: 8px;
+    padding: 8px;
+    min-width: 200px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 50;
     display: flex;
+    flex-direction: column;
   }
   
-  .dropdown a {
+  .dropdownLink {
+    display: block;
+    padding: 8px;
+    color: #3A2E39;
     text-decoration: none;
-    color: black; /* Black text */
-    padding: 8px 12px;
-    transition: background 0.3s ease-in-out;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
   }
   
-  .dropdown a:hover {
-    background: #f2f2f2;
+  .dropdownLink:hover {
+    background-color: rgb(243, 229, 226);
+  }
+  
+  .logoutButton {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #F15152;
   }
   
