@@ -6,12 +6,12 @@ import { Autocomplete } from '@react-google-maps/api';
 
 interface SearchBarProps {
   onSearch: (city: string, startDate: string, endDate: string, keywords: string) => void;
-  searchQuery: string; // Add searchQuery as a prop
-  setSearchQuery: (query: string) => void; // Add setSearchQuery as a prop
-  events: any[]; // Add events as a prop
+  // searchQuery: string; // Add searchQuery as a prop
+  // setSearchQuery: (query: string) => void; // Add setSearchQuery as a prop
+  // events: any[]; // Add events as a prop
 }
 
-export function SearchBar({ onSearch, searchQuery, setSearchQuery,events}: SearchBarProps) {
+export function SearchBar({ onSearch}: SearchBarProps) {
   const [city, setCity] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -19,24 +19,24 @@ export function SearchBar({ onSearch, searchQuery, setSearchQuery,events}: Searc
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   // Handle searchQuery changes
-  useEffect(() => {
-    if (searchQuery &&  events.length > 0) {
-      setKeywords(searchQuery); // Set keywords to searchQuery
-      handleSubmitPre(searchQuery); // Trigger search with updated city
+  // useEffect(() => {
+  //   if (searchQuery &&  events.length > 0) {
+  //     setKeywords(searchQuery); // Set keywords to searchQuery
+  //     handleSubmitPre(searchQuery); // Trigger search with updated city
 
-    }
-  }, [searchQuery,  setSearchQuery,events]);
+  //   }
+  // }, [searchQuery,  setSearchQuery,events]);
 
 
 
-  const handleSubmitPre = (query?: string) => {
-    onSearch(city, startDate, endDate, query || keywords); // Use query if provided, otherwise use keywords
-  };
+  // const handleSubmitPre = (query?: string) => {
+  //   onSearch(city, startDate, endDate, query || keywords); // Use query if provided, otherwise use keywords
+  // };
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     onSearch(city, startDate, endDate, keywords);
-    setSearchQuery(''); 
+    // setSearchQuery(''); 
   };
 
   const inputStyle = {

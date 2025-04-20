@@ -33,7 +33,7 @@ export default function SearchEvents() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { searchQuery ,setSearchQuery} = useSearchContext(); 
+  // const { searchQuery ,setSearchQuery} = useSearchContext(); 
   const router = useRouter();
 
   const [selectedEventType, setSelectedEventType] = useState('');
@@ -195,7 +195,8 @@ export default function SearchEvents() {
         Find Events
       </h1>
       
-      <SearchBar onSearch={handleSearch} searchQuery={searchQuery} setSearchQuery={setSearchQuery} events={events}/>
+      {/* <SearchBar onSearch={handleSearch} searchQuery={searchQuery} setSearchQuery={setSearchQuery} events={events}/> */}
+      <SearchBar onSearch={handleSearch} />
       
       {/* Filter Bar */}
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
