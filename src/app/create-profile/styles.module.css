@@ -1,20 +1,140 @@
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  min-height: calc(100vh - 80px);
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 3rem 4rem;
+  min-height: 80vh;
 }
 
-.title {
-  text-align: center;
+.stepIndicator {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.stepIcon {
+  font-size: 24px;
+  color: #ccc;
+}
+
+.stepIcon.active {
+  color: #F15152;
+}
+
+.stepText {
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  color: #64748B;
   margin-bottom: 1rem;
 }
 
+.title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 48px;
+  color: #3A2E39;
+  margin-bottom: 2.5rem;
+  font-weight: 500;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.label {
+  font-family: 'Manrope', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #3A2E39;
+}
+
+.input {
+  width: 100%;
+  padding: 16px;
+  border: 1.5px solid #3A2E39;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+  background-color: white;
+  color: #1A1A1A;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #F15152;
+  box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
+}
+
+.input::placeholder {
+  color: #64748B;
+}
+
+.textarea {
+  width: 100%;
+  padding: 16px;
+  border: 1.5px solid #3A2E39;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+  min-height: 120px;
+  resize: vertical;
+  background-color: white;
+  color: #1A1A1A;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #F15152;
+  box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
+}
+
+.textarea::placeholder {
+  color: #64748B;
+}
+
+.helperText {
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  color: #64748B;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.button {
+  background: #F15152;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background: #E04142;
+}
+
 .description {
-  text-align: center;
-  max-width: 600px;
-  margin-bottom: 3rem;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  color: #64748B;
+  margin-top: -0.5rem;
 }
 
 .cardsContainer {
@@ -37,4 +157,338 @@
 .roleButton:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.slideIn {
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+.slideOut {
+  animation: slideOut 0.5s ease-in forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+.pillButton {
+  padding: 12px 32px;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+  background-color: white;
+  color: #3A2E39;
+  border: 2px solid #F15152;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.pillButton.selected {
+  background-color: #F15152;
+  color: white;
+}
+
+.pillButtonContainer {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.centeredTitle {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.nextButton {
+  background-color: #F15152;
+  color: white;
+  padding: 12px 32px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.nextButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nextButton:not(:disabled):hover {
+  background-color: #E04142;
+}
+
+.select {
+  width: 100%;
+  padding: 16px;
+  border: 1.5px solid #3A2E39;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+  background-color: white;
+  min-height: 200px;
+  cursor: pointer;
+  color: #1A1A1A;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #F15152;
+  box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
+}
+
+.select option {
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+  background-color: white;
+  color: #3A2E39;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+}
+
+.select option:checked {
+  background-color: #FDE9E9;
+  color: #F15152;
+}
+
+.select option:hover {
+  background-color: #f5f5f5;
+}
+
+.priceRangeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.priceInputs {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.priceSeparator {
+  font-family: 'Manrope', sans-serif;
+  color: #64748B;
+  font-size: 16px;
+}
+
+.currencySymbol {
+  color: #64748B;
+  margin-right: 4px;
+}
+
+.priceInput {
+  width: 100px;
+  padding: 12px;
+  border: 1.5px solid #3A2E39;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+  background-color: white;
+  color: #1A1A1A;
+}
+
+.priceInput:focus {
+  outline: none;
+  border-color: #F15152;
+  box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
+}
+
+.sliderContainer {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  padding-top: 20px;
+}
+
+.slider {
+  position: absolute;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: none;
+  border-radius: 2px;
+  outline: none;
+}
+
+.slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  background: #E5E7EB;
+  border-radius: 2px;
+}
+
+.slider::-moz-range-track {
+  width: 100%;
+  height: 4px;
+  background: #E5E7EB;
+  border-radius: 2px;
+}
+
+.slider::-webkit-slider-thumb {
+  pointer-events: auto;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #F15152;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: -8px;
+}
+
+.slider::-moz-range-thumb {
+  pointer-events: auto;
+  width: 20px;
+  height: 20px;
+  background: #F15152;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sliderTrack {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #E5E7EB;
+  border-radius: 2px;
+}
+
+.sliderRange {
+  position: absolute;
+  top: 20px;
+  height: 4px;
+  background: #F15152;
+  border-radius: 2px;
+}
+
+.checkboxGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  color: #3A2E39;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #3A2E39;
+  border-radius: 4px;
+  accent-color: #F15152;
+  cursor: pointer;
+}
+
+.subtitle {
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  color: #64748B;
+  margin-top: -1.5rem;
+  margin-bottom: 2rem;
+}
+
+.sliderValue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-family: 'Manrope', sans-serif;
+}
+
+.sliderValue span:first-child {
+  background: #F15152;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.distanceLabel {
+  color: #F15152;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.reviewText {
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  color: #3A2E39;
+  padding: 12px 16px;
+  background-color: #F8F9FA;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+.reviewPill {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #FDE9E9;
+  color: #F15152;
+  border-radius: 16px;
+  font-size: 14px;
+  margin: 4px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.pillContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.secondaryButton {
+  background-color: #E5E7EB;
+  color: #3A2E39;
+  padding: 12px 32px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-right: 12px;
+}
+
+.secondaryButton:hover {
+  background-color: #D1D5DB;
 } 

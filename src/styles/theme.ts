@@ -31,6 +31,7 @@ export const theme = {
       title: '72px',
       header: '24px',
       body: '20px',
+      small: '14px',
     },
     fontWeight: {
       regular: 400,
