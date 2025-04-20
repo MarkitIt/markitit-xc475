@@ -1,3 +1,5 @@
+import { redirect } from "next/dist/server/api-utils";
+
 export const theme = {
   colors: {
     primary: {
@@ -8,6 +10,7 @@ export const theme = {
       pink: '#E4B7B7',
       darkBlue: '#1B2559',
       coral: '#E88D67',
+      red: '#F15152',
     },
     secondary: {
       yellow: '#F4D03F',
@@ -29,6 +32,7 @@ export const theme = {
     },
     fontSize: {
       title: '72px',
+      subtitle: '48px',
       header: '24px',
       body: '20px',
       small: '14px',
