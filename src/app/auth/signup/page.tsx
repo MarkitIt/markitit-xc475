@@ -110,13 +110,43 @@ export default function SignupPage() {
 
           <div className={styles.socialButtons}>
             <button type="button" className={styles.socialButton}>
-              f
+              <Image
+                src="/images/facebookLogo.png"
+                alt="Facebook Logo"
+                width={100}
+                height={50}
+                style={{
+                  objectFit: 'contain',
+                  maxWidth: '100%',
+                  height: 'auto',
+                }}
+              />
             </button>
             <button type="button" className={styles.socialButton}>
-              G
+              <Image
+                src="/images/googleLogo.png"
+                alt="Google Logo"
+                width={20}
+                height={10}
+                style={{
+                  objectFit: 'contain',
+                  maxWidth: '100%',
+                  height: 'auto',
+                }}
+              />
             </button>
             <button type="button" className={styles.socialButton}>
-              
+              <Image
+                src="/images/appleLogo.png"
+                alt="Apple Logo"
+                width={20}
+                height={10}
+                style={{
+                  objectFit: 'contain',
+                  maxWidth: '100%',
+                  height: 'auto',
+                }}
+              />
             </button>
           </div>
 
