@@ -249,306 +249,308 @@ const CreateApplicationProfile = () => {
       };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Create Application Form</h1>
-      <p className={styles.subtitle}>
-        Set up your vendor application form with the information you need from
-        applicants.
-      </p>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.formGroup}>
-          <label htmlFor="event-name" className={styles.label}>
-            Event Name*
-          </label>
-          <input
-            type="text"
-            id="event-name"
-            name="event-name"
-            placeholder="Enter your event name"
-            className={styles.input}
-            required
-          />
-        </div>
-        <div className={styles.column}>
+    <main className={styles.main}>
+      <div className={styles.container}>
+        <h1 className={styles.title}>Create Application Form</h1>
+        <p className={styles.subtitle}>
+          Set up your vendor application form with the information you need from
+          applicants.
+        </p>
+        <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
-            <label htmlFor="start-date" className={styles.label}>
-              Start Date*
+            <label htmlFor="event-name" className={styles.label}>
+              Event Name*
             </label>
             <input
-              type="date"
-              id="start-date"
-              name="start-date"
+              type="text"
+              id="event-name"
+              name="event-name"
+              placeholder="Enter your event name"
               className={styles.input}
               required
             />
           </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="end-date" className={styles.label}>
-              End Date*
-            </label>
-            <input
-              type="date"
-              id="end-date"
-              name="end-date"
-              className={styles.input}
-              required
-            />
-          </div>
-        </div>
-
-        <div className={styles.column}>
-          <div className={styles.formGroup}>
-            <label htmlFor="start-time" className={styles.label}>
-              Start Time*
-            </label>
-            <input
-              type="time"
-              id="start-time"
-              name="start-time"
-              className={styles.input}
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="end-time" className={styles.label}>
-              End Time*
-            </label>
-            <input
-              type="time"
-              id="end-time"
-              name="end-time"
-              className={styles.input}
-              required
-            />
-          </div>
-        </div>
-        
-        <div className={styles.column}>
-          <div className={styles.formGroup}>
-            <label htmlFor="headcount" className={styles.label}>
-              Expected Headcount
-            </label>
-            <input
-              type="number"
-              id="headcount"
-              name="headcount"
-              placeholder="Enter the expected headcount"
-              className={styles.input}
-              min="0"
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label htmlFor="location" className={styles.label}>
-              Location*
-            </label>
-            <Autocomplete
-              onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-              onPlaceChanged={handlePlaceChanged}
-            >
+          <div className={styles.column}>
+            <div className={styles.formGroup}>
+              <label htmlFor="start-date" className={styles.label}>
+                Start Date*
+              </label>
               <input
-                type="text"
-                id="location"
-                name="location"
-                placeholder="Event location"
+                type="date"
+                id="start-date"
+                name="start-date"
                 className={styles.input}
                 required
               />
-            </Autocomplete>
-          </div>
-        </div>
+            </div>
 
-        <div className={styles.column}>
-          <div className={styles.formGroup}>
-            <label htmlFor="vendorFee" className={styles.label}>
-              Vendor Fee ($)
-            </label>
-            <input
-              type="number"
-              id="vendorFee"
-              name="vendorFee"
-              placeholder="Enter the vendor fee"
-              className={styles.input}
-              min="0"
-              step="0.01"
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label htmlFor="booth-cost" className={styles.label}>
-              Total Cost ($)*
-            </label>
-            <input
-              type="number"
-              id="booth-cost"
-              name="booth-cost"
-              placeholder="0.00"
-              className={styles.input}
-              min="0"
-              step="0.01"
-              required
-            />
-          </div>
-        </div>
-
-        <div className={styles.column}>
-          <div className={styles.formGroup}>
-            <label htmlFor="type" className={styles.label}>
-              Event Type
-            </label>
-            <select
-              id="type"
-              name="type"
-              multiple // Allows multi-select
-              className={styles.select}
-            >
-              {eventTypes.map((demo, index) => (
-                <option key={index} value={demo}>
-                  {demo}
-                </option>
-              ))}
-            </select>
+            <div className={styles.formGroup}>
+              <label htmlFor="end-date" className={styles.label}>
+                End Date*
+              </label>
+              <input
+                type="date"
+                id="end-date"
+                name="end-date"
+                className={styles.input}
+                required
+              />
+            </div>
           </div>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="categories" className={styles.label}>
-              Event Categories
-            </label>
-            <select
-              id="categories"
-              name="categories"
-              multiple // Allows multi-select
-              className={styles.select}
-            >
-              {categories.map((demo, index) => (
-                <option key={index} value={demo}>
-                  {demo}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+          <div className={styles.column}>
+            <div className={styles.formGroup}>
+              <label htmlFor="start-time" className={styles.label}>
+                Start Time*
+              </label>
+              <input
+                type="time"
+                id="start-time"
+                name="start-time"
+                className={styles.input}
+                required
+              />
+            </div>
 
-        <div className={styles.column}>
-          <div className={styles.formGroup}>
-            <label htmlFor="attendeeType" className={styles.label}>
-              Attendee Type
-            </label>
-            <select
-              id="attendeeType"
-              name="attendeeType"
-              multiple // Allows multi-select
-              className={styles.select}
-            >
-              {attendeeTypes.map((demo, index) => (
-                <option key={index} value={demo}>
-                  {demo}
-                </option>
-              ))}
-            </select>
+            <div className={styles.formGroup}>
+              <label htmlFor="end-time" className={styles.label}>
+                End Time*
+              </label>
+              <input
+                type="time"
+                id="end-time"
+                name="end-time"
+                className={styles.input}
+                required
+              />
+            </div>
           </div>
           
+          <div className={styles.column}>
+            <div className={styles.formGroup}>
+              <label htmlFor="headcount" className={styles.label}>
+                Expected Headcount
+              </label>
+              <input
+                type="number"
+                id="headcount"
+                name="headcount"
+                placeholder="Enter the expected headcount"
+                className={styles.input}
+                min="0"
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="location" className={styles.label}>
+                Location*
+              </label>
+              <Autocomplete
+                onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+                onPlaceChanged={handlePlaceChanged}
+              >
+                <input
+                  type="text"
+                  id="location"
+                  name="location"
+                  placeholder="Event location"
+                  className={styles.input}
+                  required
+                />
+              </Autocomplete>
+            </div>
+          </div>
+
+          <div className={styles.column}>
+            <div className={styles.formGroup}>
+              <label htmlFor="vendorFee" className={styles.label}>
+                Vendor Fee ($)
+              </label>
+              <input
+                type="number"
+                id="vendorFee"
+                name="vendorFee"
+                placeholder="Enter the vendor fee"
+                className={styles.input}
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="booth-cost" className={styles.label}>
+                Total Cost ($)*
+              </label>
+              <input
+                type="number"
+                id="booth-cost"
+                name="booth-cost"
+                placeholder="0.00"
+                className={styles.input}
+                min="0"
+                step="0.01"
+                required
+              />
+            </div>
+          </div>
+
+          <div className={styles.column}>
+            <div className={styles.formGroup}>
+              <label htmlFor="type" className={styles.label}>
+                Event Type
+              </label>
+              <select
+                id="type"
+                name="type"
+                multiple // Allows multi-select
+                className={styles.select}
+              >
+                {eventTypes.map((demo, index) => (
+                  <option key={index} value={demo}>
+                    {demo}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="categories" className={styles.label}>
+                Event Categories
+              </label>
+              <select
+                id="categories"
+                name="categories"
+                multiple // Allows multi-select
+                className={styles.select}
+              >
+                {categories.map((demo, index) => (
+                  <option key={index} value={demo}>
+                    {demo}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className={styles.column}>
+            <div className={styles.formGroup}>
+              <label htmlFor="attendeeType" className={styles.label}>
+                Attendee Type
+              </label>
+              <select
+                id="attendeeType"
+                name="attendeeType"
+                multiple // Allows multi-select
+                className={styles.select}
+              >
+                {attendeeTypes.map((demo, index) => (
+                  <option key={index} value={demo}>
+                    {demo}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label htmlFor="demographics" className={styles.label}>
+                Demographics
+              </label>
+              <select
+                id="demographics"
+                name="demographics"
+                multiple // Allows multi-select
+                className={styles.select}
+              >
+                {demographics.map((demo, index) => (
+                  <option key={index} value={demo}>
+                    {demo}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           <div className={styles.formGroup}>
-            <label htmlFor="demographics" className={styles.label}>
-              Demographics
+            <label htmlFor="image" className={styles.label}>
+              Event Image URL
             </label>
-            <select
-              id="demographics"
-              name="demographics"
-              multiple // Allows multi-select
-              className={styles.select}
-            >
-              {demographics.map((demo, index) => (
-                <option key={index} value={demo}>
-                  {demo}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="image" className={styles.label}>
-            Event Image URL
-          </label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            accept="image/*" // Restrict to image files only
-            className={styles.input}
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="description" className={styles.label}>
-            Event Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            placeholder="Enter the event description"
-            className={styles.textarea}
-            rows={4}
-          ></textarea>
-        </div>
-
-        <div className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Custom Questions</h2>
-            <p className={styles.sectionDescription}>
-              Add custom questions that will appear on a separate page of the
-              application. Applicants will need to complete these questions before submitting.
-            </p>
-            <button
-              type="button"
-              onClick={addCustomQuestion}
-              className={styles.addButton}
-            >
-              <FiPlus className={styles.icon} /> Add Question
-            </button>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*" // Restrict to image files only
+              className={styles.input}
+            />
           </div>
 
-          {customQuestions.length === 0 ? (
-            <div className={styles.emptyState}>
-              <p className={styles.emptyStateText}>
-                No custom questions added yet.
+          <div className={styles.formGroup}>
+            <label htmlFor="description" className={styles.label}>
+              Event Description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Enter the event description"
+              className={styles.textarea}
+              rows={4}
+            ></textarea>
+          </div>
+
+          <div className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>Custom Questions</h2>
+              <p className={styles.sectionDescription}>
+                Add custom questions that will appear on a separate page of the
+                application. Applicants will need to complete these questions before submitting.
               </p>
               <button
                 type="button"
                 onClick={addCustomQuestion}
                 className={styles.addButton}
               >
+                <FiPlus className={styles.icon} /> Add Question
               </button>
             </div>
-          ) : (
-            <div className={styles.questionList}>
-              {customQuestions.map((_, index) => (
-                <CustomQuestionField
-                  key={index}
-                  index={index}
-                  onDelete={removeCustomQuestion}
-                  onUpdate={handleUpdateQuestion}
-                />
-              ))}
-            </div>
-          )}
-        </div>
 
-        <div className={styles.buttonContainer}>
-          <button
-            type="submit"
-            className={styles.submitButton}
-          >
-            Create Application
-          </button>
-        </div>
+            {customQuestions.length === 0 ? (
+              <div className={styles.emptyState}>
+                <p className={styles.emptyStateText}>
+                  No custom questions added yet.
+                </p>
+                <button
+                  type="button"
+                  onClick={addCustomQuestion}
+                  className={styles.addButton}
+                >
+                </button>
+              </div>
+            ) : (
+              <div className={styles.questionList}>
+                {customQuestions.map((_, index) => (
+                  <CustomQuestionField
+                    key={index}
+                    index={index}
+                    onDelete={removeCustomQuestion}
+                    onUpdate={handleUpdateQuestion}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
 
-        
-      </form>
+          <div className={styles.buttonContainer}>
+            <button
+              type="submit"
+              className={styles.submitButton}
+            >
+              Create Application
+            </button>
+          </div>
+
+          
+        </form>
 
 
-    </div>
+      </div>
+    </main>
   );
 };
 

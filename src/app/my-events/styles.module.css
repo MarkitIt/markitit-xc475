@@ -610,3 +610,9 @@
 .submitButton:hover {
   background-color: #E04142;
 }
+
+.main{
+  background-color: var(--background-main); 
+  min-height: calc(100vh - 80px);
+  padding: var(--spacing-xl);
+}

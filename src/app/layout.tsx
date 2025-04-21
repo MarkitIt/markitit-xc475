@@ -1,6 +1,7 @@
 "use client";
 
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { VendorProvider } from "@/context/VendorContext";
 import { Manrope } from "next/font/google";
@@ -38,6 +39,7 @@ export default function RootLayout({
                 <ApplicationProfileProvider>
                   <Header />
                   <VendorProvider>{children}</VendorProvider>
+                  <Footer />
                 </ApplicationProfileProvider>
               </HostProvider>
             </UserProvider>
