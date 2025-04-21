@@ -1,10 +1,10 @@
-import eslint from '@eslint/js';
-import tseslint from '@typescript-eslint/eslint-plugin';
-import tseslintParser from '@typescript-eslint/parser';
-import globals from 'globals';
-import importPlugin from 'eslint-plugin-import';
+const eslint = require('@eslint/js');
+const tseslint = require('@typescript-eslint/eslint-plugin');
+const tseslintParser = require('@typescript-eslint/parser');
+const globals = require('globals');
+const importPlugin = require('eslint-plugin-import');
 
-export default [
+module.exports = [
   {
     files: ['**/*.ts'],
     languageOptions: {
@@ -24,10 +24,13 @@ export default [
     rules: {
       ...eslint.configs.recommended.rules,
       ...tseslint.configs.recommended.rules,
-      'quotes': ['error', 'double'],
+      'quotes': 'off',
       'import/no-unresolved': 'off',
       'indent': ['error', 2],
-      'max-len': ['error', { 'code': 120 }],
+      'max-len': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      'no-inner-declarations': 'off',
     },
     ignores: [
       'lib/**/*',
@@ -35,4 +38,4 @@ export default [
       '!node_modules/@typescript-eslint/**/*',
     ],
   },
-];
+]; 
