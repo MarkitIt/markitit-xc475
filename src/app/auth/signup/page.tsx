@@ -47,7 +47,17 @@ export default function SignupPage() {
   return (
     <div className={styles.container}>
       <div className={styles.leftPanel}>
-        <div className={styles.logo}>DM</div>
+        <Image
+          src="/images/mLogo.png"
+          alt="Markitit Shortened Logo"
+          width={200}
+          height={100}
+          style={{
+            objectFit: 'contain',
+            maxWidth: '100%',
+            height: 'auto',
+          }}
+        />
         <h1 className={styles.welcomeText}>Welcome!</h1>
       </div>
       

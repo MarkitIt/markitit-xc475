@@ -8,7 +8,7 @@ export const theme = {
       beige: '#F4D8CD',
       sand: '#EDB183',
       pink: '#E4B7B7',
-      darkBlue: '#1B2559',
+      darkBlue: '#2B2E6A',
       coral: '#E88D67',
       red: '#F15152',
     },

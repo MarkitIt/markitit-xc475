@@ -17,7 +17,6 @@ export default function Home() {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: theme.spacing.sm,
         marginLeft: theme.spacing.xl,
         marginBottom: '300px',
       }}>
