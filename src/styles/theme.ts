@@ -18,7 +18,7 @@ export const theme = {
     },
     text: {
       primary: '#3A2E39',
-      secondary: '#64748B',
+      secondary: '#2B2E6A',
     },
     background: {
       main: '#F3E5E2',
