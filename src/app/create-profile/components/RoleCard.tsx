@@ -15,8 +15,10 @@ export const RoleCard = ({ title, description, icon, onClick }: RoleCardProps) =
     className={styles.roleCard}
     style={{
       flex: 1,
-      maxWidth: '400px',
-      aspectRatio: '1',
+      maxWidth: '1000px',
+      maxHeight: '800px',
+      height: '800px',
+      margin: theme.spacing.sm,
       backgroundColor: theme.colors.background.white,
       border: `2px solid ${theme.colors.primary.coral}`,
       borderRadius: theme.borderRadius.lg,

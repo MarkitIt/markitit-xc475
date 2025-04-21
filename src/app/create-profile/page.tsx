@@ -6,6 +6,8 @@ import styles from './styles.module.css';
 import { RoleCard } from './components/RoleCard';
 import { useUserContext } from '@/context/UserContext';
 import { useState } from 'react';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 const ROLES = [
   {
@@ -58,12 +60,14 @@ export default function CreateProfilePage() {
       padding: theme.spacing.xl,
     }}>
       <div style={{
-        maxWidth: '800px',
+        maxWidth: '1000px',
+        maxHeight: '400px',
         margin: '0 auto',
         textAlign: 'center',
       }}>
         <h1 style={{
           fontSize: theme.typography.fontSize.title,
+          color: theme.colors.text.primary,
           marginBottom: theme.spacing.xl,
         }}>
           Choose Your Role
@@ -80,7 +84,7 @@ export default function CreateProfilePage() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gridTemplateColumns: 'repeat(2, 1fr)',
           gap: theme.spacing.xl,
         }}>
           {ROLES.map((role) => (

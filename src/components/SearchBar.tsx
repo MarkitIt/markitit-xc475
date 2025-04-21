@@ -70,13 +70,14 @@ export function SearchBar({ onSearch}: SearchBarProps) {
       onSubmit={handleSubmit}
       style={{
         display: 'flex',
-        flexWrap: 'wrap',
+        flexWrap: 'nowrap',
         gap: theme.spacing.sm,
         padding: theme.spacing.lg,
         backgroundColor: theme.colors.background.white,
         borderRadius: theme.borderRadius.lg,
         boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
         marginBottom: theme.spacing.xl,
+        alignItems: 'center',
       }}
     >
       <div style={{ flex: '1 1 200px' }}>

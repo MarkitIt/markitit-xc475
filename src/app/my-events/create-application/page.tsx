@@ -11,7 +11,9 @@ import { auth, db } from "../../../lib/firebase";
 import CustomQuestionField from '../../../components/CustomQuestionField';
 import { getStorage, ref,uploadBytes, getDownloadURL } from "firebase/storage";
 import { FiPlus } from 'react-icons/fi';
+import styles from "../styles.module.css";
 import "../../tailwind.css";
+import { theme } from "@/styles/theme";
 import { eventTypes } from '@/types/EventTypes';
 import { attendeeTypes } from '@/types/AttendeeTypes';
 import { categories } from '@/types/Categories';
@@ -247,407 +249,307 @@ const CreateApplicationProfile = () => {
       };
 
   return (
-      <div className='flex flex-col items-center justify-center p-8 min-h-screen bg-white'>
-        <div className='w-full' style={{ width: '60%' }}>
-          <h1 className='text-3xl font-bold text-center mb-4 text-black'>
-            Create Application Form
-          </h1>
-          <p className='text-lg text-gray-700 text-center mb-8'>
-            Set up your vendor application form with the information you need from
-            applicants
-          </p>
-  
-          <form onSubmit={handleSubmit} className='space-y-12'>
-            <div className='mb-10'>
-              <h2 className='text-2xl font-semibold mb-6 text-black text-center'>
-                Event Information
-              </h2>
-  
-              <div className='mb-6'>
-                <label
-                  className='block text-xl mb-3 text-center text-black font-semibold'
-                  htmlFor='event-name'
-                >
-                  Event Name
-                </label>
-                <input
-                  type='text'
-                  id='event-name'
-                  name='event-name'
-                  placeholder='Enter your event name'
-                  className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black'
-                />
-              </div>
-  
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
-                <div>
-                  <label
-                    className='block text-xl mb-3 text-center text-black font-semibold'
-                    htmlFor='start-date'
-                  >
-                    Start Date
-                  </label>
-                  <input
-                    type='date'
-                    id='start-date'
-                    name='start-date'
-                    className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black'
-                    required
-                  />
-                  <label
-                    className="block text-xl mt-3 mb-3 text-center text-black font-semibold"
-                    htmlFor="start-time"
-                  >
-                    Start Time
-                  </label>
-                  <input
-                    type="time"
-                    id="start-time"
-                    name="start-time"
-                    className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
-                    required
-                  />
-                </div>
-                <div>
-                  <label
-                    className='block text-xl mb-3 text-center text-black font-semibold'
-                    htmlFor='end-date'
-                  >
-                    End Date
-                  </label>
-                  <input
-                    type='date'
-                    id='end-date'
-                    name='end-date'
-                    className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black'
-                    required
-                  />
-                  <label
-                    className="block text-xl mt-3 mb-3 text-center text-black font-semibold"
-                    htmlFor="end-time"
-                  >
-                    End Time
-                  </label>
-                  <input
-                    type="time"
-                    id="end-time"
-                    name="end-time"
-                    className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
-                    required
-                  />
-                </div>
-              </div>
-  
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
-                {/* Headcount */}
-                <div className="mb-6">
-                  <label
-                    className="block text-xl mb-3 text-center text-black font-semibold"
-                    htmlFor="headcount"
-                  >
-                    Expected Headcount
-                  </label>
-                  <input
-                    type="number"
-                    id="headcount"
-                    name="headcount"
-                    placeholder="Enter the expected headcount"
-                    className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
-                    min="0"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    className='block text-xl mb-3 text-center text-black font-semibold'
-                    htmlFor='location'
-                  >
-                    Location
-                  </label>
-                  <Autocomplete
-                    onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-                    onPlaceChanged={handlePlaceChanged}
-                    >
-                    <input
-                        type='text'
-                        id='location'
-                        name='location'
-                        placeholder='Event location'
-                        className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700'
-                        required
-                    />
-                    </Autocomplete>
-                </div>
-                
-              </div>
-            </div>
-
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
-              {/* Vendor Fee */}
-              <div className="mb-6">
-                <label
-                  className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="vendorFee"
-                >
-                  Vendor Fee ($)
-                </label>
-                <input
-                  type="number"
-                  id="vendorFee"
-                  name="vendorFee"
-                  placeholder="Enter the vendor fee"
-                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
-                  min="0"
-                  step="0.01"
-                />
-              </div>
-
-              <div>
-                  <label
-                    className='block text-xl mb-3 text-center text-black font-semibold'
-                    htmlFor='booth-cost'
-                  >
-                    Total Cost ($)
-                  </label>
-                  <input
-                    type='number'
-                    id='booth-cost'
-                    name='booth-cost'
-                    placeholder='0.00'
-                    className='w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black'
-                    min='0'
-                    step='0.01'
-                    required
-                  />
-                </div>
-            </div>
-
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
-              {/* Type */}
-              <div className="mb-6">
-                <label
-                  className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="type"
-                >
-                  Event Type
-                </label>
-                <select
-                  id="type"
-                  name="type"
-                  multiple // Allows multi-select
-                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
-                >
-                  {eventTypes.map((demo, index) => (
-                    <option key={index} value={demo}>
-                      {demo}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              
-              {/* Categories */}
-              <div className="mb-6">
-                <label
-                  className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="categories"
-                >
-                  Event Categories
-                </label>
-                <select
-                  id="categories"
-                  name="categories"
-                  multiple // Allows multi-select
-                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
-                >
-                  {categories.map((demo, index) => (
-                    <option key={index} value={demo}>
-                      {demo}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
-              {/* Attendee Type */}
-              <div className="mb-6">
-                <label
-                  className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="attendeeType"
-                >
-                  Attendee Type
-                </label>
-                <select
-                  id="attendeeType"
-                  name="attendeeType"
-                  multiple // Allows multi-select
-                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
-                >
-                  {attendeeTypes.map((demo, index) => (
-                    <option key={index} value={demo}>
-                      {demo}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Demographics */}
-              <div className="mb-6">
-                <label
-                  className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="demographics"
-                >
-                  Demographics
-                </label>
-                <select
-                  id="demographics"
-                  name="demographics"
-                  multiple // Allows multi-select
-                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
-                >
-                  {demographics.map((demo, index) => (
-                    <option key={index} value={demo}>
-                      {demo}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              
-            </div>
-
-            {/* Image */}
-            <div className="mb-6">
-              <label
-                className="block text-xl mb-3 text-center text-black font-semibold"
-                htmlFor="image"
-              >
-                Event Image URL
-              </label>
-              <input
-                type="file"
-                id="image"
-                name="image"
-                accept="image/*" // Restrict to image files only
-                className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white text-black"
-              />
-            </div>
-
-            {/* Description */}
-            <div className="mb-6">
-                <label
-                  className="block text-xl mb-3 text-center text-black font-semibold"
-                  htmlFor="description"
-                >
-                  Event Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  placeholder="Enter the event description"
-                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-white placeholder-gray-700 text-black"
-                  rows={4}
-                ></textarea>
-              </div>
-  
-            <div className='mb-10'>
-              {/*<h2 className='text-2xl font-semibold mb-6 text-black text-center'>
-                Standard Application Fields
-              </h2>
-              <p className='text-lg text-gray-700 text-center mb-6'>
-                Select the information you want to collect from vendors.
-              </p>
-  
-              <div className='p-6 border-2 border-gray-300 rounded-lg bg-white'>
-                <div className='flex flex-col'>
-                  {standardFields.map((field, index) => (
-                    <div key={field.id}>
-                      <div className='flex items-center justify-between py-6'>
-                        <div className='flex items-center'>
-                          <input
-                            type='checkbox'
-                            id={field.id}
-                            checked={selectedFields.includes(field.id)}
-                            onChange={() => handleFieldToggle(field.id)}
-                            className='w-8 h-8 rounded border-2 border-gray-400 checked:bg-[#f15152] bg-white'
-                          />
-                        </div>
-                        <label
-                          htmlFor={field.id}
-                          className='text-xl font-medium text-black'
-                        >
-                          {field.label}
-                        </label>
-                      </div>
-                      {index < standardFields.length - 1 && (
-                        <div className='border-b border-gray-200'></div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>*/}
-            </div> 
-  
-            <div className='mb-10'>
-              <div className='flex flex-col items-center mb-6'>
-                <h2 className='text-2xl font-semibold text-black text-center mb-6'>
-                  Custom Questions
-                </h2>
-                <p className='text-lg text-gray-700 text-center mb-6'>
-                  Add custom questions that will appear on a separate page of the
-                  application. Applicants will need to complete these questions
-                  before submitting.
-                </p>
-                <button
-                  type='button'
-                  onClick={addCustomQuestion}
-                  className='py-4 bg-[#f15152] text-white text-xl font-semibold rounded-lg hover:bg-red-600 transition px-8'
-                >
-                  <FiPlus className='inline mr-2' /> Add Question
-                </button>
-              </div>
-  
-              {customQuestions.length === 0 ? (
-                <div className='p-10 border-2 border-gray-300 rounded-lg bg-white flex flex-col items-center'>
-                  <p className='text-xl text-gray-500 mb-6'>
-                    No custom questions added yet.
-                  </p>
-                  <button
-                    type='button'
-                    onClick={addCustomQuestion}
-                    className='py-4 bg-[#f15152] text-white text-xl font-semibold rounded-lg hover:bg-red-600 transition px-8'
-                  ></button>
-                </div>
-              ) : (
-                <div className='space-y-6'>
-                  {customQuestions.map((_, index) => (
-                    <CustomQuestionField
-                      key={index}
-                      index={index}
-                      onDelete={removeCustomQuestion}
-                      onUpdate={handleUpdateQuestion}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-  
-            <div className='flex justify-center'>
-              <div style={{ width: '50%', margin: '0 auto' }}>
-                <button
-                  type='submit'
-                  className='w-full py-4 bg-[#f15152] text-white text-xl font-semibold rounded-lg hover:bg-red-600 transition'
-                  style={{ marginBottom: '10px' }}
-                >
-                  Create Application
-                </button>
-              </div>
-            </div>
-          </form>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Create Application Form</h1>
+      <p className={styles.subtitle}>
+        Set up your vendor application form with the information you need from
+        applicants.
+      </p>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.formGroup}>
+          <label htmlFor="event-name" className={styles.label}>
+            Event Name*
+          </label>
+          <input
+            type="text"
+            id="event-name"
+            name="event-name"
+            placeholder="Enter your event name"
+            className={styles.input}
+            required
+          />
         </div>
-      </div>
-    );
+        <div className={styles.column}>
+          <div className={styles.formGroup}>
+            <label htmlFor="start-date" className={styles.label}>
+              Start Date*
+            </label>
+            <input
+              type="date"
+              id="start-date"
+              name="start-date"
+              className={styles.input}
+              required
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="end-date" className={styles.label}>
+              End Date*
+            </label>
+            <input
+              type="date"
+              id="end-date"
+              name="end-date"
+              className={styles.input}
+              required
+            />
+          </div>
+        </div>
+
+        <div className={styles.column}>
+          <div className={styles.formGroup}>
+            <label htmlFor="start-time" className={styles.label}>
+              Start Time*
+            </label>
+            <input
+              type="time"
+              id="start-time"
+              name="start-time"
+              className={styles.input}
+              required
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="end-time" className={styles.label}>
+              End Time*
+            </label>
+            <input
+              type="time"
+              id="end-time"
+              name="end-time"
+              className={styles.input}
+              required
+            />
+          </div>
+        </div>
+        
+        <div className={styles.column}>
+          <div className={styles.formGroup}>
+            <label htmlFor="headcount" className={styles.label}>
+              Expected Headcount
+            </label>
+            <input
+              type="number"
+              id="headcount"
+              name="headcount"
+              placeholder="Enter the expected headcount"
+              className={styles.input}
+              min="0"
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="location" className={styles.label}>
+              Location*
+            </label>
+            <Autocomplete
+              onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+              onPlaceChanged={handlePlaceChanged}
+            >
+              <input
+                type="text"
+                id="location"
+                name="location"
+                placeholder="Event location"
+                className={styles.input}
+                required
+              />
+            </Autocomplete>
+          </div>
+        </div>
+
+        <div className={styles.column}>
+          <div className={styles.formGroup}>
+            <label htmlFor="vendorFee" className={styles.label}>
+              Vendor Fee ($)
+            </label>
+            <input
+              type="number"
+              id="vendorFee"
+              name="vendorFee"
+              placeholder="Enter the vendor fee"
+              className={styles.input}
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="booth-cost" className={styles.label}>
+              Total Cost ($)*
+            </label>
+            <input
+              type="number"
+              id="booth-cost"
+              name="booth-cost"
+              placeholder="0.00"
+              className={styles.input}
+              min="0"
+              step="0.01"
+              required
+            />
+          </div>
+        </div>
+
+        <div className={styles.column}>
+          <div className={styles.formGroup}>
+            <label htmlFor="type" className={styles.label}>
+              Event Type
+            </label>
+            <select
+              id="type"
+              name="type"
+              multiple // Allows multi-select
+              className={styles.select}
+            >
+              {eventTypes.map((demo, index) => (
+                <option key={index} value={demo}>
+                  {demo}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="categories" className={styles.label}>
+              Event Categories
+            </label>
+            <select
+              id="categories"
+              name="categories"
+              multiple // Allows multi-select
+              className={styles.select}
+            >
+              {categories.map((demo, index) => (
+                <option key={index} value={demo}>
+                  {demo}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className={styles.column}>
+          <div className={styles.formGroup}>
+            <label htmlFor="attendeeType" className={styles.label}>
+              Attendee Type
+            </label>
+            <select
+              id="attendeeType"
+              name="attendeeType"
+              multiple // Allows multi-select
+              className={styles.select}
+            >
+              {attendeeTypes.map((demo, index) => (
+                <option key={index} value={demo}>
+                  {demo}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div className={styles.formGroup}>
+            <label htmlFor="demographics" className={styles.label}>
+              Demographics
+            </label>
+            <select
+              id="demographics"
+              name="demographics"
+              multiple // Allows multi-select
+              className={styles.select}
+            >
+              {demographics.map((demo, index) => (
+                <option key={index} value={demo}>
+                  {demo}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="image" className={styles.label}>
+            Event Image URL
+          </label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*" // Restrict to image files only
+            className={styles.input}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="description" className={styles.label}>
+            Event Description
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Enter the event description"
+            className={styles.textarea}
+            rows={4}
+          ></textarea>
+        </div>
+
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Custom Questions</h2>
+            <p className={styles.sectionDescription}>
+              Add custom questions that will appear on a separate page of the
+              application. Applicants will need to complete these questions before submitting.
+            </p>
+            <button
+              type="button"
+              onClick={addCustomQuestion}
+              className={styles.addButton}
+            >
+              <FiPlus className={styles.icon} /> Add Question
+            </button>
+          </div>
+
+          {customQuestions.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p className={styles.emptyStateText}>
+                No custom questions added yet.
+              </p>
+              <button
+                type="button"
+                onClick={addCustomQuestion}
+                className={styles.addButton}
+              >
+              </button>
+            </div>
+          ) : (
+            <div className={styles.questionList}>
+              {customQuestions.map((_, index) => (
+                <CustomQuestionField
+                  key={index}
+                  index={index}
+                  onDelete={removeCustomQuestion}
+                  onUpdate={handleUpdateQuestion}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className={styles.buttonContainer}>
+          <button
+            type="submit"
+            className={styles.submitButton}
+          >
+            Create Application
+          </button>
+        </div>
+
+        
+      </form>
+
+
+    </div>
+  );
 };
 
 export default CreateApplicationProfile;
