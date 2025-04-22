@@ -1,8 +1,20 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, collection, getDocs, query, where } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-
+import { initializeApp } from 'firebase/app';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  setPersistence,
+  browserLocalPersistence,
+} from 'firebase/auth';
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -19,13 +31,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
 // Authentication functions
 export const signUpUser = async (email: string, password: string) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     return userCredential.user;
   } catch (error) {
     throw error;
@@ -34,7 +51,11 @@ export const signUpUser = async (email: string, password: string) => {
 
 export const loginUser = async (email: string, password: string) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     return userCredential.user;
   } catch (error) {
     throw error;
@@ -54,9 +75,9 @@ export const getEvents = async () => {
   try {
     const eventsRef = collection(db, 'events');
     const snapshot = await getDocs(eventsRef);
-    return snapshot.docs.map(doc => ({
+    return snapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data()
+      ...doc.data(),
     }));
   } catch (error) {
     console.error('Error fetching events:', error);
@@ -64,7 +85,11 @@ export const getEvents = async () => {
   }
 };
 
-export const searchEvents = async (city?: string, date?: string, keywords?: string) => {
+export const searchEvents = async (
+  city?: string,
+  date?: string,
+  keywords?: string
+) => {
   try {
     let eventsRef = collection(db, 'events');
     let constraints = [];
@@ -79,12 +104,13 @@ export const searchEvents = async (city?: string, date?: string, keywords?: stri
       constraints.push(where('title', '>=', keywords));
     }
 
-    const q = constraints.length > 0 ? query(eventsRef, ...constraints) : eventsRef;
+    const q =
+      constraints.length > 0 ? query(eventsRef, ...constraints) : eventsRef;
     const snapshot = await getDocs(q);
-    
-    return snapshot.docs.map(doc => ({
+
+    return snapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data()
+      ...doc.data(),
     }));
   } catch (error) {
     console.error('Error searching events:', error);
