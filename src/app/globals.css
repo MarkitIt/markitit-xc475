@@ -10,7 +10,7 @@
   --primary-sand: #EDB183;
   --primary-pink: #E4B7B7;
   --primary-dark-blue: #1B2559;
-  --primary-coral: #E88D67;
+  --primary-coral: #F15152;
 
   --secondary-yellow: #F4D03F;
   --secondary-light-pink: #FFF1F1;
@@ -629,10 +629,16 @@ div[style*="position: absolute"] {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
 }
 
+.search-field {
+  flex: 1 1 200px;
+  min-width: 140px;
+}
+
 .search-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
 }
 
 .search-input {
@@ -931,4 +937,63 @@ div[style*="position: absolute"] {
 .search-button, 
 .filter-row * {
   font-family: 'Manrope', sans-serif !important;
+}
+
+/* Font imports */
+@font-face {
+  font-family: 'Nunito';
+  src: url('/fonts/Nunito/Nunito-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  src: url('/fonts/Nunito/Nunito-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Landing Page Styles */
+.landing-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 83px;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.landing-title.coral {
+  color: var(--primary-coral);
+  margin-bottom: 5px;
+}
+
+.landing-title.dark-blue {
+  color: var(--primary-dark-blue);
+  margin-bottom: 5px;
+}
+
+.landing-title.beige {
+  color: var(--primary-beige);
+  margin-bottom: var(--spacing-xl);
+}
+
+.title-underline {
+  height: 8px;
+  width: 70%;
+  background-color: var(--primary-dark-blue);
+  margin: 20px 0 30px 0;
+}
+
+.landing-description {
+  font-family: 'Manrope', sans-serif;
+  font-size: var(--font-size-body);
+  color: var(--primary-dark-blue);
+  max-width: 600px;
+  line-height: 1.5;
+  margin-top: 20px;
 }

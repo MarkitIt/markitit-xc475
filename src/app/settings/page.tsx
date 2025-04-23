@@ -18,26 +18,28 @@ export default function SettingsPage() {
   };
 
   return (
-    <main className={styles.container}>
-      <h1 className={styles.title}>Settings</h1>
+    <main className="global-background">
+      <div className={styles.container}>
+        <h1 className={styles.title}>Settings</h1>
 
-      <div className={styles.layout}>
-        <SettingsNavigation
-          activeSection={activeSection}
-          onSectionChange={handleSectionChange}
-        />
-
-        {activeSection === 'profile' && (
-          <ProfileSettings
-            initialData={{
-              displayName: 'John Doe',
-              email: 'john@example.com',
-            }}
-            onSave={handleProfileSave}
+        <div className={styles.layout}>
+          <SettingsNavigation
+            activeSection={activeSection}
+            onSectionChange={handleSectionChange}
           />
-        )}
 
-        {/* Add other sections as needed */}
+          {activeSection === 'profile' && (
+            <ProfileSettings
+              initialData={{
+                displayName: 'John Doe',
+                email: 'john@example.com',
+              }}
+              onSave={handleProfileSave}
+            />
+          )}
+
+          {/* Add other sections as needed */}
+        </div>
       </div>
     </main>
   );

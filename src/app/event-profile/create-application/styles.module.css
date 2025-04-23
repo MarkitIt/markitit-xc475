@@ -138,19 +138,3 @@
 .addButton:hover {
   background-color: #dc2626;
 }
-
-.emptyState {
-  padding: 2.5rem;
-  border: 2px solid #D1D5DB;
-  border-radius: 0.5rem;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.emptyStateText {
-  font-size: 1.25rem;
-  color: #6B7280;
-} 

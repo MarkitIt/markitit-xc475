@@ -24,7 +24,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         display: 'flex',
         justifyContent: 'center',
         width: '100%',
-        backgroundColor: theme.colors.background.white,
+        backgroundColor: 'transparent',
         position: 'relative',
         paddingTop: theme.spacing.xl,
         overflow: 'hidden',
@@ -34,7 +34,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         style={{
           width: '1440px',
           position: 'relative',
-          backgroundColor: theme.colors.background.white,
+          backgroundColor: 'transparent',
           paddingBottom: 0,
         }}
       >

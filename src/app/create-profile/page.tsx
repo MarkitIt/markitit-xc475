@@ -2,7 +2,6 @@
 
 import { theme } from '@/styles/theme';
 import { useRouter } from 'next/navigation';
-import styles from './styles.module.css';
 import { RoleCard } from './components/RoleCard';
 import { useUserContext } from '@/context/UserContext';
 import { useState } from 'react';
@@ -53,7 +52,6 @@ export default function CreateProfilePage() {
 
   return (
     <main style={{
-      backgroundColor: theme.colors.background.main,
       minHeight: 'calc(100vh - 80px)',
       padding: theme.spacing.xl,
     }}>

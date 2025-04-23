@@ -3,7 +3,6 @@
 import Link from "next/link";
 import "./tailwind.css";
 import { theme } from '@/styles/theme';
-import { EventSearchBar } from '@/components/EventSearchBar';
 import Image from 'next/image';
 
 export default function Home() {
@@ -13,50 +12,33 @@ export default function Home() {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: theme.spacing.sm,
+        marginTop: theme.spacing.lg,
+        padding: '0 4rem',
       }}>
         <div style={{
-          maxWidth: '600px',
+          maxWidth: '800px',
+          position: 'relative',
         }}>
-          <h1 style={{
-            fontFamily: theme.typography.fontFamily.primary,
-            fontSize: theme.typography.fontSize.title,
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.primary.coral,
-            marginBottom: theme.spacing.md,
-            lineHeight: 1.2,
-          }}>
+          <h1 className="landing-title coral">
             Pop Up.
           </h1>
-          <h1 style={{
-            fontFamily: theme.typography.fontFamily.primary,
-            fontSize: theme.typography.fontSize.title,
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.primary.darkBlue,
-            marginBottom: theme.spacing.md,
-            lineHeight: 1.2,
-          }}>
+          <h1 className="landing-title dark-blue">
             Stand Out.
           </h1>
-          <h1 style={{
-            fontFamily: theme.typography.fontFamily.primary,
-            fontSize: theme.typography.fontSize.title,
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.background.white,
-            marginBottom: theme.spacing.xl,
-            lineHeight: 1.2,
-          }}>
+          <h1 className="landing-title beige">
             Sell More.
           </h1>
           
-          <p style={{
-            fontFamily: theme.typography.fontFamily.primary,
-            fontSize: theme.typography.fontSize.body,
-            color: theme.colors.text.secondary,
-            maxWidth: '450px',
-            lineHeight: 1.5,
-          }}>
-            a one-stop platform for finding top-tier events, managing applications, and connecting with a thriving vendor community.
+          <Image 
+            src="/images/underline.png" 
+            alt="Decorative underline" 
+            width={500} 
+            height={20}
+            className="title-underline-image"
+          />
+          
+          <p className="landing-description">
+            a one-stop platform for finding events, managing applications, and connecting with a thriving vendor community.
           </p>
         </div>
 

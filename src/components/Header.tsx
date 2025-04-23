@@ -6,7 +6,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useUserContext } from '../context/UserContext';
 import { auth } from "../lib/firebase";
 import styles from './Header.module.css';
-import { EventSearchBar } from '@/components/EventSearchBar';
 import Image from 'next/image';
 
 export default function Header() {
@@ -130,7 +129,6 @@ export default function Header() {
             style={{ objectFit: 'contain' }}
           />
         </Link>
-        <EventSearchBar />
       </div>
       
       <div className={styles.rightSection}>

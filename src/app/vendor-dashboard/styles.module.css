@@ -1,0 +1,27 @@
+.container {
+  min-height: calc(100vh - 80px);
+  padding: var(--spacing-xl);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.header {
+  margin-bottom: var(--spacing-xl);
+}
+
+.title {
+  font-size: var(--font-size-title);
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: var(--font-size-body);
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.navigation {
+  margin-top: 2rem;
+} 

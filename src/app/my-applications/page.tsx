@@ -9,6 +9,7 @@ import { useUserContext } from '@/context/UserContext';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import styles from './styles.module.css';
 
+
 export default function MyApplicationsPage() {
   const router = useRouter();
   const { user } = useUserContext(); // Get the logged-in user
@@ -139,51 +140,53 @@ export default function MyApplicationsPage() {
   };
 
   return (
-    <main className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>
-          My Applications
-        </h1>
+    <main className="global-background">
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>
+            My Applications
+          </h1>
 
-        <button 
-          onClick={handleNewApplication}
-          className={styles.newButton}
-        >
-          Find Events
-        </button>
-      </div>
-
-      {/* Add debug information panel */}
-      <div style={{ 
-        marginBottom: '20px', 
-        padding: '10px',
-        border: '1px solid #ccc',
-        borderRadius: '5px',
-        background: '#f5f5f5'
-      }}>
-        <h3>Debug Information</h3>
-        <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
-        <p>Applications found: {applications.length}</p>
-      </div>
-
-      {applications.length > 0 ? (
-        <div className={styles.applicationsList}>
-          {applications.map((application) => (
-            <ApplicationCard
-              key={application.eventId} // Use a unique key
-              eventName={application.eventName}
-              status={application.status}
-              submissionDate={application.appliedAt || 'N/A'}
-              onViewDetails={() => handleViewDetails(application.eventId)} // Pass the eventId to the view details function
-            />
-          ))}
+          <button 
+            onClick={handleNewApplication}
+            className={styles.newButton}
+          >
+            Find Events
+          </button>
         </div>
-      ) : (
-        <div className={styles.emptyState}>
-          <p>You haven't applied to any events yet.</p>
-          <p>Browse available events and submit your first application!</p>
-        </div>
-      )}
+
+        {/* Add debug information panel
+        <div style={{ 
+          marginBottom: '20px', 
+          padding: '10px',
+          border: '1px solid #ccc',
+          borderRadius: '5px',
+          background: '#f5f5f5'
+        }}>
+          <h3>Debug Information</h3>
+          <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
+          <p>Applications found: {applications.length}</p>
+        </div> */}
+
+        {applications.length > 0 ? (
+          <div className={styles.applicationsList}>
+            {applications.map((application) => (
+              <ApplicationCard
+                key={application.eventId} // Use a unique key
+                eventName={application.eventName}
+                status={application.status}
+                submissionDate={application.appliedAt || 'N/A'}
+                onViewDetails={() => handleViewDetails(application.eventId)} // Pass the eventId to the view details function
+              />
+            ))}
+          </div>
+        ) : (
+          <div className={styles.emptyState}>
+            <p>You haven't applied to any events yet.</p>
+            <p>Browse available events and submit your first application!</p>
+          </div>
+        )}
+      </div>
     </main>
   );
 }

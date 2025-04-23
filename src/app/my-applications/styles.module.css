@@ -1,9 +1,9 @@
-
-
 .container {
-  background-color: var(--background-main);
   min-height: calc(100vh - 80px);
   padding: var(--spacing-xl);
+  width: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 .header {
@@ -26,6 +26,13 @@
   border: none;
   cursor: pointer;
   font-size: var(--font-size-body);
+}
+
+.label {
+  font-family: 'Manrope', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #3A2E39;
 }
 
 .applicationsList {
@@ -75,4 +82,11 @@
   border: 1px solid var(--primary-coral);
   cursor: pointer;
   font-size: var(--font-size-body);
+}
+
+.emptyState {
+  margin-top: 2rem;
+  font-size: var(--font-size-body);
+  color: var(--text-secondary);
+  line-height: 1.5;
 } 
