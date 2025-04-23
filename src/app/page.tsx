@@ -12,6 +12,7 @@ export default function Home() {
     <main style={{
       background: theme.colors.background.gradient,
       minHeight: '100vh',
+      overflow: 'hidden',
     }}>
       <div style={{
         display: 'flex',
