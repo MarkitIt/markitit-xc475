@@ -29,10 +29,10 @@
 }
 
 .label {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 18px;
   font-weight: 500;
-  color: #3A2E39;
+  color: #3a2e39;
 }
 
 .applicationsList {
@@ -89,4 +89,4 @@
   font-size: var(--font-size-body);
   color: var(--text-secondary);
   line-height: 1.5;
-} 
+}

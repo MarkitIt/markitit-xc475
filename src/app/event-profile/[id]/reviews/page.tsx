@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useRouter , useParams} from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../../lib/firebase';
-import '../../../tailwind.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../../lib/firebase";
+import "../../../tailwind.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 interface Event {
   id: string;
@@ -22,19 +22,19 @@ interface Event {
 
 export default function EventReviewPage() {
   const router = useRouter();
-  const params = useParams(); 
-  const id = params.id as string// Get the id from the URL
+  const params = useParams();
+  const id = params.id as string; // Get the id from the URL
   const [event, setEvent] = useState<Event | null>(null);
 
   useEffect(() => {
     if (id) {
       const fetchEvent = async () => {
-        const docRef = doc(db, 'events', id as string);
+        const docRef = doc(db, "events", id as string);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setEvent(docSnap.data() as Event);
         } else {
-          console.log('No such document!');
+          console.log("No such document!");
         }
       };
 
@@ -64,15 +64,19 @@ export default function EventReviewPage() {
           </div>
         </div>
         <button className="flex items-center space-x-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            <FontAwesomeIcon icon={faStar} />
-            <span>Follow</span>
+          <FontAwesomeIcon icon={faStar} />
+          <span>Follow</span>
         </button>
       </div>
 
       {/* Tabs */}
       <div className="flex space-x-6 mt-6 border-b text-gray-600 w-full max-w-2xl">
-        <button className="pb-2 cursor-pointer" onClick={handleEventsClick}>Event</button>
-        <button className="pb-2 border-b-2 border-black font-semibold cursor-pointer">Reviews</button>
+        <button className="pb-2 cursor-pointer" onClick={handleEventsClick}>
+          Event
+        </button>
+        <button className="pb-2 border-b-2 border-black font-semibold cursor-pointer">
+          Reviews
+        </button>
         <button className="pb-2 cursor-pointer">Lorem</button>
       </div>
 

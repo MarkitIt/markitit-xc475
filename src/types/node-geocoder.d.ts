@@ -1,4 +1,4 @@
-declare module 'node-geocoder' {
+declare module "node-geocoder" {
   export interface Options {
     provider: string;
     apiKey?: string;
@@ -25,7 +25,9 @@ declare module 'node-geocoder' {
 
   export default function NodeGeocoder(options: Options): {
     geocode(address: string): Promise<GeocoderResult[]>;
-    batchGeocode(addresses: string[]): Promise<Array<{ error: Error | null; value: GeocoderResult[] }>>;
+    batchGeocode(
+      addresses: string[],
+    ): Promise<Array<{ error: Error | null; value: GeocoderResult[] }>>;
     reverse(lat: number, lon: number): Promise<GeocoderResult[]>;
   };
-} 
+}

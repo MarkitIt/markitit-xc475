@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import styles from './styles.module.css';
-import { SettingsNavigation } from './components/SettingsNavigation';
-import { ProfileSettings } from './components/ProfileSettings';
+import { useState } from "react";
+import styles from "./styles.module.css";
+import { SettingsNavigation } from "./components/SettingsNavigation";
+import { ProfileSettings } from "./components/ProfileSettings";
 
 export default function SettingsPage() {
-  const [activeSection, setActiveSection] = useState('profile');
+  const [activeSection, setActiveSection] = useState("profile");
 
   const handleSectionChange = (section: string) => {
     setActiveSection(section);
@@ -14,7 +14,7 @@ export default function SettingsPage() {
 
   const handleProfileSave = (data: { displayName: string; email: string }) => {
     // Implement save functionality
-    console.log('Saving profile data:', data);
+    console.log("Saving profile data:", data);
   };
 
   return (
@@ -28,11 +28,11 @@ export default function SettingsPage() {
             onSectionChange={handleSectionChange}
           />
 
-          {activeSection === 'profile' && (
+          {activeSection === "profile" && (
             <ProfileSettings
               initialData={{
-                displayName: 'John Doe',
-                email: 'john@example.com',
+                displayName: "John Doe",
+                email: "john@example.com",
               }}
               onSave={handleProfileSave}
             />
@@ -43,4 +43,4 @@ export default function SettingsPage() {
       </div>
     </main>
   );
-} 
+}

@@ -4,27 +4,36 @@
 
 :root {
   /* Colors */
-  --primary-black: #3A2E39;
-  --primary-green: #1E555C;
-  --primary-beige: #F4D8CD;
-  --primary-sand: #EDB183;
-  --primary-pink: #E4B7B7;
-  --primary-dark-blue: #1B2559;
-  --primary-coral: #F15152;
+  --primary-black: #3a2e39;
+  --primary-green: #1e555c;
+  --primary-beige: #f4d8cd;
+  --primary-sand: #edb183;
+  --primary-pink: #e4b7b7;
+  --primary-dark-blue: #1b2559;
+  --primary-coral: #f15152;
 
-  --secondary-yellow: #F4D03F;
-  --secondary-light-pink: #FFF1F1;
+  --secondary-yellow: #f4d03f;
+  --secondary-light-pink: #fff1f1;
 
-  --text-primary: #3A2E39;
-  --text-secondary: #64748B;
+  --text-primary: #3a2e39;
+  --text-secondary: #64748b;
 
-  --background-main: #F3E5E2;
-  --background-white: #FFFFFF;
-  --background-gradient: linear-gradient(180deg, #f3e5e2 0%, rgb(233, 86, 73) 100%);
-  --background-gradient-soft: linear-gradient(180deg, #f6e2dd 0%, #fde9e9 3%, #FFFFFF 8%);
+  --background-main: #f3e5e2;
+  --background-white: #ffffff;
+  --background-gradient: linear-gradient(
+    180deg,
+    #f3e5e2 0%,
+    rgb(233, 86, 73) 100%
+  );
+  --background-gradient-soft: linear-gradient(
+    180deg,
+    #f6e2dd 0%,
+    #fde9e9 3%,
+    #ffffff 8%
+  );
 
   /* Typography */
-  --font-family-primary: 'Manrope, sans-serif';
+  --font-family-primary: "Manrope, sans-serif";
   --font-size-title: 72px;
   --font-size-header: 24px;
   --font-size-body: 20px;
@@ -53,7 +62,7 @@
 
 /* Global Background */
 .global-background {
-  background: linear-gradient(180deg, #f6e2dd 0%, #fde9e9 3%, #FFFFFF 8%);
+  background: linear-gradient(180deg, #f6e2dd 0%, #fde9e9 3%, #ffffff 8%);
   min-height: 100vh;
   width: 100%;
   display: flex;
@@ -80,7 +89,7 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
@@ -122,24 +131,24 @@ button:hover {
 }
 
 .button {
-  background: #F15152;
+  background: #f15152;
   color: white;
   border: none;
   border-radius: 8px;
   padding: 12px 24px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .button:hover {
-  background: #E04142;
+  background: #e04142;
 }
 
 .secondaryButton {
-  background-color: #E5E7EB;
-  color: #3A2E39;
+  background-color: #e5e7eb;
+  color: #3a2e39;
   padding: 12px 32px;
   border-radius: 8px;
   border: none;
@@ -150,11 +159,11 @@ button:hover {
 }
 
 .secondaryButton:hover {
-  background-color: #D1D5DB;
+  background-color: #d1d5db;
 }
 
 .nextButton {
-  background-color: #F15152;
+  background-color: #f15152;
   color: white;
   padding: 12px 32px;
   border-radius: 8px;
@@ -170,7 +179,7 @@ button:hover {
 }
 
 .nextButton:not(:disabled):hover {
-  background-color: #E04142;
+  background-color: #e04142;
 }
 
 /* Pill Button Styles */
@@ -178,16 +187,16 @@ button:hover {
   padding: 12px 32px;
   border-radius: 9999px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   background-color: white;
-  color: #3A2E39;
-  border: 2px solid #F15152;
+  color: #3a2e39;
+  border: 2px solid #f15152;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
 
 .pillButton.selected {
-  background-color: #F15152;
+  background-color: #f15152;
   color: white;
 }
 
@@ -200,12 +209,12 @@ button:hover {
 .reviewPill {
   display: inline-block;
   padding: 6px 12px;
-  background-color: #FDE9E9;
-  color: #F15152;
+  background-color: #fde9e9;
+  color: #f15152;
   border-radius: 16px;
   font-size: 14px;
   margin: 4px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
 }
 
 .pillContainer {
@@ -219,79 +228,79 @@ button:hover {
 .input {
   width: 100%;
   padding: 16px;
-  border: 1.5px solid #3A2E39;
+  border: 1.5px solid #3a2e39;
   border-radius: 12px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   background-color: white;
-  color: #1A1A1A;
+  color: #1a1a1a;
 }
 
 .input:focus {
   outline: none;
-  border-color: #F15152;
+  border-color: #f15152;
   box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
 }
 
 .input::placeholder {
-  color: #64748B;
+  color: #64748b;
 }
 
 .textarea {
   width: 100%;
   padding: 16px;
-  border: 1.5px solid #3A2E39;
+  border: 1.5px solid #3a2e39;
   border-radius: 12px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   min-height: 120px;
   resize: vertical;
   background-color: white;
-  color: #1A1A1A;
+  color: #1a1a1a;
 }
 
 .textarea:focus {
   outline: none;
-  border-color: #F15152;
+  border-color: #f15152;
   box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
 }
 
 .textarea::placeholder {
-  color: #64748B;
+  color: #64748b;
 }
 
 .select {
   width: 100%;
   padding: 16px;
-  border: 1.5px solid #3A2E39;
+  border: 1.5px solid #3a2e39;
   border-radius: 12px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   background-color: white;
   min-height: 200px;
   cursor: pointer;
-  color: #1A1A1A;
+  color: #1a1a1a;
 }
 
 .select:focus {
   outline: none;
-  border-color: #F15152;
+  border-color: #f15152;
   box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
 }
 
 .select option {
   padding: 12px 16px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   background-color: white;
-  color: #3A2E39;
+  color: #3a2e39;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
 }
 
 .select option:checked {
-  background-color: #FDE9E9;
-  color: #F15152;
+  background-color: #fde9e9;
+  color: #f15152;
 }
 
 .select option:hover {
@@ -301,9 +310,9 @@ button:hover {
 .checkbox {
   width: 18px;
   height: 18px;
-  border: 1.5px solid #3A2E39;
+  border: 1.5px solid #3a2e39;
   border-radius: 4px;
-  accent-color: #F15152;
+  accent-color: #f15152;
   cursor: pointer;
 }
 
@@ -311,9 +320,9 @@ button:hover {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 14px;
-  color: #3A2E39;
+  color: #3a2e39;
   cursor: pointer;
 }
 
@@ -364,21 +373,21 @@ button:hover {
 
 /* Typography Styles */
 .text-coral {
-  color: #F15152;
+  color: #f15152;
 }
 
 .title {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 48px;
-  color: #3A2E39;
+  color: #3a2e39;
   margin-bottom: 2.5rem;
   font-weight: 500;
 }
 
 .subtitle {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 16px;
-  color: #64748B;
+  color: #64748b;
   margin-top: -1.5rem;
   margin-bottom: 2rem;
 }
@@ -389,22 +398,22 @@ button:hover {
 }
 
 .label {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 18px;
   font-weight: 500;
-  color: #3A2E39;
+  color: #3a2e39;
 }
 
 .helperText {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 14px;
-  color: #64748B;
+  color: #64748b;
 }
 
 .description {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 14px;
-  color: #64748B;
+  color: #64748b;
   margin-top: -0.5rem;
 }
 
@@ -414,7 +423,7 @@ button:hover {
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
-  border: 1.5px solid #3A2E39;
+  border: 1.5px solid #3a2e39;
   border-radius: 24px;
   background-color: white;
   cursor: pointer;
@@ -423,8 +432,8 @@ button:hover {
 }
 
 .upload-image-container:hover {
-  border-color: #F15152;
-  background-color: #FDE9E9;
+  border-color: #f15152;
+  background-color: #fde9e9;
 }
 
 .upload-icon {
@@ -433,21 +442,21 @@ button:hover {
   justify-content: center;
   width: 24px;
   height: 24px;
-  background-color: #F15152;
+  background-color: #f15152;
   border-radius: 50%;
   color: white;
 }
 
 .upload-text {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 16px;
-  color: #3A2E39;
+  color: #3a2e39;
 }
 
 .add-more-images {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 14px;
-  color: #F15152;
+  color: #f15152;
   text-decoration: underline;
   cursor: pointer;
   margin-top: 12px;
@@ -455,7 +464,7 @@ button:hover {
 }
 
 .add-more-images:hover {
-  color: #E04142;
+  color: #e04142;
 }
 
 .image-placeholder {
@@ -500,7 +509,9 @@ button:hover {
 
 /* Component Styles */
 .roleCard {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .roleCard:hover {
@@ -525,7 +536,7 @@ div[style*="position: absolute"] {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-  
+
   html {
     color-scheme: dark;
   }
@@ -593,11 +604,11 @@ div[style*="position: absolute"] {
 }
 
 .star-active {
-  color: #F4D03F;
+  color: #f4d03f;
 }
 
 .star-inactive {
-  color: #CBD5E0;
+  color: #cbd5e0;
 }
 
 .event-details {
@@ -607,7 +618,8 @@ div[style*="position: absolute"] {
   font-size: 0.875rem;
 }
 
-.event-date, .event-location {
+.event-date,
+.event-location {
   color: var(--text-secondary);
   display: flex;
   align-items: center;
@@ -830,7 +842,8 @@ div[style*="position: absolute"] {
   gap: 2rem;
 }
 
-.event-info-section, .demographics-section {
+.event-info-section,
+.demographics-section {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -924,33 +937,34 @@ div[style*="position: absolute"] {
 
 /* Make search page font styles more specific and important */
 .search-page * {
-  font-family: 'Manrope', sans-serif !important;
+  font-family: "Manrope", sans-serif !important;
 }
 
 .search-page .page-title,
 .search-page h1 {
-  font-family: 'Manrope', sans-serif !important;
+  font-family: "Manrope", sans-serif !important;
   font-weight: 700 !important;
 }
 
-.filter-select, 
-.search-button, 
+.filter-select,
+.search-button,
 .filter-row * {
-  font-family: 'Manrope', sans-serif !important;
+  font-family: "Manrope", sans-serif !important;
 }
 
 /* Font imports */
 @font-face {
-  font-family: 'Nunito';
-  src: url('/fonts/Nunito/Nunito-VariableFont_wght.ttf') format('truetype');
+  font-family: "Nunito";
+  src: url("/fonts/Nunito/Nunito-VariableFont_wght.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Nunito';
-  src: url('/fonts/Nunito/Nunito-Italic-VariableFont_wght.ttf') format('truetype');
+  font-family: "Nunito";
+  src: url("/fonts/Nunito/Nunito-Italic-VariableFont_wght.ttf")
+    format("truetype");
   font-weight: 100 900;
   font-style: italic;
   font-display: swap;
@@ -958,7 +972,7 @@ div[style*="position: absolute"] {
 
 /* Landing Page Styles */
 .landing-title {
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
   font-size: 83px;
   font-weight: 700;
   margin: 0;
@@ -990,7 +1004,7 @@ div[style*="position: absolute"] {
 }
 
 .landing-description {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: var(--font-size-body);
   color: var(--primary-dark-blue);
   max-width: 600px;

@@ -19,20 +19,20 @@
 }
 
 .stepIcon.active {
-  color: #F15152;
+  color: #f15152;
 }
 
 .stepText {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 14px;
-  color: #64748B;
+  color: #64748b;
   margin-bottom: 1rem;
 }
 
 .title {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 48px;
-  color: #3A2E39;
+  color: #3a2e39;
   margin-bottom: 2.5rem;
   font-weight: 500;
 }
@@ -52,60 +52,60 @@
 }
 
 .label {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 18px;
   font-weight: 500;
-  color: #3A2E39;
+  color: #3a2e39;
 }
 
 .input {
   width: 100%;
   padding: 16px;
-  border: 1.5px solid #3A2E39;
+  border: 1.5px solid #3a2e39;
   border-radius: 12px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   background-color: white;
-  color: #1A1A1A;
+  color: #1a1a1a;
 }
 
 .input:focus {
   outline: none;
-  border-color: #F15152;
+  border-color: #f15152;
   box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
 }
 
 .input::placeholder {
-  color: #64748B;
+  color: #64748b;
 }
 
 .textarea {
   width: 100%;
   padding: 16px;
-  border: 1.5px solid #3A2E39;
+  border: 1.5px solid #3a2e39;
   border-radius: 12px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   min-height: 120px;
   resize: vertical;
   background-color: white;
-  color: #1A1A1A;
+  color: #1a1a1a;
 }
 
 .textarea:focus {
   outline: none;
-  border-color: #F15152;
+  border-color: #f15152;
   box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
 }
 
 .textarea::placeholder {
-  color: #64748B;
+  color: #64748b;
 }
 
 .helperText {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 14px;
-  color: #64748B;
+  color: #64748b;
 }
 
 .buttonContainer {
@@ -115,25 +115,25 @@
 }
 
 .button {
-  background: #F15152;
+  background: #f15152;
   color: white;
   border: none;
   border-radius: 8px;
   padding: 12px 24px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .button:hover {
-  background: #E04142;
+  background: #e04142;
 }
 
 .description {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 14px;
-  color: #64748B;
+  color: #64748b;
   margin-top: -0.5rem;
 }
 
@@ -146,7 +146,9 @@
 }
 
 .roleCard {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .roleCard:hover {
@@ -193,16 +195,16 @@
   padding: 12px 32px;
   border-radius: 9999px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   background-color: white;
-  color: #3A2E39;
-  border: 2px solid #F15152;
+  color: #3a2e39;
+  border: 2px solid #f15152;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
 
 .pillButton.selected {
-  background-color: #F15152;
+  background-color: #f15152;
   color: white;
 }
 
@@ -218,7 +220,7 @@
 }
 
 .nextButton {
-  background-color: #F15152;
+  background-color: #f15152;
   color: white;
   padding: 12px 32px;
   border-radius: 8px;
@@ -234,41 +236,41 @@
 }
 
 .nextButton:not(:disabled):hover {
-  background-color: #E04142;
+  background-color: #e04142;
 }
 
 .select {
   width: 100%;
   padding: 16px;
-  border: 1.5px solid #3A2E39;
+  border: 1.5px solid #3a2e39;
   border-radius: 12px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   background-color: white;
   min-height: 200px;
   cursor: pointer;
-  color: #1A1A1A;
+  color: #1a1a1a;
 }
 
 .select:focus {
   outline: none;
-  border-color: #F15152;
+  border-color: #f15152;
   box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
 }
 
 .select option {
   padding: 12px 16px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   background-color: white;
-  color: #3A2E39;
+  color: #3a2e39;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
 }
 
 .select option:checked {
-  background-color: #FDE9E9;
-  color: #F15152;
+  background-color: #fde9e9;
+  color: #f15152;
 }
 
 .select option:hover {
@@ -289,30 +291,30 @@
 }
 
 .priceSeparator {
-  font-family: 'Manrope', sans-serif;
-  color: #64748B;
+  font-family: "Manrope", sans-serif;
+  color: #64748b;
   font-size: 16px;
 }
 
 .currencySymbol {
-  color: #64748B;
+  color: #64748b;
   margin-right: 4px;
 }
 
 .priceInput {
   width: 100px;
   padding: 12px;
-  border: 1.5px solid #3A2E39;
+  border: 1.5px solid #3a2e39;
   border-radius: 12px;
   font-size: 16px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   background-color: white;
-  color: #1A1A1A;
+  color: #1a1a1a;
 }
 
 .priceInput:focus {
   outline: none;
-  border-color: #F15152;
+  border-color: #f15152;
   box-shadow: 0 0 0 3px rgba(241, 81, 82, 0.1);
 }
 
@@ -338,14 +340,14 @@
 .slider::-webkit-slider-runnable-track {
   width: 100%;
   height: 4px;
-  background: #E5E7EB;
+  background: #e5e7eb;
   border-radius: 2px;
 }
 
 .slider::-moz-range-track {
   width: 100%;
   height: 4px;
-  background: #E5E7EB;
+  background: #e5e7eb;
   border-radius: 2px;
 }
 
@@ -355,7 +357,7 @@
   appearance: none;
   width: 20px;
   height: 20px;
-  background: #F15152;
+  background: #f15152;
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid white;
@@ -367,7 +369,7 @@
   pointer-events: auto;
   width: 20px;
   height: 20px;
-  background: #F15152;
+  background: #f15152;
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid white;
@@ -380,7 +382,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: #E5E7EB;
+  background: #e5e7eb;
   border-radius: 2px;
 }
 
@@ -388,7 +390,7 @@
   position: absolute;
   top: 20px;
   height: 4px;
-  background: #F15152;
+  background: #f15152;
   border-radius: 2px;
 }
 
@@ -403,25 +405,25 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 14px;
-  color: #3A2E39;
+  color: #3a2e39;
   cursor: pointer;
 }
 
 .checkbox {
   width: 18px;
   height: 18px;
-  border: 1.5px solid #3A2E39;
+  border: 1.5px solid #3a2e39;
   border-radius: 4px;
-  accent-color: #F15152;
+  accent-color: #f15152;
   cursor: pointer;
 }
 
 .subtitle {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 16px;
-  color: #64748B;
+  color: #64748b;
   margin-top: -1.5rem;
   margin-bottom: 2rem;
 }
@@ -432,11 +434,11 @@
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.5rem;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
 }
 
 .sliderValue span:first-child {
-  background: #F15152;
+  background: #f15152;
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -444,17 +446,17 @@
 }
 
 .distanceLabel {
-  color: #F15152;
+  color: #f15152;
   font-size: 14px;
   font-weight: 500;
 }
 
 .reviewText {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 16px;
-  color: #3A2E39;
+  color: #3a2e39;
   padding: 12px 16px;
-  background-color: #F8F9FA;
+  background-color: #f8f9fa;
   border-radius: 8px;
   margin-top: 4px;
 }
@@ -462,12 +464,12 @@
 .reviewPill {
   display: inline-block;
   padding: 6px 12px;
-  background-color: #FDE9E9;
-  color: #F15152;
+  background-color: #fde9e9;
+  color: #f15152;
   border-radius: 16px;
   font-size: 14px;
   margin: 4px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
 }
 
 .pillContainer {
@@ -478,8 +480,8 @@
 }
 
 .secondaryButton {
-  background-color: #E5E7EB;
-  color: #3A2E39;
+  background-color: #e5e7eb;
+  color: #3a2e39;
   padding: 12px 32px;
   border-radius: 8px;
   border: none;
@@ -490,5 +492,5 @@
 }
 
 .secondaryButton:hover {
-  background-color: #D1D5DB;
-} 
+  background-color: #d1d5db;
+}

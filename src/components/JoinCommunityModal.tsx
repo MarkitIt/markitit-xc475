@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { theme } from '@/styles/theme';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { joinCommunityChat, Conversation } from '@/lib/firebaseChat';
+import React, { useState, useEffect } from "react";
+import { theme } from "@/styles/theme";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { joinCommunityChat, Conversation } from "@/lib/firebaseChat";
 
 interface JoinCommunityModalProps {
   userId: string;
@@ -15,21 +15,21 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [communities, setCommunities] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [joining, setJoining] = useState(false);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
 
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const communitiesRef = collection(db, 'conversations');
-      const q = query(communitiesRef, where('type', '==', 'community'));
+      const communitiesRef = collection(db, "conversations");
+      const q = query(communitiesRef, where("type", "==", "community"));
 
       const querySnapshot = await getDocs(q);
       const results: Conversation[] = [];
@@ -46,8 +46,8 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
 
       setCommunities(results);
     } catch (err) {
-      console.error('Error searching communities:', err);
-      setError('Failed to search communities');
+      console.error("Error searching communities:", err);
+      setError("Failed to search communities");
     } finally {
       setLoading(false);
     }
@@ -55,14 +55,14 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
 
   const handleJoin = async (communityId: string) => {
     setJoining(true);
-    setError('');
+    setError("");
 
     try {
       await joinCommunityChat(communityId, userId);
       onSuccess();
     } catch (err) {
-      console.error('Error joining community:', err);
-      setError('Failed to join community');
+      console.error("Error joining community:", err);
+      setError("Failed to join community");
       setJoining(false);
     }
   };
@@ -70,15 +70,15 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
   return (
     <div
       style={{
-        position: 'fixed',
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: "rgba(0,0,0,0.5)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         zIndex: 1000,
       }}
     >
@@ -87,10 +87,10 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
           backgroundColor: theme.colors.background.white,
           borderRadius: theme.borderRadius.lg,
           padding: theme.spacing.xl,
-          width: '500px',
-          maxWidth: '90%',
-          maxHeight: '80vh',
-          overflow: 'auto',
+          width: "500px",
+          maxWidth: "90%",
+          maxHeight: "80vh",
+          overflow: "auto",
         }}
       >
         <h2
@@ -105,29 +105,29 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
 
         <div
           style={{
-            display: 'flex',
+            display: "flex",
             marginBottom: theme.spacing.lg,
           }}
         >
           <input
-            type='text'
+            type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder='Search for communities'
+            placeholder="Search for communities"
             style={{
               flex: 1,
               padding: theme.spacing.md,
               margin: 0,
               borderRadius: `${theme.borderRadius.md} 0 0 ${theme.borderRadius.md}`,
-              border: '1px solid rgba(0,0,0,0.1)',
-              borderRight: 'none',
-              backgroundColor: '#f5f5f5',
-              color: 'black',
+              border: "1px solid rgba(0,0,0,0.1)",
+              borderRight: "none",
+              backgroundColor: "#f5f5f5",
+              color: "black",
               fontSize: theme.typography.fontSize.body,
               fontFamily: theme.typography.fontFamily.primary,
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') {
+              if (e.key === "Enter") {
                 handleSearch();
               }
             }}
@@ -139,25 +139,25 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
               padding: theme.spacing.md,
               margin: 0,
               borderRadius: `0 ${theme.borderRadius.md} ${theme.borderRadius.md} 0`,
-              border: '1px solid rgba(0,0,0,0.1)',
-              borderLeft: 'none',
-              backgroundColor: '#F16261',
+              border: "1px solid rgba(0,0,0,0.1)",
+              borderLeft: "none",
+              backgroundColor: "#F16261",
               color: theme.colors.background.white,
-              cursor: loading || !searchQuery.trim() ? 'default' : 'pointer',
+              cursor: loading || !searchQuery.trim() ? "default" : "pointer",
               opacity: loading || !searchQuery.trim() ? 0.7 : 1,
               fontFamily: theme.typography.fontFamily.primary,
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
             }}
           >
-            {loading ? 'Searching...' : 'Search'}
+            {loading ? "Searching..." : "Search"}
           </button>
         </div>
 
         {error && (
           <div
             style={{
-              color: 'red',
+              color: "red",
               marginBottom: theme.spacing.md,
             }}
           >
@@ -168,21 +168,21 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
         <div
           style={{
             marginBottom: theme.spacing.lg,
-            maxHeight: '300px',
-            overflowY: 'auto',
+            maxHeight: "300px",
+            overflowY: "auto",
           }}
         >
           {communities.length === 0 ? (
             <div
               style={{
-                textAlign: 'center',
+                textAlign: "center",
                 padding: theme.spacing.md,
                 color: theme.colors.text.secondary,
               }}
             >
               {searchQuery.trim()
-                ? 'No communities found'
-                : 'Search for communities to join'}
+                ? "No communities found"
+                : "Search for communities to join"}
             </div>
           ) : (
             communities.map((community) => (
@@ -190,16 +190,16 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
                 key={community.id}
                 style={{
                   padding: theme.spacing.md,
-                  borderBottom: '1px solid rgba(0,0,0,0.05)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  borderBottom: "1px solid rgba(0,0,0,0.05)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                 }}
               >
                 <div>
                   <div
                     style={{
-                      fontSize: '16px',
+                      fontSize: "16px",
                       fontWeight: theme.typography.fontWeight.medium,
                       color: theme.colors.text.primary,
                     }}
@@ -208,7 +208,7 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
                   </div>
                   <div
                     style={{
-                      fontSize: '14px',
+                      fontSize: "14px",
                       color: theme.colors.text.secondary,
                     }}
                   >
@@ -221,23 +221,23 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
                   style={{
                     padding: theme.spacing.xs,
                     borderRadius: theme.borderRadius.md,
-                    border: 'none',
-                    backgroundColor: '#F16261',
+                    border: "none",
+                    backgroundColor: "#F16261",
                     color: theme.colors.background.white,
                     cursor:
                       joining || community.participants?.includes(userId)
-                        ? 'default'
-                        : 'pointer',
+                        ? "default"
+                        : "pointer",
                     opacity:
                       joining || community.participants?.includes(userId)
                         ? 0.7
                         : 1,
                     fontFamily: theme.typography.fontFamily.primary,
-                    minWidth: '80px',
-                    textAlign: 'center',
+                    minWidth: "80px",
+                    textAlign: "center",
                   }}
                 >
-                  {community.participants?.includes(userId) ? 'Joined' : 'Join'}
+                  {community.participants?.includes(userId) ? "Joined" : "Join"}
                 </button>
               </div>
             ))
@@ -246,8 +246,8 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
 
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
+            display: "flex",
+            justifyContent: "flex-end",
           }}
         >
           <button
@@ -255,10 +255,10 @@ const JoinCommunityModal: React.FC<JoinCommunityModalProps> = ({
             style={{
               padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
               borderRadius: theme.borderRadius.md,
-              border: '1px solid rgba(0,0,0,0.1)',
+              border: "1px solid rgba(0,0,0,0.1)",
               backgroundColor: theme.colors.background.white,
               color: theme.colors.text.primary,
-              cursor: 'pointer',
+              cursor: "pointer",
               fontFamily: theme.typography.fontFamily.primary,
             }}
           >

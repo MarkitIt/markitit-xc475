@@ -1,12 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { FiTrash2 } from 'react-icons/fi';
+import { useState } from "react";
+import { FiTrash2 } from "react-icons/fi";
 
 interface CustomQuestionFieldProps {
   index: number;
   onDelete: (index: number) => void;
-  onUpdate: (index: number, data: { title: string; description: string; isRequired: boolean }) => void;
+  onUpdate: (
+    index: number,
+    data: { title: string; description: string; isRequired: boolean },
+  ) => void;
 }
 
 export default function CustomQuestionField({
@@ -14,8 +17,8 @@ export default function CustomQuestionField({
   onDelete,
   onUpdate,
 }: CustomQuestionFieldProps) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [isRequired, setIsRequired] = useState(false);
 
   // Handle changes to the title
@@ -27,7 +30,9 @@ export default function CustomQuestionField({
   };
 
   // Handle changes to the description
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     //console.log('Description changed:', e.target.value); // Debugging line
     const newDescription = e.target.value;
     setDescription(newDescription);
@@ -45,7 +50,9 @@ export default function CustomQuestionField({
     <div className="mb-6 p-6 border-2 border-gray-300 rounded-lg bg-white">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-6">
-          <h3 className="text-xl font-semibold text-black">Question {index + 1}</h3>
+          <h3 className="text-xl font-semibold text-black">
+            Question {index + 1}
+          </h3>
           <div className="flex items-center space-x-2">
             <input
               type="checkbox"
@@ -54,7 +61,10 @@ export default function CustomQuestionField({
               onChange={handleRequiredChange}
               className="w-5 h-5 rounded border-2 border-gray-400 checked:bg-[#f15152]"
             />
-            <label htmlFor={`required-${index}`} className="text-lg text-gray-700">
+            <label
+              htmlFor={`required-${index}`}
+              className="text-lg text-gray-700"
+            >
               Required
             </label>
           </div>

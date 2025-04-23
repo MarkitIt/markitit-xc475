@@ -1,23 +1,27 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useUserContext } from '@/context/UserContext';
-import { useVendor } from '@/context/VendorContext';
+import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useUserContext } from "@/context/UserContext";
+import { useVendor } from "@/context/VendorContext";
 
 const ROUTE_ORDER = [
-  '/create-profile/vendor',
-  '/create-profile/vendor/type',
-  '/create-profile/vendor/category',
-  '/create-profile/vendor/product',
-  '/create-profile/vendor/budget',
-  '/create-profile/vendor/preferences',
-  '/create-profile/vendor/media',
-  '/create-profile/vendor/optional',
-  '/create-profile/vendor/review'
+  "/create-profile/vendor",
+  "/create-profile/vendor/type",
+  "/create-profile/vendor/category",
+  "/create-profile/vendor/product",
+  "/create-profile/vendor/budget",
+  "/create-profile/vendor/preferences",
+  "/create-profile/vendor/media",
+  "/create-profile/vendor/optional",
+  "/create-profile/vendor/review",
 ];
 
-export default function VendorLayout({ children }: { children: React.ReactNode }) {
+export default function VendorLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useUserContext();
@@ -27,19 +31,19 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
     const checkAccess = async () => {
       // If not logged in, redirect to login
       if (!user) {
-        router.push('/auth/login');
+        router.push("/auth/login");
         return;
       }
 
       // If user already has a role, redirect to home
-      if (user.role && user.role !== 'none') {
-        router.push('/');
+      if (user.role && user.role !== "none") {
+        router.push("/");
         return;
       }
 
       // Get current route index
       const currentRouteIndex = ROUTE_ORDER.indexOf(pathname);
-      
+
       // If invalid route, redirect to first step
       if (currentRouteIndex === -1) {
         router.push(ROUTE_ORDER[0]);
@@ -72,21 +76,21 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
 
     // Define required fields for each step
     switch (ROUTE_ORDER[currentIndex - 1]) {
-      case '/create-profile/vendor':
+      case "/create-profile/vendor":
         return true; // First page, always accessible if logged in
-      case '/create-profile/vendor/type':
+      case "/create-profile/vendor/type":
         return !!vendor.type;
-      case '/create-profile/vendor/category':
+      case "/create-profile/vendor/category":
         return !!vendor.categories?.length && !!vendor.description;
-      case '/create-profile/vendor/product':
+      case "/create-profile/vendor/product":
         return !!vendor.priceRange?.min && !!vendor.priceRange?.max;
-      case '/create-profile/vendor/budget':
+      case "/create-profile/vendor/budget":
         return !!vendor.budget;
-      case '/create-profile/vendor/preferences':
+      case "/create-profile/vendor/preferences":
         return !!vendor.eventPreference?.length && !!vendor.cities?.length;
-      case '/create-profile/vendor/media':
+      case "/create-profile/vendor/media":
         return true; // Media is optional
-      case '/create-profile/vendor/optional':
+      case "/create-profile/vendor/optional":
         return true; // Optional step
       default:
         return false;
@@ -95,7 +99,7 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
 
   const findLastCompletedStep = () => {
     if (!vendor) return 0;
-    
+
     for (let i = ROUTE_ORDER.length - 1; i >= 0; i--) {
       if (checkStepCompletion(i)) {
         return i;
@@ -105,4 +109,4 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
   };
 
   return <>{children}</>;
-} 
+}

@@ -1,58 +1,65 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import styles from '../styles.module.css';
-import { useVendor } from '@/context/VendorContext';
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import styles from "../styles.module.css";
+import { useVendor } from "@/context/VendorContext";
 /*
-* Business Name
-* Contact Name
-* Email
-* Phone Number
-* Website / Instagram / Etsy (any that apply)
-* Business Address / City & State
-*/
+ * Business Name
+ * Contact Name
+ * Email
+ * Phone Number
+ * Website / Instagram / Etsy (any that apply)
+ * Business Address / City & State
+ */
 export default function VendorProfilePage() {
   const router = useRouter();
   const { vendor, updateVendor } = useVendor();
   const [isExiting, setIsExiting] = useState(false);
   const [formData, setFormData] = useState({
-    businessName: vendor?.businessName || '',
-    contactName: vendor?.contactName || '',
-    email: vendor?.email || '',
-    phoneNumber: vendor?.phoneNumber || '',
-    website: vendor?.website || '',
-    instagram: vendor?.instagram || '',
-    etsy: vendor?.etsy || '',
-    facebook: vendor?.facebook || ''
+    businessName: vendor?.businessName || "",
+    contactName: vendor?.contactName || "",
+    email: vendor?.email || "",
+    phoneNumber: vendor?.phoneNumber || "",
+    website: vendor?.website || "",
+    instagram: vendor?.instagram || "",
+    etsy: vendor?.etsy || "",
+    facebook: vendor?.facebook || "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.businessName && formData.contactName && formData.email && 
-        formData.phoneNumber && formData.website && formData.instagram) {
-      
+    if (
+      formData.businessName &&
+      formData.contactName &&
+      formData.email &&
+      formData.phoneNumber &&
+      formData.website &&
+      formData.instagram
+    ) {
       // Update vendor context
       updateVendor(formData);
 
       setIsExiting(true);
-      await new Promise(resolve => setTimeout(resolve, 500));
-      router.push('/create-profile/vendor/type');
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      router.push("/create-profile/vendor/type");
     } else {
-      alert('Please fill in all required fields');
+      alert("Please fill in all required fields");
     }
   };
 
   return (
-    <div className={`${styles.container} ${isExiting ? styles.slideOut : styles.slideIn}`}>
+    <div
+      className={`${styles.container} ${isExiting ? styles.slideOut : styles.slideIn}`}
+    >
       <div className={styles.stepIndicator}>
         <span className={`${styles.stepIcon} ${styles.active}`}>▲</span>
         <span className={styles.stepIcon}>★</span>
@@ -127,7 +134,9 @@ export default function VendorProfilePage() {
 
         <div className={styles.formGroup}>
           <label className={styles.label}>Instagram Link*</label>
-          <p className={styles.description}>Enter your Instagram Profile link</p>
+          <p className={styles.description}>
+            Enter your Instagram Profile link
+          </p>
           <input
             type="url"
             name="instagram"

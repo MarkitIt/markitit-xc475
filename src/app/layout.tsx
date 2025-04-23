@@ -39,9 +39,7 @@ export default function RootLayout({
                 <ApplicationProfileProvider>
                   <Header />
                   <VendorProvider>
-                    <GlobalBackground>
-                      {children}
-                    </GlobalBackground>
+                    <GlobalBackground>{children}</GlobalBackground>
                   </VendorProvider>
                 </ApplicationProfileProvider>
               </HostProvider>

@@ -12,7 +12,9 @@ const ProfileCompleteness = () => {
           style={{ width: `${completionPercentage}%` }}
         ></div>
       </div>
-      <p className="text-sm text-gray-700 mt-2">{completionPercentage}% Complete</p>
+      <p className="text-sm text-gray-700 mt-2">
+        {completionPercentage}% Complete
+      </p>
     </div>
   );
 };

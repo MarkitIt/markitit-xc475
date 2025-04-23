@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { theme } from '@/styles/theme';
-import { useUserContext } from '@/context/UserContext';
-import ChatInterface from '@/components/ChatInterface';
+import { useState } from "react";
+import { theme } from "@/styles/theme";
+import { useUserContext } from "@/context/UserContext";
+import ChatInterface from "@/components/ChatInterface";
 
 export default function ChatPage() {
   const { user } = useUserContext();
-  const [activeTab, setActiveTab] = useState<'personal' | 'community'>(
-    'community'
+  const [activeTab, setActiveTab] = useState<"personal" | "community">(
+    "community",
   );
 
   if (!user) {
     return (
       <div
         style={{
-          minHeight: 'calc(100vh - 80px)',
+          minHeight: "calc(100vh - 80px)",
           padding: theme.spacing.xl,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <p
@@ -37,9 +37,9 @@ export default function ChatPage() {
   return (
     <main
       style={{
-        height: 'calc(100vh - 80px)',
+        height: "calc(100vh - 80px)",
         padding: 0,
-        overflow: 'hidden',
+        overflow: "hidden",
       }}
     >
       <ChatInterface

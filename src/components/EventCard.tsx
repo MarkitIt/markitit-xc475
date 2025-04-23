@@ -1,11 +1,11 @@
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import '../app/tailwind.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
-import { Event } from '@/types/Event';
-import { theme } from '@/styles/theme';
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import "../app/tailwind.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { Event } from "@/types/Event";
+import { theme } from "@/styles/theme";
 
 interface EventCardProps {
   event: Event;
@@ -15,33 +15,43 @@ interface EventCardProps {
   score?: number;
 }
 
-export const EventCard: React.FC<EventCardProps> = ({ event, index, rank, showRank, score }) => {
+export const EventCard: React.FC<EventCardProps> = ({
+  event,
+  index,
+  rank,
+  showRank,
+  score,
+}) => {
   // Use the score from props if provided, otherwise use the score from the event
   const displayScore = score !== undefined ? score : event.score;
-  
+
   // Debug output for scores
-  console.log(`EventCard for ${event.name}: Raw API score=${displayScore}, Score breakdown:`, event.scoreBreakdown);
-  
+  console.log(
+    `EventCard for ${event.name}: Raw API score=${displayScore}, Score breakdown:`,
+    event.scoreBreakdown,
+  );
+
   // Calculate the properly formatted score - if over 100, divide by 100
-  const formattedScore = displayScore !== undefined && displayScore > 100 
-    ? (displayScore / 100) 
-    : displayScore;
-  
+  const formattedScore =
+    displayScore !== undefined && displayScore > 100
+      ? displayScore / 100
+      : displayScore;
+
   // Format date as startDate - endDate
   const formatDate = (timestamp: any) => {
     if (!timestamp) return null;
-    return new Date(timestamp.seconds * 1000).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric'
+    return new Date(timestamp.seconds * 1000).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
     });
   };
-  
+
   // Format the date display
-  let dateDisplay = 'Date not available';
+  let dateDisplay = "Date not available";
   if (event.startDate && event.endDate) {
     const startFormatted = formatDate(event.startDate);
     const endFormatted = formatDate(event.endDate);
-    
+
     if (startFormatted === endFormatted) {
       // Single day event
       dateDisplay = startFormatted as string;
@@ -53,17 +63,17 @@ export const EventCard: React.FC<EventCardProps> = ({ event, index, rank, showRa
     // Only start date available
     dateDisplay = formatDate(event.startDate) as string;
   }
-  
+
   return (
     <Link href={`/event-profile/${index + 1}`} className="card">
       <div className="event-card">
         <div className="image-container">
           {event.image ? (
-            <Image 
-              src={event.image} 
+            <Image
+              src={event.image}
               alt={event.name}
               layout="fill"
-              objectFit="cover" 
+              objectFit="cover"
             />
           ) : (
             <div className="image-placeholder">
@@ -74,10 +84,12 @@ export const EventCard: React.FC<EventCardProps> = ({ event, index, rank, showRa
         <h3 className="event-title">{event.name}</h3>
         <div className="rating-container">
           {[...Array(5)].map((_, i) => (
-            <FontAwesomeIcon 
-              key={i} 
-              icon={faStar} 
-              className={i < (event.rating || 0) ? "star-active" : "star-inactive"} 
+            <FontAwesomeIcon
+              key={i}
+              icon={faStar}
+              className={
+                i < (event.rating || 0) ? "star-active" : "star-inactive"
+              }
               size="sm"
             />
           ))}
@@ -94,4 +106,4 @@ export const EventCard: React.FC<EventCardProps> = ({ event, index, rank, showRa
       </div>
     </Link>
   );
-}; 
+};

@@ -1,6 +1,14 @@
 "use client";
 
-import { collection, getDocs, addDoc, updateDoc, arrayUnion, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  arrayUnion,
+  query,
+  where,
+} from "firebase/firestore";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter, useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -20,7 +28,9 @@ interface EventWithCustomQuestions extends Event {
 const EventApplyProfile = () => {
   const [loading, setLoading] = useState(true);
   const [customQuestions, setCustomQuestions] = useState<any[]>([]); // State to store custom questions
-  const [answers, setAnswers] = useState<{ [key: number]: { question: string; value: string } }>({}); // State to store answers
+  const [answers, setAnswers] = useState<{
+    [key: number]: { question: string; value: string };
+  }>({}); // State to store answers
   const router = useRouter();
   const params = useParams();
   const idParam = params.id as string; // Get the id from the URL
@@ -34,32 +44,37 @@ const EventApplyProfile = () => {
       try {
         setLoading(true);
         setErrorMessage(null);
-        
-        console.log('Attempting to fetch event with ID for application:', idParam);
-        
+
+        console.log(
+          "Attempting to fetch event with ID for application:",
+          idParam,
+        );
+
         // Check if the ID is numeric
         if (/^\d+$/.test(idParam)) {
           const numericId = parseInt(idParam);
-          
+
           // Fetch all events
-          const eventsRef = collection(db, 'events');
+          const eventsRef = collection(db, "events");
           const querySnapshot = await getDocs(eventsRef);
-          const allEvents = querySnapshot.docs.map(doc => ({
+          const allEvents = querySnapshot.docs.map((doc) => ({
             ...doc.data(),
-            id: doc.id
+            id: doc.id,
           })) as EventWithCustomQuestions[];
-          
+
           console.log(`Found ${allEvents.length} events in total`);
-          
+
           // Get the event at the specified index (adjust for zero-based array)
           const eventIndex = numericId - 1;
           if (eventIndex >= 0 && eventIndex < allEvents.length) {
             const selectedEvent = allEvents[eventIndex];
-            console.log('Found event by index for application:', selectedEvent);
+            console.log("Found event by index for application:", selectedEvent);
             setEventId(selectedEvent.id);
             setCustomQuestions(selectedEvent.customQuestions || []);
           } else {
-            console.log(`Event index out of range: ${eventIndex}, total events: ${allEvents.length}`);
+            console.log(
+              `Event index out of range: ${eventIndex}, total events: ${allEvents.length}`,
+            );
             setErrorMessage(`Event #${numericId} not found`);
           }
         } else {
@@ -77,8 +92,8 @@ const EventApplyProfile = () => {
           }
         }
       } catch (err) {
-        console.error('Error fetching event for application:', err);
-        setErrorMessage('Error loading event');
+        console.error("Error fetching event for application:", err);
+        setErrorMessage("Error loading event");
       } finally {
         setLoading(false);
       }
@@ -100,7 +115,7 @@ const EventApplyProfile = () => {
         alert("You must be logged in to apply.");
         return;
       }
-      
+
       console.log("Current user ID:", user.uid);
       setDebugInfo(`Checking for vendor profile with ID: ${user.uid}`);
 
@@ -115,35 +130,43 @@ const EventApplyProfile = () => {
       }
 
       const userData = userDocSnap.data();
-      setDebugInfo(`User found: ${userData.email || 'No email'}`);
+      setDebugInfo(`User found: ${userData.email || "No email"}`);
 
       // Fetch the vendor's profile from the `vendorProfile` collection
       // Instead of looking for a document with ID matching user.uid,
       // query for documents where the uid field equals user.uid
-      setDebugInfo(`Looking for vendor profile with uid field matching: ${user.uid}`);
-      
+      setDebugInfo(
+        `Looking for vendor profile with uid field matching: ${user.uid}`,
+      );
+
       const vendorProfileQuery = query(
         collection(db, "vendorProfile"),
-        where("uid", "==", user.uid)
+        where("uid", "==", user.uid),
       );
-      
+
       const vendorProfileSnapshot = await getDocs(vendorProfileQuery);
-      
+
       if (vendorProfileSnapshot.empty) {
-        setDebugInfo(`No vendor profile found with uid: ${user.uid}. Creating a vendor profile is required.`);
-        alert("Vendor profile not found. Please create a vendor profile first.");
-        
+        setDebugInfo(
+          `No vendor profile found with uid: ${user.uid}. Creating a vendor profile is required.`,
+        );
+        alert(
+          "Vendor profile not found. Please create a vendor profile first.",
+        );
+
         // Add a button to create vendor profile instead of automatic redirect
         if (confirm("Would you like to create a vendor profile now?")) {
           router.push("/vendor-profile");
         }
         return;
       }
-      
+
       // Use the first matching document
       const vendorProfileDoc = vendorProfileSnapshot.docs[0];
       const vendorProfileData = vendorProfileDoc.data();
-      setDebugInfo(`Found vendor profile with document ID: ${vendorProfileDoc.id} for user: ${user.uid}`);
+      setDebugInfo(
+        `Found vendor profile with document ID: ${vendorProfileDoc.id} for user: ${user.uid}`,
+      );
 
       // Reference the existing document in the `vendorApply` collection
       const vendorApplyDocRef = doc(db, "vendorApply", eventId); // Now using the real event ID
@@ -160,7 +183,7 @@ const EventApplyProfile = () => {
 
       // Check if the user is already in the vendorId array
       const isAlreadyApplied = vendorApplyData.vendorId?.some(
-        (v: any) => v.email === userData.email
+        (v: any) => v.email === userData.email,
       );
 
       if (isAlreadyApplied) {
@@ -210,7 +233,11 @@ const EventApplyProfile = () => {
       }
 
       await updateDoc(userDocRef, {
-        events: arrayUnion({ eventId: eventId, appliedAt: appliedAt, eventName: eventName }),
+        events: arrayUnion({
+          eventId: eventId,
+          appliedAt: appliedAt,
+          eventName: eventName,
+        }),
       });
 
       console.log("Vendor application submitted successfully:", eventId);
@@ -220,13 +247,19 @@ const EventApplyProfile = () => {
     } catch (error: any) {
       console.error("Error submitting vendor application:", error);
       setDebugInfo(`Error: ${error.toString()}`);
-      alert("An error occurred while submitting your application. Please try again.");
+      alert(
+        "An error occurred while submitting your application. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAnswerChange = (index: number, question:string,value: string) => {
+  const handleAnswerChange = (
+    index: number,
+    question: string,
+    value: string,
+  ) => {
     setAnswers((prevAnswers) => ({
       ...prevAnswers,
       [index]: { question, value }, // Store the question title along with the answer
@@ -254,7 +287,9 @@ const EventApplyProfile = () => {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center flex-col gap-4">
         <div className="text-xl text-gray-600">Event not found</div>
-        <div className="text-sm text-gray-500">Please go back and try another event</div>
+        <div className="text-sm text-gray-500">
+          Please go back and try another event
+        </div>
       </div>
     );
   }
@@ -268,7 +303,10 @@ const EventApplyProfile = () => {
         {/* Profile */}
         <div className="w-full md:w-[50%]">
           <div className="text-xl">
-            <div className="">You're sure you want to apply to the event?<span className="text-red-500"></span></div>
+            <div className="">
+              You're sure you want to apply to the event?
+              <span className="text-red-500"></span>
+            </div>
 
             {/* Display Debug Info */}
             {debugInfo && (
@@ -285,13 +323,23 @@ const EventApplyProfile = () => {
                 {customQuestions.map((question, index) => (
                   <div key={index} className="mb-6">
                     <p className="font-semibold">{question.title}</p>
-                    {question.description && <p className="text-gray-600">{question.description}</p>}
-                    {question.isRequired && <span className="text-red-500">* Required</span>}
+                    {question.description && (
+                      <p className="text-gray-600">{question.description}</p>
+                    )}
+                    {question.isRequired && (
+                      <span className="text-red-500">* Required</span>
+                    )}
                     <input
                       type="text"
                       placeholder="Your answer"
                       value={answers[index]?.value || ""}
-                      onChange={(e) => handleAnswerChange(index,question.title, e.target.value)}
+                      onChange={(e) =>
+                        handleAnswerChange(
+                          index,
+                          question.title,
+                          e.target.value,
+                        )
+                      }
                       className="w-full p-4 border-2 border-gray-300 rounded-lg mt-2 bg-gray-100"
                     />
                   </div>
@@ -301,8 +349,10 @@ const EventApplyProfile = () => {
 
             {/* Next step click */}
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 mt-8">
-              <div className="w-full sm:w-36 h-14 bg-gray-300 flex items-center justify-center rounded-lg cursor-pointer"
-                   onClick={() => router.push(`/event-profile/${idParam}`)}>
+              <div
+                className="w-full sm:w-36 h-14 bg-gray-300 flex items-center justify-center rounded-lg cursor-pointer"
+                onClick={() => router.push(`/event-profile/${idParam}`)}
+              >
                 Back
               </div>
               <div

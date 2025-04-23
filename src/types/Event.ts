@@ -20,4 +20,4 @@ export interface Event {
   rating?: number;
   scoreBreakdown?: any;
   index?: number;
-} 
+}

@@ -1,18 +1,23 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import { theme } from '@/styles/theme';
+import { useState, useRef } from "react";
+import { theme } from "@/styles/theme";
 import { Autocomplete } from "@react-google-maps/api";
 
 interface SearchBarProps {
-  onSearch: (city: string, startDate: string, endDate: string, keywords: string) => void;
+  onSearch: (
+    city: string,
+    startDate: string,
+    endDate: string,
+    keywords: string,
+  ) => void;
 }
 
 export function SearchBar({ onSearch }: SearchBarProps) {
-  const [city, setCity] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [keywords, setKeywords] = useState('');
+  const [city, setCity] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [keywords, setKeywords] = useState("");
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -21,12 +26,9 @@ export function SearchBar({ onSearch }: SearchBarProps) {
   };
 
   return (
-    <form 
-      onSubmit={handleSubmit}
-      className="search-container search-form"
-    >
+    <form onSubmit={handleSubmit} className="search-container search-form">
       <div className="search-field">
-        <Autocomplete 
+        <Autocomplete
           onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
         >
           <input
@@ -38,7 +40,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
           />
         </Autocomplete>
       </div>
-      
+
       <div className="search-field">
         <input
           type="text"
@@ -48,7 +50,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
           className="search-input"
         />
       </div>
-      
+
       <div className="search-field">
         <input
           type="text"
@@ -58,7 +60,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
           className="search-input"
         />
       </div>
-      
+
       <div className="search-field">
         <input
           type="text"
@@ -68,15 +70,12 @@ export function SearchBar({ onSearch }: SearchBarProps) {
           className="search-input"
         />
       </div>
-      
+
       <div>
-        <button 
-          type="submit"
-          className="search-button"
-        >
+        <button type="submit" className="search-button">
           Search
         </button>
       </div>
     </form>
   );
-} 
+}

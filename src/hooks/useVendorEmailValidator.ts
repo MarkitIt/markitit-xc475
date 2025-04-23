@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useUserContext } from '@/context/UserContext';
-import { validateVendorEmail } from '@/utils/validateVendorEmail';
+import { useEffect, useState } from "react";
+import { useUserContext } from "@/context/UserContext";
+import { validateVendorEmail } from "@/utils/validateVendorEmail";
 
 interface ValidationResult {
   isValid: boolean;
@@ -18,7 +18,10 @@ interface ValidationResult {
  */
 export function useVendorEmailValidator(): ValidationResult {
   const { user } = useUserContext();
-  const [validationResult, setValidationResult] = useState<Omit<ValidationResult, 'isLoading'> | null>(null);
+  const [validationResult, setValidationResult] = useState<Omit<
+    ValidationResult,
+    "isLoading"
+  > | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -32,14 +35,14 @@ export function useVendorEmailValidator(): ValidationResult {
         const result = await validateVendorEmail(user);
         setValidationResult(result);
       } catch (error) {
-        console.error('Error validating vendor email:', error);
+        console.error("Error validating vendor email:", error);
         setValidationResult({
           isValid: false,
           emailsMatch: false,
           authEmail: user.email,
           profileEmail: null,
-          errorMessage: 'Failed to validate email. Please try again later.',
-          vendorProfileId: null
+          errorMessage: "Failed to validate email. Please try again later.",
+          vendorProfileId: null,
         });
       } finally {
         setIsLoading(false);
@@ -56,15 +59,15 @@ export function useVendorEmailValidator(): ValidationResult {
       emailsMatch: false,
       authEmail: user?.email || null,
       profileEmail: null,
-      errorMessage: isLoading ? null : 'Email validation failed',
+      errorMessage: isLoading ? null : "Email validation failed",
       vendorProfileId: null,
-      isLoading
+      isLoading,
     };
   }
 
   // Return the validation result with loading state
   return {
     ...validationResult,
-    isLoading
+    isLoading,
   };
-} 
+}

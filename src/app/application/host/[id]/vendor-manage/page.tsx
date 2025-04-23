@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useRouter, useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { useRouter, useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { db } from "@/lib/firebase";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import styles from "../../../../page.module.css";
-import '../../../../tailwind.css';
+import "../../../../tailwind.css";
 
 interface Vendor {
   eventId: string;
@@ -17,7 +17,9 @@ export default function ApplicationHostProfile() {
   const router = useRouter();
   const params = useParams();
   const eventId = params.id as string; // Get the id from the URL
-  const [vendors, setVendors] = useState<{ email: string; status: string }[]>([]);
+  const [vendors, setVendors] = useState<{ email: string; status: string }[]>(
+    [],
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -30,10 +32,10 @@ export default function ApplicationHostProfile() {
           return;
         }
 
-        const vendorsQuery = collection(db, 'vendorApply');
+        const vendorsQuery = collection(db, "vendorApply");
         const vendorsSnapshot = await getDocs(vendorsQuery);
         const vendorsList = vendorsSnapshot.docs
-          .map(doc => {
+          .map((doc) => {
             const data = doc.data();
             return {
               eventId: data.eventId,
@@ -46,9 +48,9 @@ export default function ApplicationHostProfile() {
                 : [],
             } as Vendor;
           })
-          .filter(vendor => vendor.eventId === eventId); // Filter by eventId
+          .filter((vendor) => vendor.eventId === eventId); // Filter by eventId
 
-        setVendors(vendorsList.flatMap(vendor => vendor.vendorId));
+        setVendors(vendorsList.flatMap((vendor) => vendor.vendorId));
       } catch (error) {
         console.error("Error fetching vendors:", error);
       } finally {
@@ -65,24 +67,30 @@ export default function ApplicationHostProfile() {
     // Update the vendor's status to "REJECTED" in the state
     setVendors((prevVendors) =>
       prevVendors.map((vendor) =>
-        vendor.email === email ? { ...vendor, status: "REJECTED" } : vendor
-      )
+        vendor.email === email ? { ...vendor, status: "REJECTED" } : vendor,
+      ),
     );
 
     // Update the vendor's status in the database
     try {
-        const vendorsQuery = collection(db, 'vendorApply');
-        const vendorsSnapshot = await getDocs(vendorsQuery);
-        const vendorDoc = vendorsSnapshot.docs.find(doc => doc.data().vendorId.some((v: any) => v.email === email));
-        if (vendorDoc) {
-          const vendorRef = doc(db, 'vendorApply', vendorDoc.id);
-          await updateDoc(vendorRef, {
-            vendorId: vendorDoc.data().vendorId.map((v: any) =>
-              v.email === email ? { ...v, status: "REJECTED" } : v
+      const vendorsQuery = collection(db, "vendorApply");
+      const vendorsSnapshot = await getDocs(vendorsQuery);
+      const vendorDoc = vendorsSnapshot.docs.find((doc) =>
+        doc.data().vendorId.some((v: any) => v.email === email),
+      );
+      if (vendorDoc) {
+        const vendorRef = doc(db, "vendorApply", vendorDoc.id);
+        await updateDoc(vendorRef, {
+          vendorId: vendorDoc
+            .data()
+            .vendorId.map((v: any) =>
+              v.email === email ? { ...v, status: "REJECTED" } : v,
             ),
-          });
-        }
-      console.log(`Vendor with email ${email} status updated to REJECTED in the database.`);
+        });
+      }
+      console.log(
+        `Vendor with email ${email} status updated to REJECTED in the database.`,
+      );
     } catch (error) {
       console.error(`Error updating vendor status for email ${email}:`, error);
     }
@@ -94,23 +102,29 @@ export default function ApplicationHostProfile() {
     // Update the vendor's status to "ACCEPTED" in the state
     setVendors((prevVendors) =>
       prevVendors.map((vendor) =>
-        vendor.email === email ? { ...vendor, status: "ACCEPTED" } : vendor
-      )
+        vendor.email === email ? { ...vendor, status: "ACCEPTED" } : vendor,
+      ),
     );
 
     try {
-        const vendorsQuery = collection(db, 'vendorApply');
-        const vendorsSnapshot = await getDocs(vendorsQuery);
-        const vendorDoc = vendorsSnapshot.docs.find(doc => doc.data().vendorId.some((v: any) => v.email === email));
-        if (vendorDoc) {
-          const vendorRef = doc(db, 'vendorApply', vendorDoc.id);
-          await updateDoc(vendorRef, {
-            vendorId: vendorDoc.data().vendorId.map((v: any) =>
-              v.email === email ? { ...v, status: "ACCEPTED" } : v
+      const vendorsQuery = collection(db, "vendorApply");
+      const vendorsSnapshot = await getDocs(vendorsQuery);
+      const vendorDoc = vendorsSnapshot.docs.find((doc) =>
+        doc.data().vendorId.some((v: any) => v.email === email),
+      );
+      if (vendorDoc) {
+        const vendorRef = doc(db, "vendorApply", vendorDoc.id);
+        await updateDoc(vendorRef, {
+          vendorId: vendorDoc
+            .data()
+            .vendorId.map((v: any) =>
+              v.email === email ? { ...v, status: "ACCEPTED" } : v,
             ),
-          });
-        }
-      console.log(`Vendor with email ${email} status updated to ACCEPTED in the database.`);
+        });
+      }
+      console.log(
+        `Vendor with email ${email} status updated to ACCEPTED in the database.`,
+      );
     } catch (error) {
       console.error(`Error updating vendor status for email ${email}:`, error);
     }
@@ -139,8 +153,12 @@ export default function ApplicationHostProfile() {
               <tbody>
                 {vendors.map((vendor, index) => (
                   <tr key={index} className="hover:bg-gray-100">
-                    <td className="border border-gray-300 px-4 py-2">{vendor.email}</td>
-                    <td className="border border-gray-300 px-4 py-2">{vendor.status}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {vendor.email}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {vendor.status}
+                    </td>
                     <td className="border border-gray-300 px-4 py-2">
                       <button
                         className="bg-red-500 text-white px-3 py-1 rounded mr-2 hover:bg-red-600"
