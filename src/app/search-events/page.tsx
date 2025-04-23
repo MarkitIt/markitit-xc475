@@ -156,34 +156,18 @@ export default function SearchEvents() {
   };
 
   return (
-    <div style={{ 
-      padding: theme.spacing.lg,
-      backgroundColor: theme.colors.background.main,
-      minHeight: '100vh',
-      fontFamily: theme.typography.fontFamily.primary
-    }}>
-      <h1 style={{ 
-        fontSize: '2rem', 
-        marginBottom: theme.spacing.lg,
-        color: theme.colors.primary.black,
-        fontWeight: theme.typography.fontWeight.bold
-      }}>
-        Find Events
-      </h1>
+    <div className="search-page">
+      <h1 className="page-title">Find Events</h1>
       
       <SearchBar onSearch={handleSearch} />
       
       {/* Filter Bar */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+      <div className="filter-row">
         {/* Event Type Dropdown */}
         <select
           value={selectedType}
           onChange={(e) => setSelectedType(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
+          className="filter-select"
         >
           <option value="">All Types</option>
           <option value="Conference">Conference</option>
@@ -195,11 +179,7 @@ export default function SearchEvents() {
         <select
           value={selectedCity}
           onChange={(e) => setSelectedCity(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
+          className="filter-select"
         >
           <option value="">All Cities</option>
           <option value="New York">New York</option>
@@ -211,11 +191,7 @@ export default function SearchEvents() {
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
+          className="filter-select"
         >
           <option value="">All Categories</option>
           <option value="Technology">Technology</option>
@@ -226,49 +202,28 @@ export default function SearchEvents() {
         {/* Apply Filters Button */}
         <button
           onClick={handleFilter}
-          style={{
-            padding: '0.5rem 1rem',
-            borderRadius: '4px',
-            backgroundColor: '#007BFF',
-            color: '#fff',
-            border: 'none',
-            cursor: 'pointer',
-          }}
+          className="search-button"
         >
           Apply Filters
         </button>
       </div>
 
       {loading ? (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: theme.spacing.xl,
-          color: theme.colors.text.secondary
-        }}>
+        <div className="loading-message">
           Loading events...
         </div>
       ) : error ? (
-        <div style={{ 
-          color: theme.colors.primary.coral,
-          padding: theme.spacing.lg,
-          backgroundColor: theme.colors.background.white,
-          borderRadius: theme.borderRadius.md,
-          marginBottom: theme.spacing.lg
-        }}>
+        <div className="error-message">
           {error}
         </div>
       ) : (
         <>
-          <div style={{ 
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: theme.spacing.lg,
-            marginBottom: theme.spacing.xl
-          }}>
-            {currentEvents.map((event, index) => (
+          <div className="events-grid">
+            {currentEvents.map((event, idx) => (
               <EventCard
                 key={event.id}
                 event={event}
+                index={idx}
                 score={event.score}
                 showRank={!!user && !!vendorProfile}
               />
@@ -284,14 +239,7 @@ export default function SearchEvents() {
           )}
           
           {filteredEvents.length === 0 && (
-            <div style={{ 
-              textAlign: 'center',
-              padding: theme.spacing.xl,
-              backgroundColor: theme.colors.background.white,
-              borderRadius: theme.borderRadius.md,
-              color: theme.colors.text.secondary,
-              fontWeight: theme.typography.fontWeight.medium
-            }}>
+            <div className="no-results-message">
               No events found matching your criteria.
             </div>
           )}

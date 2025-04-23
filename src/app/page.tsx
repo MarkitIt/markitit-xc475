@@ -8,11 +8,7 @@ import Image from 'next/image';
 
 export default function Home() {
   return (
-    <main style={{
-      background: theme.colors.background.gradient,
-      minHeight: '100vh',
-      padding: theme.spacing.xl,
-    }}>
+    <main className="landing-background">
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',

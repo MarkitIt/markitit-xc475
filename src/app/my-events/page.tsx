@@ -95,7 +95,6 @@ export default function ApplicationHostProfile() {
 
   return (
     <main style={{
-      backgroundColor: theme.colors.background.main,
       minHeight: 'calc(100vh - 80px)',
       padding: theme.spacing.xl,
     }}>
@@ -115,7 +114,7 @@ export default function ApplicationHostProfile() {
                 <button
                 onClick={() => router.push('/my-events/create-application')}
                 style={{
-                  backgroundColor: theme.colors.primary.coral,
+                  //backgroundColor: theme.colors.primary.coral,
                   color: theme.colors.background.white,
                   padding: `${theme.spacing.sm} ${theme.spacing.xl}`,
                   borderRadius: theme.borderRadius.md,

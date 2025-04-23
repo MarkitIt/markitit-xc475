@@ -5,7 +5,6 @@ import { theme } from '@/styles/theme';
 export default function NotificationsPage() {
   return (
     <main style={{
-      backgroundColor: theme.colors.background.main,
       minHeight: 'calc(100vh - 80px)', // Account for header height
       padding: theme.spacing.xl,
     }}>

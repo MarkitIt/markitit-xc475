@@ -15,7 +15,6 @@ export default function ChatPage() {
     return (
       <div
         style={{
-          backgroundColor: theme.colors.background.main,
           minHeight: 'calc(100vh - 80px)',
           padding: theme.spacing.xl,
           display: 'flex',
@@ -38,7 +37,6 @@ export default function ChatPage() {
   return (
     <main
       style={{
-        backgroundColor: theme.colors.background.white,
         height: 'calc(100vh - 80px)',
         padding: 0,
         overflow: 'hidden',

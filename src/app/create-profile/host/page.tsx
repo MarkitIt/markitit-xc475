@@ -54,7 +54,6 @@ export default function HostProfilePage() {
   return (
     <main
       style={{
-        backgroundColor: theme.colors.background.main,
         minHeight: 'calc(100vh - 80px)',
         padding: theme.spacing.xl,
       }}

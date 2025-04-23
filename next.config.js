@@ -10,6 +10,10 @@ const nextConfig = {
     
     return config;
   },
+  // Add image domains configuration
+  images: {
+    domains: ['www.eventeny.com', 'firebasestorage.googleapis.com', 'img.evbuc.com', 'cdn.evbuc.com'],
+  },
   // Explicitly exclude fb_functions directory from being processed
   transpilePackages: [],
   // Exclude specific directories from being watched or processed
