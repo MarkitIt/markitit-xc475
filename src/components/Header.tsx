@@ -2,20 +2,25 @@
 
 import { signOut } from "firebase/auth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState, useRef } from "react";
 import { useUserContext } from '../context/UserContext';
 import { auth } from "../lib/firebase";
 import styles from './Header.module.css';
 import { EventSearchBar } from '@/components/EventSearchBar';
 import { useSearchContext } from "@/context/SearchContext";
+import { useRouter, usePathname } from "next/navigation"; 
 import Image from 'next/image';
 
 export default function Header() {
   const { user, vendorProfile, hostProfile, getVendorProfile, getHostProfile } = useUserContext();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter(); 
   // const { setSearchQuery } = useSearchContext();
+
+  const pathname = usePathname();
+  const isActive = (path: string) => pathname === path;  // Check if the current route matches the path
+
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -145,18 +150,42 @@ export default function Header() {
       
       <div className={styles.rightSection}>
         <Link href="/search-events" className={styles.navLink}>
-          <Image src="/icons/home.svg" alt="Home" width={24} height={24} />
-          Home
+          <Image
+            src="/icons/home.svg"
+            alt="Home"
+            width={24}
+            height={24}
+            style={{
+              filter: isActive("/search-events") ? "invert(28%) sepia(77%) saturate(747%) hue-rotate(340deg) brightness(91%) contrast(94%)" : "none",
+            }}
+          />
+          <span style={{ color: isActive("/search-events") ? "#f15152" : "inherit" }}>Home</span>
         </Link>
         
         <Link href="/community" className={styles.navLink}>
-          <Image src="/icons/community.svg" alt="Community" width={24} height={24} />
-          <span>Community</span>
+          <Image
+            src="/icons/community.svg"
+            alt="Community"
+            width={24}
+            height={24}
+            style={{
+              filter: isActive("/community") ? "invert(28%) sepia(77%) saturate(747%) hue-rotate(340deg) brightness(91%) contrast(94%)" : "none",
+            }}
+          />
+          <span style={{ color: isActive("/community") ? "#f15152" : "inherit" }}>Community</span>
         </Link>
         
         <Link href="/notifications" className={styles.navLink}>
-          <Image src="/icons/bell.svg" alt="Notifications" width={24} height={24} />
-          <span>Notifications</span>
+          <Image
+            src="/icons/bell.svg"
+            alt="Notifications"
+            width={24}
+            height={24}
+            style={{
+              filter: isActive("/notifications") ? "invert(28%) sepia(77%) saturate(747%) hue-rotate(340deg) brightness(91%) contrast(94%)" : "none",
+            }}
+          />
+          <span style={{ color: isActive("/notifications") ? "#f15152" : "inherit" }}>Notifications</span>
         </Link>
         
         {renderProfileSection()}
