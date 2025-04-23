@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useUserContext } from '@/context/UserContext';
+import { theme } from '@/styles/theme';
 
 export default function CreateProfileLayout({
   children,
@@ -44,7 +45,8 @@ export default function CreateProfileLayout({
 
   return (
     <div style={{
-      background: 'linear-gradient(180deg, #f6e2dd 0%, #fde9e9 3%, #FFFFFF 8%)',
+      //background: 'linear-gradient(180deg, #f6e2dd 0%, #fde9e9 3%, #FFFFFF 8%)',
+      backgroundColor: theme.colors.background.main,
       minHeight: '100vh',
       width: '100%',
       display: 'flex',

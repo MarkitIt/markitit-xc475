@@ -55,13 +55,12 @@ export default function CreateProfilePage() {
 
   return (
     <main style={{
-      backgroundColor: theme.colors.background.main,
       minHeight: 'calc(100vh - 80px)',
       padding: theme.spacing.xl,
     }}>
       <div style={{
         maxWidth: '1000px',
-        maxHeight: '400px',
+        height: '100%',
         margin: '0 auto',
         textAlign: 'center',
       }}>
