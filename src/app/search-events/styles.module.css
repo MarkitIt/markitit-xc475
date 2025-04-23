@@ -30,7 +30,7 @@
   background-color: var(--background-white);
   padding: var(--spacing-md);
   border-radius: var(--border-radius-md);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .welcomeTitle {
@@ -102,4 +102,4 @@
   padding: var(--spacing-md);
   border-bottom: 1px solid var(--primary-beige);
   color: var(--text-primary);
-} 
+}

@@ -1,23 +1,36 @@
-'use client';
+"use client";
 
-import { useRouter, useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
-import { collection, getDocs,getDoc, doc, updateDoc } from 'firebase/firestore';
+import { useRouter, useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { db } from "@/lib/firebase";
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import styles from "../../../page.module.css";
-import '../../../tailwind.css';
+import "../../../tailwind.css";
 
 interface Vendor {
   eventId: string;
   hostId: string;
-  vendorId: { email: string; firstName: string; lastName:string; status: string }[]; // Array of objects with email and status
+  vendorId: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    status: string;
+  }[]; // Array of objects with email and status
 }
 
 export default function ApplicationHostProfile() {
   const router = useRouter();
   const params = useParams();
   const eventId = params.id as string; // Get the id from the URL
-  const [vendors, setVendors] = useState<{ email: string; firstName: string; lastName:string; status: string }[]>([]);
+  const [vendors, setVendors] = useState<
+    { email: string; firstName: string; lastName: string; status: string }[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -30,10 +43,10 @@ export default function ApplicationHostProfile() {
           return;
         }
 
-        const vendorsQuery = collection(db, 'vendorApply');
+        const vendorsQuery = collection(db, "vendorApply");
         const vendorsSnapshot = await getDocs(vendorsQuery);
         const vendorsList = vendorsSnapshot.docs
-          .map(doc => {
+          .map((doc) => {
             const data = doc.data();
             return {
               eventId: data.eventId,
@@ -48,9 +61,9 @@ export default function ApplicationHostProfile() {
                 : [],
             } as Vendor;
           })
-          .filter(vendor => vendor.eventId === eventId); // Filter by eventId
+          .filter((vendor) => vendor.eventId === eventId); // Filter by eventId
 
-        setVendors(vendorsList.flatMap(vendor => vendor.vendorId));
+        setVendors(vendorsList.flatMap((vendor) => vendor.vendorId));
       } catch (error) {
         console.error("Error fetching vendors:", error);
       } finally {
@@ -67,14 +80,14 @@ export default function ApplicationHostProfile() {
     // Update the vendor's status to "REJECTED" in the state
     setVendors((prevVendors) =>
       prevVendors.map((vendor) =>
-        vendor.email === email ? { ...vendor, status: "REJECTED" } : vendor
-      )
+        vendor.email === email ? { ...vendor, status: "REJECTED" } : vendor,
+      ),
     );
 
     // Update the vendor's status in the database
     try {
       // Fetch the vendorApply document
-      const vendorRef = doc(db, 'vendorApply', eventId);
+      const vendorRef = doc(db, "vendorApply", eventId);
       const vendorDocSnap = await getDoc(vendorRef);
 
       if (!vendorDocSnap.exists()) {
@@ -84,13 +97,15 @@ export default function ApplicationHostProfile() {
       const vendorData = vendorDocSnap.data();
       // Update the vendor's status in the vendorId array
       const updatedVendors = vendorData.vendorId.map((v: any) =>
-        v.email === email ? { ...v, status: "REJECTED" } : v
+        v.email === email ? { ...v, status: "REJECTED" } : v,
       );
       // Update the document in Firestore
       await updateDoc(vendorRef, {
         vendorId: updatedVendors,
       });
-      console.log(`Vendor with email ${email} status updated to REJECTED in the database.`);
+      console.log(
+        `Vendor with email ${email} status updated to REJECTED in the database.`,
+      );
     } catch (error) {
       console.error(`Error updating vendor status for email ${email}:`, error);
     }
@@ -102,13 +117,13 @@ export default function ApplicationHostProfile() {
     // Update the vendor's status to "ACCEPTED" in the state
     setVendors((prevVendors) =>
       prevVendors.map((vendor) =>
-        vendor.email === email ? { ...vendor, status: "ACCEPTED" } : vendor
-      )
+        vendor.email === email ? { ...vendor, status: "ACCEPTED" } : vendor,
+      ),
     );
 
     try {
       // Fetch the vendorApply document
-      const vendorRef = doc(db, 'vendorApply', eventId);
+      const vendorRef = doc(db, "vendorApply", eventId);
       const vendorDocSnap = await getDoc(vendorRef);
 
       if (!vendorDocSnap.exists()) {
@@ -118,13 +133,15 @@ export default function ApplicationHostProfile() {
       const vendorData = vendorDocSnap.data();
       // Update the vendor's status in the vendorId array
       const updatedVendors = vendorData.vendorId.map((v: any) =>
-        v.email === email ? { ...v, status: "ACCEPTED" } : v
+        v.email === email ? { ...v, status: "ACCEPTED" } : v,
       );
       // Update the document in Firestore
       await updateDoc(vendorRef, {
         vendorId: updatedVendors,
       });
-      console.log(`Vendor with email ${email} status updated to ACCEPTED in the database.`);
+      console.log(
+        `Vendor with email ${email} status updated to ACCEPTED in the database.`,
+      );
     } catch (error) {
       console.error(`Error updating vendor status for email ${email}:`, error);
     }
@@ -132,7 +149,7 @@ export default function ApplicationHostProfile() {
 
   const viewDetail = async (index: number) => {
     router.push(`/my-events/${eventId}/vendor-manage/${index}/detail`);
-  }
+  };
 
   return (
     <div className={styles.page}>
@@ -151,7 +168,9 @@ export default function ApplicationHostProfile() {
                 <tr className="bg-gray-200">
                   <th className="border border-gray-300 px-4 py-2"></th>
                   <th className="border border-gray-300 px-4 py-2">Email</th>
-                  <th className="border border-gray-300 px-4 py-2">FirstName</th>
+                  <th className="border border-gray-300 px-4 py-2">
+                    FirstName
+                  </th>
                   <th className="border border-gray-300 px-4 py-2">LastName</th>
                   <th className="border border-gray-300 px-4 py-2">Detail</th>
                   <th className="border border-gray-300 px-4 py-2">Status</th>
@@ -161,19 +180,29 @@ export default function ApplicationHostProfile() {
               <tbody>
                 {vendors.map((vendor, index) => (
                   <tr key={index} className="hover:bg-gray-100">
-                    <td className="border border-gray-300 px-4 py-2">{index+1}</td>
-                    <td className="border border-gray-300 px-4 py-2">{vendor.email}</td>
-                    <td className="border border-gray-300 px-4 py-2">{vendor.firstName}</td>
-                    <td className="border border-gray-300 px-4 py-2">{vendor.lastName}</td>
                     <td className="border border-gray-300 px-4 py-2">
-                    <button
+                      {index + 1}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {vendor.email}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {vendor.firstName}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {vendor.lastName}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <button
                         className="bg-red-500 text-white px-3 py-1 rounded mr-2 hover:bg-red-600"
-                        onClick={() => viewDetail(index+1)}
+                        onClick={() => viewDetail(index + 1)}
                       >
                         Detail
                       </button>
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">{vendor.status}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {vendor.status}
+                    </td>
                     <td className="border border-gray-300 px-4 py-2">
                       <button
                         className="bg-red-500 text-white px-3 py-1 rounded mr-2 hover:bg-red-600"

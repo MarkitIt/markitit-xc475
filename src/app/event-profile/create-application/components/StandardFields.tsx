@@ -1,4 +1,4 @@
-import styles from '../styles.module.css';
+import styles from "../styles.module.css";
 
 interface StandardField {
   id: string;
@@ -11,23 +11,25 @@ interface StandardFieldsProps {
   onToggle: (fieldId: string) => void;
 }
 
-export const StandardFields = ({ fields, selectedFields, onToggle }: StandardFieldsProps) => (
+export const StandardFields = ({
+  fields,
+  selectedFields,
+  onToggle,
+}: StandardFieldsProps) => (
   <div className={styles.section}>
-    <h2 className={styles.sectionTitle}>
-      Standard Application Fields
-    </h2>
+    <h2 className={styles.sectionTitle}>Standard Application Fields</h2>
     <p className={styles.subtitle}>
       Select the information you want to collect from vendors.
     </p>
 
     <div className={styles.checkboxContainer}>
-      <div className='flex flex-col'>
+      <div className="flex flex-col">
         {fields.map((field, index) => (
           <div key={field.id}>
             <div className={styles.checkboxItem}>
-              <div className='flex items-center'>
+              <div className="flex items-center">
                 <input
-                  type='checkbox'
+                  type="checkbox"
                   id={field.id}
                   checked={selectedFields.includes(field.id)}
                   onChange={() => onToggle(field.id)}
@@ -44,4 +46,4 @@ export const StandardFields = ({ fields, selectedFields, onToggle }: StandardFie
       </div>
     </div>
   </div>
-); 
+);

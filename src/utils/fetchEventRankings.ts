@@ -9,25 +9,25 @@ export async function fetchEventRankings(vendorId: string) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ vendorId }),
     });
-    
+
     const data = await response.json();
-    
+
     if (!response.ok) {
-      return { 
-        error: data.error || 'Failed to fetch event rankings',
-        data: null
+      return {
+        error: data.error || "Failed to fetch event rankings",
+        data: null,
       };
     }
-    
-    return { 
+
+    return {
       error: null,
-      data
+      data,
     };
   } catch (err) {
     console.error("Error fetching event rankings:", err);
-    return { 
-      error: 'Failed to connect to ranking service',
-      data: null
+    return {
+      error: "Failed to connect to ranking service",
+      data: null,
     };
   }
-} 
+}

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useVendor } from '@/context/VendorContext';
-import styles from '../../styles.module.css';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useVendor } from "@/context/VendorContext";
+import styles from "../../styles.module.css";
 
 const eventTypes = [
   "College pop-ups",
@@ -11,45 +11,45 @@ const eventTypes = [
   "Outdoor festivals",
   "Holiday fairs",
   "Private corporate events",
-  "Other"
+  "Other",
 ];
 
 const cities = [
-    "Atlanta",
-    "Austin",
-    "Baltimore",
-    "Boston",
-    "Charlotte",
-    "Chicago",
-    "Cleveland",
-    "Dallas",
-    "Denver",
-    "Detroit",
-    "Houston",
-    "Las Vegas",
-    "Los Angeles",
-    "Miami",
-    "Minneapolis",
-    "Nashville",
-    "New Orleans",
-    "New York City",
-    "Oakland",
-    "Orlando",
-    "Philadelphia",
-    "Phoenix",
-    "Pittsburgh",
-    "Portland",
-    "Raleigh",
-    "Richmond",
-    "San Antonio",
-    "San Diego",
-    "San Francisco",
-    "San Jose",
-    "Seattle",
-    "St. Louis",
-    "Tampa",
-    "Washington DC"
-  ];
+  "Atlanta",
+  "Austin",
+  "Baltimore",
+  "Boston",
+  "Charlotte",
+  "Chicago",
+  "Cleveland",
+  "Dallas",
+  "Denver",
+  "Detroit",
+  "Houston",
+  "Las Vegas",
+  "Los Angeles",
+  "Miami",
+  "Minneapolis",
+  "Nashville",
+  "New Orleans",
+  "New York City",
+  "Oakland",
+  "Orlando",
+  "Philadelphia",
+  "Phoenix",
+  "Pittsburgh",
+  "Portland",
+  "Raleigh",
+  "Richmond",
+  "San Antonio",
+  "San Diego",
+  "San Francisco",
+  "San Jose",
+  "Seattle",
+  "St. Louis",
+  "Tampa",
+  "Washington DC",
+];
 
 const daysOfWeek = [
   "Monday",
@@ -59,14 +59,14 @@ const daysOfWeek = [
   "Friday",
   "Saturday",
   "Sunday",
-  "No preference"
+  "No preference",
 ];
 
 const eventSizes = [
   { label: "Small (under 25 vendors)", value: "small" },
   { label: "Medium (25–75 vendors)", value: "medium" },
   { label: "Large (75–150 vendors)", value: "large" },
-  { label: "Mega Events (150+ vendors / festivals)", value: "mega" }
+  { label: "Mega Events (150+ vendors / festivals)", value: "mega" },
 ];
 
 const customerTypes = [
@@ -92,7 +92,7 @@ const customerTypes = [
   "Remote Workers / Digital Nomads",
   "Festival-Goers / Music Lovers",
   "Travelers & Expats",
-  "Gift Shoppers / Holiday Buyers"
+  "Gift Shoppers / Holiday Buyers",
 ];
 
 export default function PreferencesPage() {
@@ -101,12 +101,14 @@ export default function PreferencesPage() {
   const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>([]);
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
   const [travelRadius, setTravelRadius] = useState<number>(25);
-  const [hasSetup, setHasSetup] = useState<'yes' | 'no' | 'depends' | null>(null);
+  const [hasSetup, setHasSetup] = useState<"yes" | "no" | "depends" | null>(
+    null,
+  );
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  const [eventSize, setEventSize] = useState<string>('');
+  const [eventSize, setEventSize] = useState<string>("");
   const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
-  const [otherEventType, setOtherEventType] = useState('');
-  const [otherCity, setOtherCity] = useState('');
+  const [otherEventType, setOtherEventType] = useState("");
+  const [otherCity, setOtherCity] = useState("");
   const [isExiting, setIsExiting] = useState(false);
 
   const handleNext = async () => {
@@ -115,22 +117,27 @@ export default function PreferencesPage() {
       eventPreference: selectedEventTypes,
       cities: selectedCities,
       travelRadius: travelRadius,
-      hasOwnSetup: hasSetup === 'yes' ? true : hasSetup === 'no' ? false : 'depends',
+      hasOwnSetup:
+        hasSetup === "yes" ? true : hasSetup === "no" ? false : "depends",
       schedule: {
-        preferredDays: selectedDays
+        preferredDays: selectedDays,
       },
       preferredEventSize: eventSize,
-      demographic: selectedCustomers
+      demographic: selectedCustomers,
     });
 
     setIsExiting(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    router.push('/create-profile/vendor/media');
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    router.push("/create-profile/vendor/media");
   };
 
-  const toggleSelection = (array: string[], setArray: (value: string[]) => void, item: string) => {
+  const toggleSelection = (
+    array: string[],
+    setArray: (value: string[]) => void,
+    item: string,
+  ) => {
     if (array.includes(item)) {
-      setArray(array.filter(i => i !== item));
+      setArray(array.filter((i) => i !== item));
     } else {
       setArray([...array, item]);
     }
@@ -144,7 +151,9 @@ export default function PreferencesPage() {
   };
 
   return (
-    <div className={`${styles.container} ${isExiting ? styles.slideOut : styles.slideIn}`}>
+    <div
+      className={`${styles.container} ${isExiting ? styles.slideOut : styles.slideIn}`}
+    >
       <div className={styles.stepIndicator}>
         <span className={styles.stepIcon}>▲</span>
         <span className={styles.stepIcon}>★</span>
@@ -159,20 +168,28 @@ export default function PreferencesPage() {
 
       <div className={styles.form}>
         <div className={styles.formGroup}>
-          <label className={styles.label}>What kind of events are you most interested in?*</label>
+          <label className={styles.label}>
+            What kind of events are you most interested in?*
+          </label>
           <div className={styles.checkboxGrid}>
             {eventTypes.map((type) => (
               <label key={type} className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
                   checked={selectedEventTypes.includes(type)}
-                  onChange={() => toggleSelection(selectedEventTypes, setSelectedEventTypes, type)}
+                  onChange={() =>
+                    toggleSelection(
+                      selectedEventTypes,
+                      setSelectedEventTypes,
+                      type,
+                    )
+                  }
                   className={styles.checkbox}
                 />
                 {type}
               </label>
             ))}
-            {selectedEventTypes.includes('Other') && (
+            {selectedEventTypes.includes("Other") && (
               <input
                 type="text"
                 value={otherEventType}
@@ -185,14 +202,18 @@ export default function PreferencesPage() {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>What cities/regions are you open to vending in?*</label>
+          <label className={styles.label}>
+            What cities/regions are you open to vending in?*
+          </label>
           <div className={styles.checkboxGrid}>
             {cities.map((city) => (
               <label key={city} className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
                   checked={selectedCities.includes(city)}
-                  onChange={() => toggleSelection(selectedCities, setSelectedCities, city)}
+                  onChange={() =>
+                    toggleSelection(selectedCities, setSelectedCities, city)
+                  }
                   className={styles.checkbox}
                 />
                 {city}
@@ -202,15 +223,17 @@ export default function PreferencesPage() {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>How far are you willing to travel for an event?*</label>
+          <label className={styles.label}>
+            How far are you willing to travel for an event?*
+          </label>
           <p className={styles.description}>Maximum travel distance in miles</p>
           <div className={styles.sliderContainer}>
             <div className={styles.sliderTrack} />
             <div
               className={styles.sliderRange}
               style={{
-                left: '0%',
-                right: `${100 - ((travelRadius - 5) / (3000 - 5)) * 100}%`
+                left: "0%",
+                right: `${100 - ((travelRadius - 5) / (3000 - 5)) * 100}%`,
               }}
             />
             <input
@@ -224,30 +247,34 @@ export default function PreferencesPage() {
           </div>
           <div className={styles.sliderValue}>
             <span>{travelRadius} miles</span>
-            <span className={styles.distanceLabel}>{getDistanceLabel(travelRadius)}</span>
+            <span className={styles.distanceLabel}>
+              {getDistanceLabel(travelRadius)}
+            </span>
           </div>
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>Do you have your own table/set up?*</label>
+          <label className={styles.label}>
+            Do you have your own table/set up?*
+          </label>
           <div className={styles.pillButtonContainer}>
             <button
-              className={`${styles.pillButton} ${hasSetup === 'yes' ? styles.selected : ''}`}
-              onClick={() => setHasSetup('yes')}
+              className={`${styles.pillButton} ${hasSetup === "yes" ? styles.selected : ""}`}
+              onClick={() => setHasSetup("yes")}
               type="button"
             >
               Yes
             </button>
             <button
-              className={`${styles.pillButton} ${hasSetup === 'no' ? styles.selected : ''}`}
-              onClick={() => setHasSetup('no')}
+              className={`${styles.pillButton} ${hasSetup === "no" ? styles.selected : ""}`}
+              onClick={() => setHasSetup("no")}
               type="button"
             >
               No
             </button>
             <button
-              className={`${styles.pillButton} ${hasSetup === 'depends' ? styles.selected : ''}`}
-              onClick={() => setHasSetup('depends')}
+              className={`${styles.pillButton} ${hasSetup === "depends" ? styles.selected : ""}`}
+              onClick={() => setHasSetup("depends")}
               type="button"
             >
               Depends on the event
@@ -263,7 +290,9 @@ export default function PreferencesPage() {
                 <input
                   type="checkbox"
                   checked={selectedDays.includes(day)}
-                  onChange={() => toggleSelection(selectedDays, setSelectedDays, day)}
+                  onChange={() =>
+                    toggleSelection(selectedDays, setSelectedDays, day)
+                  }
                   className={styles.checkbox}
                 />
                 {day}
@@ -273,12 +302,14 @@ export default function PreferencesPage() {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>What size of events do you usually vend at?*</label>
+          <label className={styles.label}>
+            What size of events do you usually vend at?*
+          </label>
           <div className={styles.pillButtonContainer}>
             {eventSizes.map((size) => (
               <button
                 key={size.value}
-                className={`${styles.pillButton} ${eventSize === size.value ? styles.selected : ''}`}
+                className={`${styles.pillButton} ${eventSize === size.value ? styles.selected : ""}`}
                 onClick={() => setEventSize(size.value)}
                 type="button"
               >
@@ -289,14 +320,22 @@ export default function PreferencesPage() {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>What kind of customers do you usually attract?*</label>
+          <label className={styles.label}>
+            What kind of customers do you usually attract?*
+          </label>
           <div className={styles.checkboxGrid}>
             {customerTypes.map((type) => (
               <label key={type} className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
                   checked={selectedCustomers.includes(type)}
-                  onChange={() => toggleSelection(selectedCustomers, setSelectedCustomers, type)}
+                  onChange={() =>
+                    toggleSelection(
+                      selectedCustomers,
+                      setSelectedCustomers,
+                      type,
+                    )
+                  }
                   className={styles.checkbox}
                 />
                 {type}
@@ -309,7 +348,14 @@ export default function PreferencesPage() {
           <button
             className={styles.nextButton}
             onClick={handleNext}
-            disabled={!selectedEventTypes.length || !selectedCities.length || !hasSetup || !selectedDays.length || !eventSize || !selectedCustomers.length}
+            disabled={
+              !selectedEventTypes.length ||
+              !selectedCities.length ||
+              !hasSetup ||
+              !selectedDays.length ||
+              !eventSize ||
+              !selectedCustomers.length
+            }
           >
             Next
           </button>

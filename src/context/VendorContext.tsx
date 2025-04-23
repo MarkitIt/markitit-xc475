@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
-import { Vendor } from '../types/Vendor';
+import { createContext, useContext, useState, ReactNode } from "react";
+import { Vendor } from "../types/Vendor";
 
 interface VendorContextType {
   vendor: Vendor | null;
@@ -13,7 +13,7 @@ export function VendorProvider({ children }: { children: ReactNode }) {
   const [vendor, setVendor] = useState<Vendor | null>(null);
 
   const updateVendor = (updates: Partial<Vendor>) => {
-    setVendor(prev => prev ? { ...prev, ...updates } : updates as Vendor);
+    setVendor((prev) => (prev ? { ...prev, ...updates } : (updates as Vendor)));
   };
 
   return (
@@ -26,7 +26,7 @@ export function VendorProvider({ children }: { children: ReactNode }) {
 export function useVendor() {
   const context = useContext(VendorContext);
   if (context === undefined) {
-    throw new Error('useVendor must be used within a VendorProvider');
+    throw new Error("useVendor must be used within a VendorProvider");
   }
   return context;
 }

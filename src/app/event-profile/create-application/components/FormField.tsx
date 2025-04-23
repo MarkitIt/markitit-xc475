@@ -1,9 +1,9 @@
-import styles from '../styles.module.css';
+import styles from "../styles.module.css";
 
 interface FormFieldProps {
   label: string;
   id: string;
-  type: 'text' | 'date' | 'number';
+  type: "text" | "date" | "number";
   placeholder?: string;
   required?: boolean;
   min?: number;
@@ -34,4 +34,4 @@ export const FormField = ({
       step={step}
     />
   </div>
-); 
+);

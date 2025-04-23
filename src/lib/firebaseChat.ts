@@ -1,4 +1,4 @@
-import { db } from './firebase';
+import { db } from "./firebase";
 import {
   collection,
   addDoc,
@@ -13,7 +13,7 @@ import {
   updateDoc,
   arrayUnion,
   setDoc,
-} from 'firebase/firestore';
+} from "firebase/firestore";
 
 export interface Message {
   id?: string;
@@ -28,7 +28,7 @@ export interface Conversation {
   participants: string[];
   lastMessage?: string;
   lastMessageTimestamp?: any;
-  type: 'personal' | 'community';
+  type: "personal" | "community";
   name?: string;
   memberCount?: number;
   createdBy?: string;
@@ -44,11 +44,11 @@ export interface UserChat {
 export const createPersonalChat = async (user1Id: string, user2Id: string) => {
   try {
     // Check if a conversation already exists between these users
-    const conversationsRef = collection(db, 'conversations');
+    const conversationsRef = collection(db, "conversations");
     const q = query(
       conversationsRef,
-      where('participants', 'array-contains', user1Id),
-      where('type', '==', 'personal')
+      where("participants", "array-contains", user1Id),
+      where("type", "==", "personal"),
     );
 
     const querySnapshot = await getDocs(q);
@@ -67,13 +67,13 @@ export const createPersonalChat = async (user1Id: string, user2Id: string) => {
 
     const newConversation = {
       participants: [user1Id, user2Id],
-      type: 'personal',
+      type: "personal",
       lastMessageTimestamp: serverTimestamp(),
     };
 
     const conversationRef = await addDoc(
-      collection(db, 'conversations'),
-      newConversation
+      collection(db, "conversations"),
+      newConversation,
     );
 
     await updateUserChats(user1Id, conversationRef.id);
@@ -81,7 +81,7 @@ export const createPersonalChat = async (user1Id: string, user2Id: string) => {
 
     return { id: conversationRef.id, ...newConversation };
   } catch (error) {
-    console.error('Error creating personal chat:', error);
+    console.error("Error creating personal chat:", error);
     throw error;
   }
 };
@@ -91,14 +91,14 @@ export const createCommunityChat = async (
   name: string,
   creatorId: string,
   initialMembers: string[] = [],
-  imageUrl?: string | null
+  imageUrl?: string | null,
 ) => {
   try {
     const members = [creatorId, ...initialMembers];
 
     const newCommunity = {
       participants: members,
-      type: 'community',
+      type: "community",
       name,
       memberCount: members.length,
       createdBy: creatorId,
@@ -107,8 +107,8 @@ export const createCommunityChat = async (
     };
 
     const communityRef = await addDoc(
-      collection(db, 'conversations'),
-      newCommunity
+      collection(db, "conversations"),
+      newCommunity,
     );
 
     for (const memberId of members) {
@@ -117,13 +117,13 @@ export const createCommunityChat = async (
 
     return { id: communityRef.id, ...newCommunity };
   } catch (error) {
-    console.error('Error creating community chat:', error);
+    console.error("Error creating community chat:", error);
     throw error;
   }
 };
 
 const updateUserChats = async (userId: string, conversationId: string) => {
-  const userChatRef = doc(db, 'userChats', userId);
+  const userChatRef = doc(db, "userChats", userId);
 
   try {
     const docSnap = await getDoc(userChatRef);
@@ -139,7 +139,7 @@ const updateUserChats = async (userId: string, conversationId: string) => {
       });
     }
   } catch (error) {
-    console.error('Error updating userChats:', error);
+    console.error("Error updating userChats:", error);
     throw error;
   }
 };
@@ -148,7 +148,7 @@ const updateUserChats = async (userId: string, conversationId: string) => {
 export const sendMessage = async (
   conversationId: string,
   senderId: string,
-  text: string
+  text: string,
 ) => {
   try {
     const message = {
@@ -160,18 +160,18 @@ export const sendMessage = async (
 
     // Add message to the messages collection
     const messageRef = await addDoc(
-      collection(db, 'conversations', conversationId, 'messages'),
-      message
+      collection(db, "conversations", conversationId, "messages"),
+      message,
     );
 
-    await updateDoc(doc(db, 'conversations', conversationId), {
+    await updateDoc(doc(db, "conversations", conversationId), {
       lastMessage: text,
       lastMessageTimestamp: serverTimestamp(),
     });
 
     return { id: messageRef.id, ...message };
   } catch (error) {
-    console.error('Error sending message:', error);
+    console.error("Error sending message:", error);
     throw error;
   }
 };
@@ -179,14 +179,14 @@ export const sendMessage = async (
 // Get all user chat
 export const getUserChats = (
   userId: string,
-  callback: (chats: Conversation[]) => void
+  callback: (chats: Conversation[]) => void,
 ) => {
   try {
-    const conversationsRef = collection(db, 'conversations');
+    const conversationsRef = collection(db, "conversations");
     const q = query(
       conversationsRef,
-      where('participants', 'array-contains', userId),
-      orderBy('lastMessageTimestamp', 'desc')
+      where("participants", "array-contains", userId),
+      orderBy("lastMessageTimestamp", "desc"),
     );
 
     return onSnapshot(q, (querySnapshot) => {
@@ -198,7 +198,7 @@ export const getUserChats = (
       callback(conversations);
     });
   } catch (error) {
-    console.error('Error getting user chats:', error);
+    console.error("Error getting user chats:", error);
     callback([]);
     throw error;
   }
@@ -206,16 +206,16 @@ export const getUserChats = (
 
 export const getConversationMessages = (
   conversationId: string,
-  callback: (messages: Message[]) => void
+  callback: (messages: Message[]) => void,
 ) => {
   try {
     const messagesRef = collection(
       db,
-      'conversations',
+      "conversations",
       conversationId,
-      'messages'
+      "messages",
     );
-    const q = query(messagesRef, orderBy('timestamp', 'asc'));
+    const q = query(messagesRef, orderBy("timestamp", "asc"));
 
     return onSnapshot(q, (querySnapshot) => {
       const messages: Message[] = [];
@@ -226,7 +226,7 @@ export const getConversationMessages = (
       callback(messages);
     });
   } catch (error) {
-    console.error('Error getting conversation messages:', error);
+    console.error("Error getting conversation messages:", error);
     callback([]);
     throw error;
   }
@@ -234,20 +234,20 @@ export const getConversationMessages = (
 
 export const joinCommunityChat = async (
   conversationId: string,
-  userId: string
+  userId: string,
 ) => {
   try {
-    const conversationRef = doc(db, 'conversations', conversationId);
+    const conversationRef = doc(db, "conversations", conversationId);
     const conversationSnap = await getDoc(conversationRef);
 
     if (!conversationSnap.exists()) {
-      throw new Error('Conversation does not exist');
+      throw new Error("Conversation does not exist");
     }
 
     const conversationData = conversationSnap.data() as Conversation;
 
-    if (conversationData.type !== 'community') {
-      throw new Error('This is not a community chat');
+    if (conversationData.type !== "community") {
+      throw new Error("This is not a community chat");
     }
 
     if (conversationData.participants.includes(userId)) {
@@ -262,7 +262,7 @@ export const joinCommunityChat = async (
     // Update userChats
     await updateUserChats(userId, conversationId);
   } catch (error) {
-    console.error('Error joining community chat:', error);
+    console.error("Error joining community chat:", error);
     throw error;
   }
 };

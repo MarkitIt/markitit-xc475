@@ -1,4 +1,4 @@
-import styles from '../styles.module.css';
+import styles from "../styles.module.css";
 
 interface FormFieldProps {
   label: string;
@@ -13,15 +13,16 @@ interface FormFieldProps {
 export const FormField = ({
   label,
   required,
-  type = 'text',
+  type = "text",
   value,
   onChange,
   isTextArea,
-  placeholder
+  placeholder,
 }: FormFieldProps) => (
   <div>
     <div>
-      {label}{required && <span className={styles.required}>*</span>}
+      {label}
+      {required && <span className={styles.required}>*</span>}
     </div>
     {isTextArea ? (
       <textarea
@@ -41,4 +42,4 @@ export const FormField = ({
       />
     )}
   </div>
-); 
+);

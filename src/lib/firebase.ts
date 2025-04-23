@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp } from "firebase/app";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -6,15 +6,15 @@ import {
   signOut,
   setPersistence,
   browserLocalPersistence,
-} from 'firebase/auth';
+} from "firebase/auth";
 import {
   getFirestore,
   collection,
   getDocs,
   query,
   where,
-} from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+} from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -41,7 +41,7 @@ export const signUpUser = async (email: string, password: string) => {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     return userCredential.user;
   } catch (error) {
@@ -54,7 +54,7 @@ export const loginUser = async (email: string, password: string) => {
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     return userCredential.user;
   } catch (error) {
@@ -73,14 +73,14 @@ export const logoutUser = async () => {
 // Firestore functions
 export const getEvents = async () => {
   try {
-    const eventsRef = collection(db, 'events');
+    const eventsRef = collection(db, "events");
     const snapshot = await getDocs(eventsRef);
     return snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
   } catch (error) {
-    console.error('Error fetching events:', error);
+    console.error("Error fetching events:", error);
     return [];
   }
 };
@@ -88,20 +88,20 @@ export const getEvents = async () => {
 export const searchEvents = async (
   city?: string,
   date?: string,
-  keywords?: string
+  keywords?: string,
 ) => {
   try {
-    let eventsRef = collection(db, 'events');
+    let eventsRef = collection(db, "events");
     let constraints = [];
 
     if (city) {
-      constraints.push(where('location', '==', city));
+      constraints.push(where("location", "==", city));
     }
     if (date) {
-      constraints.push(where('date', '==', date));
+      constraints.push(where("date", "==", date));
     }
     if (keywords) {
-      constraints.push(where('title', '>=', keywords));
+      constraints.push(where("title", ">=", keywords));
     }
 
     const q =
@@ -113,7 +113,7 @@ export const searchEvents = async (
       ...doc.data(),
     }));
   } catch (error) {
-    console.error('Error searching events:', error);
+    console.error("Error searching events:", error);
     return [];
   }
 };

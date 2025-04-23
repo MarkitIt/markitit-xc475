@@ -13,10 +13,10 @@ const compat = new FlatCompat({
 export default [
   {
     // Spread the extended configs
-    ...compat.extends("next/core-web-vitals", "next/typescript", 'prettier')[0],
+    ...compat.extends("next/core-web-vitals", "next/typescript", "prettier")[0],
     // Add your rules
     rules: {
-      '@typescript-eslint/no-unused-vars': 'off',
+      "@typescript-eslint/no-unused-vars": "off",
     },
-  }
+  },
 ];

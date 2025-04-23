@@ -1,4 +1,4 @@
-import styles from '../styles.module.css';
+import styles from "../styles.module.css";
 
 interface Event {
   id: string;
@@ -14,9 +14,7 @@ export const Recommendations = ({ events }: RecommendationsProps) => {
 
   return (
     <div className={styles.recommendations}>
-      <h2 className={styles.recommendationsTitle}>
-        Recommended Events
-      </h2>
+      <h2 className={styles.recommendationsTitle}>Recommended Events</h2>
       {/* <ul className={styles.recommendationsList}>
         {events.map(event => (
           <li key={event.id} className={styles.recommendationItem}>
@@ -26,4 +24,4 @@ export const Recommendations = ({ events }: RecommendationsProps) => {
       </ul> */}
     </div>
   );
-}; 
+};

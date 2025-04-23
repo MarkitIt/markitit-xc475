@@ -17,5 +17,7 @@ export interface Event {
   description?: string;
   categories?: string[];
   score?: number;
+  rating?: number;
   scoreBreakdown?: any;
-} 
+  index?: number;
+}

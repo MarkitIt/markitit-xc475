@@ -1,153 +1,152 @@
 .container {
-    display: flex;
-    min-height: 100vh;
-    width: 100%;
-  }
-  
-  .leftPanel {
-    flex: 1;
-    background: linear-gradient(180deg, #E57373 0%, #FFCDD2 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  }
-  
-  .logo {
-    font-size: 4rem;
-    color: #E57373;
-    margin-bottom: 1rem;
-  }
-  
-  .welcomeText {
-    font-size: 2.5rem;
-    color: #283593;
-    text-align: center;
-    font-weight: bold;
-  }
-  
-  .rightPanel {
-    flex: 1;
-    background: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  }
-  
-  .form {
-    width: 100%;
-    max-width: 400px;
-  }
-  
-  .title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
-    color: #333;
-  }
-  
-  .inputGroup {
-    margin-bottom: 1.5rem;
-  }
-  
-  .label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #333;
-  }
-  
-  .input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #3A2E39;
-    border-radius: 10px;
-    font-size: 1rem;
-    background-color: white;
-    color: #3A2E39;
-  }
-  
-  .input::placeholder {
-    color: #64748B;
-  }
-  
-  .button {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #E57373;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .button:hover {
-    background-color: #EF5350;
-  }
-  
-  .divider {
-    display: flex;
-    align-items: center;
-    margin: 2rem 0;
-    color: #666;
-  }
-  
-  .divider::before,
-  .divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .dividerText {
-    padding: 0 1rem;
-  }
-  
-  .socialButtons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-  }
-  
-  .socialButton {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #ddd;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .socialButton:hover {
-    background-color: #f5f5f5;
-  }
-  
-  .error {
-    color: #D32F2F;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  
-  /* Shared styles for login/signup text */
-  .authText {
-    margin-top: 1.5rem;
-    text-align: center;
-    color: #666;
-  }
-  
-  .authLink {
-    color: #E57373;
-    text-decoration: none;
-  }
-  
-  .authLink:hover {
-    text-decoration: underline;
-  } 
-  
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.leftPanel {
+  flex: 1;
+  background: linear-gradient(180deg, #e57373 0%, #ffcdd2 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.logo {
+  font-size: 4rem;
+  color: #e57373;
+  margin-bottom: 1rem;
+}
+
+.welcomeText {
+  font-size: 2.5rem;
+  color: #283593;
+  text-align: center;
+  font-weight: bold;
+}
+
+.rightPanel {
+  flex: 1;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.form {
+  width: 100%;
+  max-width: 400px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #3a2e39;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: white;
+  color: #3a2e39;
+}
+
+.input::placeholder {
+  color: #64748b;
+}
+
+.button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #e57373;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #ef5350;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 2rem 0;
+  color: #666;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.dividerText {
+  padding: 0 1rem;
+}
+
+.socialButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.socialButton {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.socialButton:hover {
+  background-color: #f5f5f5;
+}
+
+.error {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Shared styles for login/signup text */
+.authText {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #666;
+}
+
+.authLink {
+  color: #e57373;
+  text-decoration: none;
+}
+
+.authLink:hover {
+  text-decoration: underline;
+}

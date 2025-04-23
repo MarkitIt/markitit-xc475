@@ -1,7 +1,9 @@
 .container {
-  background-color: var(--background-main);
   min-height: calc(100vh - 80px);
   padding: var(--spacing-xl);
+  width: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 .title {
@@ -91,4 +93,4 @@
   cursor: pointer;
   font-size: var(--font-size-body);
   width: fit-content;
-} 
+}

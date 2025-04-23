@@ -1,34 +1,77 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useVendor } from '../../../../context/VendorContext';
-import styles from '../../styles.module.css';
-
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useVendor } from "../../../../context/VendorContext";
+import styles from "../../styles.module.css";
 
 const marketCategories = [
-  "Accessories", "Art", "Fashion", "Kids", "Home Decor", "Beauty & Skincare", 
-  "Jewelry", "Food & Beverage", "Candles", "Books & Stationery", "Tech & Gadgets",
-  "Vintage & Thrift", "Handmade Goods", "Pet Products", "Wellness & Health", 
-  "Plants & Gardening", "Toys & Games", "Bags & Wallets", "Spiritual & Metaphysical",
-  "Sports & Fitness", "Bath & Body", "Music & Instruments", "Automotive", 
-  "Photography", "Sustainable & Eco-Friendly", "Gifts & Seasonal", 
-  "DIY & Craft Supplies", "Furniture", "Men's Fashion", "Women's Fashion", 
-  "Children's Fashion", "Digital Art & NFTs", "Custom Apparel", "Luxury Goods",
-  "Event Planning & Party Supplies", "Hobby & Collectibles", "Baking & Desserts"
+  "Accessories",
+  "Art",
+  "Fashion",
+  "Kids",
+  "Home Decor",
+  "Beauty & Skincare",
+  "Jewelry",
+  "Food & Beverage",
+  "Candles",
+  "Books & Stationery",
+  "Tech & Gadgets",
+  "Vintage & Thrift",
+  "Handmade Goods",
+  "Pet Products",
+  "Wellness & Health",
+  "Plants & Gardening",
+  "Toys & Games",
+  "Bags & Wallets",
+  "Spiritual & Metaphysical",
+  "Sports & Fitness",
+  "Bath & Body",
+  "Music & Instruments",
+  "Automotive",
+  "Photography",
+  "Sustainable & Eco-Friendly",
+  "Gifts & Seasonal",
+  "DIY & Craft Supplies",
+  "Furniture",
+  "Men's Fashion",
+  "Women's Fashion",
+  "Children's Fashion",
+  "Digital Art & NFTs",
+  "Custom Apparel",
+  "Luxury Goods",
+  "Event Planning & Party Supplies",
+  "Hobby & Collectibles",
+  "Baking & Desserts",
 ];
 
 const foodCategories = [
-  "Packaged Snacks (cookies, chips, trail mix, etc.)", "Baked Goods (cupcakes, pastries, breads)",
-  "Beverages (juices, teas, smoothies)", "Hot/Prepared Meals (pop-up kitchen, warm dishes)",
-  "Desserts & Sweets (ice cream, pudding, candy)", "Vegan / Plant-Based",
-  "Specialty Items (sauces, seasonings, condiments, honey, etc.)", "Cottage Foods (home kitchen–approved items)", 
-  "Cultural Cuisine (e.g. Mexican, Asian, Italian, etc.)", "Other: _______"
+  "Packaged Snacks (cookies, chips, trail mix, etc.)",
+  "Baked Goods (cupcakes, pastries, breads)",
+  "Beverages (juices, teas, smoothies)",
+  "Hot/Prepared Meals (pop-up kitchen, warm dishes)",
+  "Desserts & Sweets (ice cream, pudding, candy)",
+  "Vegan / Plant-Based",
+  "Specialty Items (sauces, seasonings, condiments, honey, etc.)",
+  "Cottage Foods (home kitchen–approved items)",
+  "Cultural Cuisine (e.g. Mexican, Asian, Italian, etc.)",
+  "Other: _______",
 ];
 
 const ethnicFoodCategories = [
-  "Mexican", "Asian", "Italian", "Middle Eastern", "African", "Caribbean", "Latin American",
-  "Indian", "Japanese", "Korean", "Vietnamese", "Thai", "Other: _______"
+  "Mexican",
+  "Asian",
+  "Italian",
+  "Middle Eastern",
+  "African",
+  "Caribbean",
+  "Latin American",
+  "Indian",
+  "Japanese",
+  "Korean",
+  "Vietnamese",
+  "Thai",
+  "Other: _______",
 ];
 
 export default function CategoryPage() {
@@ -36,18 +79,28 @@ export default function CategoryPage() {
   const { vendor, updateVendor } = useVendor();
   const [isExiting, setIsExiting] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedEthnicCuisine, setSelectedEthnicCuisine] = useState<string[]>([]);
-  const [businessDescription, setBusinessDescription] = useState<string>('');
-  const [showEthnicCuisineDropdown, setShowEthnicCuisineDropdown] = useState<boolean>(false);
+  const [selectedEthnicCuisine, setSelectedEthnicCuisine] = useState<string[]>(
+    [],
+  );
+  const [businessDescription, setBusinessDescription] = useState<string>("");
+  const [showEthnicCuisineDropdown, setShowEthnicCuisineDropdown] =
+    useState<boolean>(false);
 
-  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOptions = Array.from(event.target.selectedOptions, option => option.value);
+  const handleCategoryChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const selectedOptions = Array.from(
+      event.target.selectedOptions,
+      (option) => option.value,
+    );
     setSelectedCategories(selectedOptions);
-    
+
     // Check if "Cultural Cuisine" is selected
-    const hasCulturalCuisine = selectedOptions.includes("Cultural Cuisine (e.g. Mexican, Asian, Italian, etc.)");
+    const hasCulturalCuisine = selectedOptions.includes(
+      "Cultural Cuisine (e.g. Mexican, Asian, Italian, etc.)",
+    );
     setShowEthnicCuisineDropdown(hasCulturalCuisine);
-    
+
     if (!hasCulturalCuisine) {
       setSelectedEthnicCuisine([]);
     }
@@ -55,22 +108,25 @@ export default function CategoryPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     updateVendor({
       categories: selectedCategories,
       ethnicFoodCategories: selectedEthnicCuisine,
-      description: businessDescription
+      description: businessDescription,
     });
 
     setIsExiting(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    router.push('/create-profile/vendor/product');
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    router.push("/create-profile/vendor/product");
   };
 
-  const categories = vendor?.type === 'market' ? marketCategories : foodCategories;
+  const categories =
+    vendor?.type === "market" ? marketCategories : foodCategories;
 
   return (
-    <div className={`${styles.container} ${isExiting ? styles.slideOut : styles.slideIn}`}>
+    <div
+      className={`${styles.container} ${isExiting ? styles.slideOut : styles.slideIn}`}
+    >
       <div className={styles.stepIndicator}>
         <span className={`${styles.stepIcon} ${styles.active}`}>▲</span>
         <span className={styles.stepIcon}>★</span>
@@ -84,7 +140,9 @@ export default function CategoryPage() {
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
-          <label className={styles.label}>What category best describes your business?</label>
+          <label className={styles.label}>
+            What category best describes your business?
+          </label>
           <p className={styles.description}>(Check all that apply)</p>
           <select
             multiple
@@ -102,12 +160,21 @@ export default function CategoryPage() {
 
         {showEthnicCuisineDropdown && (
           <div className={styles.formGroup}>
-            <label className={styles.label}>What cultural cuisine do you focus on?</label>
+            <label className={styles.label}>
+              What cultural cuisine do you focus on?
+            </label>
             <select
               multiple
               className={styles.select}
               value={selectedEthnicCuisine}
-              onChange={(e) => setSelectedEthnicCuisine(Array.from(e.target.selectedOptions, option => option.value))}
+              onChange={(e) =>
+                setSelectedEthnicCuisine(
+                  Array.from(
+                    e.target.selectedOptions,
+                    (option) => option.value,
+                  ),
+                )
+              }
             >
               {ethnicFoodCategories.map((cuisine, index) => (
                 <option key={index} value={cuisine}>
@@ -119,8 +186,13 @@ export default function CategoryPage() {
         )}
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>Full Business Description (1500 characters or less)</label>
-          <p className={styles.description}>Describe your products or services, who you are and anything else you would like to share.</p>
+          <label className={styles.label}>
+            Full Business Description (1500 characters or less)
+          </label>
+          <p className={styles.description}>
+            Describe your products or services, who you are and anything else
+            you would like to share.
+          </p>
           <textarea
             className={styles.textarea}
             value={businessDescription}
@@ -128,14 +200,19 @@ export default function CategoryPage() {
             maxLength={1500}
             rows={6}
           />
-          <p className={styles.helperText}>{businessDescription.length}/1500 characters</p>
+          <p className={styles.helperText}>
+            {businessDescription.length}/1500 characters
+          </p>
         </div>
 
         <div className={styles.buttonContainer}>
           <button
             type="submit"
             className={styles.nextButton}
-            disabled={selectedCategories.length === 0 || businessDescription.length === 0}
+            disabled={
+              selectedCategories.length === 0 ||
+              businessDescription.length === 0
+            }
           >
             Next
           </button>

@@ -52,18 +52,23 @@ const ApplicationDetailPage = () => {
         <span className="font-semibold">Event Name:</span> {event.name}
       </p>
       <p className="text-lg text-gray-700">
-        <span className="font-semibold">Location:</span> {event.location?.city}, {event.location?.state}
+        <span className="font-semibold">Location:</span> {event.location?.city},{" "}
+        {event.location?.state}
       </p>
       <p className="text-lg text-gray-700">
-        <span className="font-semibold">Start Date:</span> {new Date(event.startDate?.seconds * 1000).toLocaleDateString()}
+        <span className="font-semibold">Start Date:</span>{" "}
+        {new Date(event.startDate?.seconds * 1000).toLocaleDateString()}
       </p>
       <p className="text-lg text-gray-700">
-        <span className="font-semibold">End Date:</span> {new Date(event.endDate?.seconds * 1000).toLocaleDateString()}
+        <span className="font-semibold">End Date:</span>{" "}
+        {new Date(event.endDate?.seconds * 1000).toLocaleDateString()}
       </p>
       <p className="text-lg text-gray-700">
         <span className="font-semibold">Description:</span> {event.description}
       </p>
-      <p className="text-sm text-gray-500 mt-2">More information will be added here soon.</p>
+      <p className="text-sm text-gray-500 mt-2">
+        More information will be added here soon.
+      </p>
     </div>
   );
 };

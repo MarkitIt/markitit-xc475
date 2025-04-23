@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import { ThemeProvider } from "@/context/ThemeContext";
 import GoogleMapsLoader from "../components/GoogleMapsLoader";
 import { VendorProvider } from "@/context/VendorContext";
+import GlobalBackground from "@/components/GlobalBackground";
 
 import "./globals.css";
 
@@ -37,7 +38,9 @@ export default function RootLayout({
               <HostProvider>
                 <ApplicationProfileProvider>
                   <Header />
-                  <VendorProvider>{children}</VendorProvider>
+                  <VendorProvider>
+                    <GlobalBackground>{children}</GlobalBackground>
+                  </VendorProvider>
                 </ApplicationProfileProvider>
               </HostProvider>
             </UserProvider>

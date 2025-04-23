@@ -13,7 +13,7 @@
 .imagePlaceholder {
   width: 50%;
   height: 450px;
-  background-color: #D1D5DB;
+  background-color: #d1d5db;
 }
 
 .formSection {
@@ -21,7 +21,7 @@
 }
 
 .stepIndicator {
-  color: #6B7280;
+  color: #6b7280;
   font-size: 0.875rem;
 }
 
@@ -34,7 +34,7 @@
 .formField {
   width: 70%;
   height: 3.5rem;
-  background-color: #D1D5DB;
+  background-color: #d1d5db;
   margin-bottom: 2rem;
   padding: 0.5rem;
 }
@@ -45,7 +45,7 @@
 }
 
 .required {
-  color: #EF4444;
+  color: #ef4444;
 }
 
 .buttonContainer {
@@ -57,7 +57,7 @@
 .helpButton {
   width: 9rem;
   height: 3.5rem;
-  background-color: #D1D5DB;
+  background-color: #d1d5db;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,11 +66,13 @@
 .nextButton {
   composes: helpButton;
   width: 12rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   cursor: pointer;
 }
 
 .nextButton:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-} 
+}

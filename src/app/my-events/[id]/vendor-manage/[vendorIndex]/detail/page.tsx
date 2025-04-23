@@ -7,7 +7,7 @@ import { db } from "@/lib/firebase"; // Adjust the import path to your Firebase 
 
 const VendorDetailPage = () => {
   const params = useParams(); // Get the dynamic route parameters
-  const { id:eventId, vendorIndex } = params; // Extract event ID and vendorIndex from the parameters
+  const { id: eventId, vendorIndex } = params; // Extract event ID and vendorIndex from the parameters
   const [vendor, setVendor] = useState<any>(null); // State to store vendor information
   const [isLoading, setIsLoading] = useState(true);
 
@@ -30,8 +30,11 @@ const VendorDetailPage = () => {
         if (vendorApplyDocSnap.exists()) {
           const vendorData = vendorApplyDocSnap.data();
           const vendors = vendorData.vendorId || []; // Get the vendorId array
-          const index = vendorIndex 
-            ? parseInt(Array.isArray(vendorIndex) ? vendorIndex[0] : vendorIndex, 10) - 1 
+          const index = vendorIndex
+            ? parseInt(
+                Array.isArray(vendorIndex) ? vendorIndex[0] : vendorIndex,
+                10,
+              ) - 1
             : -1; // Safely parse vendorIndex
           const vendorInfo = index >= 0 ? vendors[index] : null; // Get the vendor by index
           setVendor(vendorInfo);
@@ -71,7 +74,9 @@ const VendorDetailPage = () => {
       <p className="text-lg text-gray-700">
         <span className="font-semibold">Status:</span> {vendor.status}
       </p>
-      <p className="text-sm text-gray-500 mt-2">More information will be added here soon.</p>
+      <p className="text-sm text-gray-500 mt-2">
+        More information will be added here soon.
+      </p>
     </div>
   );
 };

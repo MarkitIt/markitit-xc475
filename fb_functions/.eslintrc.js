@@ -1,33 +1,38 @@
-module.exports = {
-  root: true,
-  env: {
-    es6: true,
-    node: true,
+import eslint from "@eslint/js";
+import tseslint from "@typescript-eslint/eslint-plugin";
+import tseslintParser from "@typescript-eslint/parser";
+import globals from "globals";
+import importPlugin from "eslint-plugin-import";
+
+export default [
+  {
+    files: ["**/*.ts"],
+    languageOptions: {
+      parser: tseslintParser,
+      parserOptions: {
+        project: ["./tsconfig.json", "./tsconfig.dev.json"],
+        sourceType: "module",
+      },
+      globals: {
+        ...globals.node,
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tseslint,
+      import: importPlugin,
+    },
+    rules: {
+      ...eslint.configs.recommended.rules,
+      ...tseslint.configs.recommended.rules,
+      quotes: ["error", "double"],
+      "import/no-unresolved": "off",
+      indent: ["error", 2],
+      "max-len": ["error", { code: 120 }],
+    },
+    ignores: [
+      "lib/**/*",
+      "node_modules/**/*",
+      "!node_modules/@typescript-eslint/**/*",
+    ],
   },
-  extends: [
-    "eslint:recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:import/typescript",
-    "google",
-    "plugin:@typescript-eslint/recommended",
-  ],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    project: ["tsconfig.json", "tsconfig.dev.json"],
-    sourceType: "module",
-  },
-  ignorePatterns: [
-    "/lib/**/*", // Ignore built files.
-    "/generated/**/*", // Ignore generated files.
-  ],
-  plugins: [
-    "@typescript-eslint",
-    "import",
-  ],
-  rules: {
-    "quotes": ["error", "double"],
-    "import/no-unresolved": 0,
-    "indent": ["error", 2],
-  },
-};
+];
