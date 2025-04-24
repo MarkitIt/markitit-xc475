@@ -1,17 +1,24 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 
 // Dynamically import LoadScript to disable SSR
-const LoadScript = dynamic(() => import('@react-google-maps/api').then((mod) => mod.LoadScript), { ssr: false });
+const LoadScript = dynamic(
+  () => import("@react-google-maps/api").then((mod) => mod.LoadScript),
+  { ssr: false },
+);
 
-const libraries = 'places';
+const libraries = "places";
 
 // Global variable to track if the Google Maps API is already loaded
 let isGoogleMapsAPILoaded = false;
 
-export default function GoogleMapsLoader({ children }: { children: React.ReactNode }) {
+export default function GoogleMapsLoader({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {

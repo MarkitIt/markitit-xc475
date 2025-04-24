@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useRef } from 'react';
-import { Autocomplete } from '@react-google-maps/api';
-import { FormField } from './components/FormField';
-import styles from './styles.module.css';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { addDoc, collection,doc,setDoc } from "firebase/firestore";
+import { useState, useRef } from "react";
+import { Autocomplete } from "@react-google-maps/api";
+import { FormField } from "./components/FormField";
+import styles from "./styles.module.css";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useApplicationProfileContext } from "../../context/CreateEventProfileContext";
@@ -15,36 +15,45 @@ export default function CreateEventPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const {
-    uid, setUid,
-    category, setCategory,
-    date, setDate,
-    description, setDescription,
-    event_unique_id, setEventUniqueId,
-    location, setLocation,
-    name, setName,
-    price, setPrice,
-    venue, setVenue,
-    vendor_id, setVendor_id,
+    uid,
+    setUid,
+    category,
+    setCategory,
+    date,
+    setDate,
+    description,
+    setDescription,
+    event_unique_id,
+    setEventUniqueId,
+    location,
+    setLocation,
+    name,
+    setName,
+    price,
+    setPrice,
+    venue,
+    setVenue,
+    vendor_id,
+    setVendor_id,
   } = useApplicationProfileContext();
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user) {
-          setUser(user);
-        } else {
-          setUser(null);
-        }
-      });
-  
-      // Cleanup subscription on unmount
-      return () => unsubscribe();
-    }, []);
-  
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
 
   const handleNextStepClick = async () => {
     if (!user) {
-      console.error('User is not authenticated');
+      console.error("User is not authenticated");
       return;
     }
 
@@ -56,20 +65,25 @@ export default function CreateEventPage() {
     setUid([user.uid]);
 
     const eventData = {
-        uid: user.uid,
-        category,
-        date,
-        description,
-        event_unique_id: generatedEventUniqueId,
-        location, // Includes city and state
-        name,
-        price,
-        venue,
-        vendor_id: generatedVendorId,
+      uid: user.uid,
+      category,
+      date,
+      description,
+      event_unique_id: generatedEventUniqueId,
+      location, // Includes city and state
+      name,
+      price,
+      venue,
+      vendor_id: generatedVendorId,
     };
 
-    if (name && location.city && location.state &&
-      date && description  && category.length > 0
+    if (
+      name &&
+      location.city &&
+      location.state &&
+      date &&
+      description &&
+      category.length > 0
     ) {
       // Add the event to the "events" collection
       const eventDocRef = await addDoc(collection(db, "events"), eventData);
@@ -85,7 +99,10 @@ export default function CreateEventPage() {
       const vendorApplyDocRef = doc(db, "vendorApply", eventDocRef.id); // Use the event ID as the document ID
       await setDoc(vendorApplyDocRef, vendorApplyData);
 
-      console.log("VendorApply document created successfully:", vendorApplyData);
+      console.log(
+        "VendorApply document created successfully:",
+        vendorApplyData,
+      );
 
       // Redirect to the home page or a success page
       router.push("/");
@@ -97,24 +114,24 @@ export default function CreateEventPage() {
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace();
-  
+
       // Debugging: Log the place object to inspect its structure
       console.log("Selected Place:", place);
-  
+
       if (place && place.address_components) {
         // Extract city and state from address components
         const city = place.address_components.find((component) =>
-          component.types.includes("locality")
+          component.types.includes("locality"),
         )?.long_name;
-  
+
         const state = place.address_components.find((component) =>
-          component.types.includes("administrative_area_level_1")
+          component.types.includes("administrative_area_level_1"),
         )?.short_name;
-  
+
         // Debugging: Log extracted city and state
         console.log("Extracted City:", city);
         console.log("Extracted State:", state);
-  
+
         if (city && state) {
           setLocation({ city, state }); // Update location with city and state
         } else {
@@ -130,7 +147,7 @@ export default function CreateEventPage() {
     <div className={styles.container}>
       <main className={styles.main}>
         <div className={styles.imagePlaceholder} />
-        
+
         <div className={styles.formSection}>
           <div className={styles.stepIndicator}>Step 01/05</div>
           <h1 className={styles.title}>Create Event Profile</h1>
@@ -143,7 +160,7 @@ export default function CreateEventPage() {
           />
 
           <Autocomplete
-            onLoad={autocomplete => (autocompleteRef.current = autocomplete)}
+            onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
             onPlaceChanged={handlePlaceChanged}
           >
             <FormField
@@ -175,7 +192,7 @@ export default function CreateEventPage() {
             label="Category"
             required
             value={category.join(", ")}
-            onChange={value => setCategory(value.split(", "))}
+            onChange={(value) => setCategory(value.split(", "))}
             placeholder="Enter categories (comma-separated)"
           />
 
@@ -186,11 +203,7 @@ export default function CreateEventPage() {
             onChange={setPrice}
           />
 
-          <FormField
-            label="Venue"
-            value={venue}
-            onChange={setVenue}
-          />
+          <FormField label="Venue" value={venue} onChange={setVenue} />
 
           <div className={styles.buttonContainer}>
             <div className={styles.helpButton}>Help</div>

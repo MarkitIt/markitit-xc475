@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { theme } from '@/styles/theme';
-import { getUserChats, Conversation } from '@/lib/firebaseChat';
-import CreateCommunityModal from './CreateCommunityModal';
-import JoinCommunityModal from './JoinCommunityModal';
+import React, { useState, useEffect, useRef } from "react";
+import { theme } from "@/styles/theme";
+import { getUserChats, Conversation } from "@/lib/firebaseChat";
+import CreateCommunityModal from "./CreateCommunityModal";
+import JoinCommunityModal from "./JoinCommunityModal";
 
 interface ConversationListProps {
   selectedConversation: Conversation | null;
   setSelectedConversation: (conversation: Conversation | null) => void;
-  activeTab: 'personal' | 'community';
-  setActiveTab: (tab: 'personal' | 'community') => void;
+  activeTab: "personal" | "community";
+  setActiveTab: (tab: "personal" | "community") => void;
   userId: string;
 }
 
@@ -46,7 +46,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
       setSelectedConversation(conversations[0]);
     } else if (selectedConversation) {
       const stillExists = conversations.some(
-        (chat) => chat.id === selectedConversation.id
+        (chat) => chat.id === selectedConversation.id,
       );
       if (!stillExists && conversations.length > 0) {
         setSelectedConversation(conversations[0]);
@@ -66,9 +66,9 @@ const ConversationList: React.FC<ConversationListProps> = ({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -82,11 +82,11 @@ const ConversationList: React.FC<ConversationListProps> = ({
       return (
         <img
           src={conversation.imageUrl}
-          alt={conversation.name || 'Chat'}
+          alt={conversation.name || "Chat"}
           style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
             borderRadius: theme.borderRadius.full,
           }}
         />
@@ -95,17 +95,17 @@ const ConversationList: React.FC<ConversationListProps> = ({
       return (
         <div
           style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             fontSize: theme.typography.fontSize.header,
             fontWeight: theme.typography.fontWeight.semibold,
             color: theme.colors.background.white,
           }}
         >
-          {conversation.name?.charAt(0) || 'U'}
+          {conversation.name?.charAt(0) || "U"}
         </div>
       );
     }
@@ -114,88 +114,88 @@ const ConversationList: React.FC<ConversationListProps> = ({
   return (
     <div
       style={{
-        width: '436px',
-        height: '781px',
-        overflow: 'visible',
-        display: 'flex',
-        flexDirection: 'column',
+        width: "436px",
+        height: "781px",
+        overflow: "visible",
+        display: "flex",
+        flexDirection: "column",
         backgroundColor: `${theme.colors.background.main}36`,
         borderRadius: theme.borderRadius.lg,
-        position: 'static',
+        position: "static",
       }}
     >
       <div
         style={{
-          height: '110px',
+          height: "110px",
           backgroundColor: `${theme.colors.background.main}54`,
           borderRadius: `${theme.borderRadius.lg} ${theme.borderRadius.lg} 0 0`,
-          position: 'relative',
+          position: "relative",
           padding: theme.spacing.md,
         }}
       >
         <div
           style={{
-            width: '24px',
-            height: '24px',
-            position: 'absolute',
+            width: "24px",
+            height: "24px",
+            position: "absolute",
             top: theme.spacing.md,
             left: theme.spacing.md,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <img src='icons/mag.svg' alt='Search' width='24' height='24' />
+          <img src="icons/mag.svg" alt="Search" width="24" height="24" />
         </div>
 
         <div
           style={{
-            display: 'flex',
-            position: 'absolute',
+            display: "flex",
+            position: "absolute",
             bottom: theme.spacing.md,
           }}
         >
-          <div style={{ position: 'relative' }} ref={dropdownRef}>
+          <div style={{ position: "relative" }} ref={dropdownRef}>
             <button
               onClick={() => {
-                setActiveTab('community');
+                setActiveTab("community");
                 setShowDropdown(!showDropdown);
               }}
               style={{
                 backgroundColor:
-                  activeTab === 'community'
+                  activeTab === "community"
                     ? theme.colors.primary.coral
-                    : 'transparent',
+                    : "transparent",
                 color:
-                  activeTab === 'community'
+                  activeTab === "community"
                     ? theme.colors.primary.beige
                     : theme.colors.text.primary,
-                border: 'none',
+                border: "none",
                 borderRadius: theme.borderRadius.lg,
                 padding: `${theme.spacing.xs} ${theme.spacing.md}`,
                 marginRight: theme.spacing.sm,
-                cursor: 'pointer',
+                cursor: "pointer",
                 fontFamily: theme.typography.fontFamily.primary,
                 fontWeight: theme.typography.fontWeight.medium,
                 fontSize: theme.typography.fontSize.small,
-                width: '123px',
-                height: '30px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'relative',
+                width: "123px",
+                height: "30px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
               }}
             >
               <span style={{ marginRight: theme.spacing.md }}>Communities</span>
-              {activeTab === 'community' && (
+              {activeTab === "community" && (
                 <span
                   style={{
-                    position: 'absolute',
+                    position: "absolute",
                     right: theme.spacing.sm,
-                    top: '50%',
-                    transform: 'translateY(-100%)',
-                    width: '12px',
-                    height: '7px',
+                    top: "50%",
+                    transform: "translateY(-100%)",
+                    width: "12px",
+                    height: "7px",
                   }}
                 >
                   ▼
@@ -206,14 +206,14 @@ const ConversationList: React.FC<ConversationListProps> = ({
             {showDropdown && (
               <div
                 style={{
-                  position: 'absolute',
-                  top: '35px',
-                  left: '4px',
-                  width: '133px',
-                  height: showCreateOption ? '70px' : '35px',
+                  position: "absolute",
+                  top: "35px",
+                  left: "4px",
+                  width: "133px",
+                  height: showCreateOption ? "70px" : "35px",
                   backgroundColor: theme.colors.background.white,
                   borderRadius: theme.borderRadius.lg,
-                  boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+                  boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
                   zIndex: 100,
                 }}
               >
@@ -223,13 +223,13 @@ const ConversationList: React.FC<ConversationListProps> = ({
                     setShowDropdown(false);
                   }}
                   style={{
-                    backgroundColor: 'transparent',
+                    backgroundColor: "transparent",
                     color: theme.colors.text.primary,
-                    border: 'none',
+                    border: "none",
                     padding: `${theme.spacing.sm} 0 0 ${theme.spacing.lg}`,
-                    width: '100%',
-                    textAlign: 'left',
-                    cursor: 'pointer',
+                    width: "100%",
+                    textAlign: "left",
+                    cursor: "pointer",
                     fontFamily: theme.typography.fontFamily.primary,
                     fontWeight: theme.typography.fontWeight.medium,
                     fontSize: theme.typography.fontSize.small,
@@ -263,25 +263,25 @@ const ConversationList: React.FC<ConversationListProps> = ({
           </div>
 
           <button
-            onClick={() => setActiveTab('personal')}
+            onClick={() => setActiveTab("personal")}
             style={{
               backgroundColor:
-                activeTab === 'personal'
+                activeTab === "personal"
                   ? `${theme.colors.background.main}B8`
-                  : 'transparent',
+                  : "transparent",
               color: theme.colors.text.primary,
-              border: 'none',
+              border: "none",
               borderRadius: theme.borderRadius.lg,
               padding: `${theme.spacing.xs} ${theme.spacing.md}`,
-              cursor: 'pointer',
+              cursor: "pointer",
               fontFamily: theme.typography.fontFamily.primary,
               fontWeight: theme.typography.fontWeight.medium,
               fontSize: theme.typography.fontSize.small,
-              width: '89px',
-              height: '30px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              width: "89px",
+              height: "30px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             Personal
@@ -292,17 +292,17 @@ const ConversationList: React.FC<ConversationListProps> = ({
       <div
         style={{
           flex: 1,
-          overflowY: 'auto',
-          position: 'relative',
+          overflowY: "auto",
+          position: "relative",
           zIndex: 1,
         }}
       >
         {loading ? (
-          <div style={{ padding: theme.spacing.md, textAlign: 'center' }}>
+          <div style={{ padding: theme.spacing.md, textAlign: "center" }}>
             Loading conversations...
           </div>
         ) : conversations.length === 0 ? (
-          <div style={{ padding: theme.spacing.md, textAlign: 'center' }}>
+          <div style={{ padding: theme.spacing.md, textAlign: "center" }}>
             No {activeTab} chats found
           </div>
         ) : (
@@ -311,26 +311,26 @@ const ConversationList: React.FC<ConversationListProps> = ({
               key={conversation.id}
               onClick={() => setSelectedConversation(conversation)}
               style={{
-                height: '121px',
+                height: "121px",
                 backgroundColor: theme.colors.background.white,
-                borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
-                cursor: 'pointer',
-                position: 'relative',
-                width: '100%',
+                borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
+                cursor: "pointer",
+                position: "relative",
+                width: "100%",
               }}
             >
               <div
                 style={{
-                  width: '68px',
-                  height: '68px',
+                  width: "68px",
+                  height: "68px",
                   borderRadius: theme.borderRadius.full,
                   backgroundColor: theme.colors.primary.beige,
-                  position: 'absolute',
+                  position: "absolute",
                   left: theme.spacing.sm,
                   top: theme.spacing.lg,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   fontSize: theme.typography.fontSize.header,
                   fontWeight: theme.typography.fontWeight.semibold,
                   color: theme.colors.background.white,
@@ -341,57 +341,57 @@ const ConversationList: React.FC<ConversationListProps> = ({
 
               <div
                 style={{
-                  position: 'absolute',
-                  left: '96px',
-                  top: '39px',
+                  position: "absolute",
+                  left: "96px",
+                  top: "39px",
                   fontFamily: theme.typography.fontFamily.primary,
                   fontWeight: theme.typography.fontWeight.semibold,
                   fontSize: theme.typography.fontSize.body,
                   color: theme.colors.text.primary,
-                  width: '192px',
+                  width: "192px",
                 }}
               >
-                {conversation.name || 'Chat'}
+                {conversation.name || "Chat"}
               </div>
 
               <div
                 style={{
-                  position: 'absolute',
-                  left: '96px',
-                  top: '62px',
+                  position: "absolute",
+                  left: "96px",
+                  top: "62px",
                   fontFamily: theme.typography.fontFamily.primary,
                   fontWeight: theme.typography.fontWeight.regular,
                   fontSize: theme.typography.fontSize.small,
                   color: theme.colors.text.primary,
-                  width: '121px',
+                  width: "121px",
                 }}
               >
-                {activeTab === 'community' ? (
+                {activeTab === "community" ? (
                   <span>{conversation.memberCount || 0} people</span>
                 ) : (
-                  <span>{conversation.lastMessage || 'Start chatting!'}</span>
+                  <span>{conversation.lastMessage || "Start chatting!"}</span>
                 )}
               </div>
 
               {conversation.lastMessageTimestamp && (
                 <div
                   style={{
-                    position: 'absolute',
+                    position: "absolute",
                     right: theme.spacing.md,
-                    top: '42px',
+                    top: "42px",
                     fontFamily: theme.typography.fontFamily.primary,
                     fontWeight: theme.typography.fontWeight.regular,
                     fontSize: theme.typography.fontSize.small,
                     color: theme.colors.text.primary,
-                    textAlign: 'right',
-                    width: '68px',
+                    textAlign: "right",
+                    width: "68px",
                   }}
                 >
                   {new Date(
-                    conversation.lastMessageTimestamp.seconds * 1000
+                    conversation.lastMessageTimestamp.seconds * 1000,
                   ).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </div>
               )}

@@ -1,15 +1,13 @@
-'use client';
+"use client";
 
-import { useUserContext } from '@/context/UserContext';
-import { db } from '@/lib/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { useUserContext } from "@/context/UserContext";
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
 import "leaflet/dist/leaflet.css";
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import styles from "../../page.module.css";
-import '../../tailwind.css';
-
-
+import "../../tailwind.css";
 
 interface Event {
   id: string;
@@ -45,45 +43,49 @@ export default function ApplicationHostProfile() {
         }
 
         // Fetch events where userId matches the current user's ID
-        const eventsQuery = collection(db, 'events');
+        const eventsQuery = collection(db, "events");
         const eventsSnapshot = await getDocs(eventsQuery);
         const eventList = eventsSnapshot.docs
-          .map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          } as Event))
-          .filter(event => event.uid === user.uid); // Filter by user ID
+          .map(
+            (doc) =>
+              ({
+                id: doc.id,
+                ...doc.data(),
+              }) as Event,
+          )
+          .filter((event) => event.uid === user.uid); // Filter by user ID
 
         setEvents(eventList);
         setFilteredEvents(eventList);
 
         // Rank events if user has a vendor profile
         if (vendorProfile) {
-            const response = await fetch("/api/rankEvents", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ uid: user.uid }),
-            });
-            const data = await response.json();
-            if (data.success) {
-              setRankedEvents(data.rankedEvents);
-            }
+          const response = await fetch("/api/rankEvents", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ uid: user.uid }),
+          });
+          const data = await response.json();
+          if (data.success) {
+            setRankedEvents(data.rankedEvents);
           }
-        } catch (error) {
-          console.error("Error fetching events:", error);
         }
-        setIsLoading(false);
-      };
-  
-      fetchAndRankEvents();
-    }, [user, vendorProfile]);
-  
-  
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+      setIsLoading(false);
+    };
+
+    fetchAndRankEvents();
+  }, [user, vendorProfile]);
 
   // Get current events
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+  const currentEvents = filteredEvents.slice(
+    indexOfFirstEvent,
+    indexOfLastEvent,
+  );
 
   // Change page
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -92,25 +94,24 @@ export default function ApplicationHostProfile() {
     <div className={styles.page}>
       <main className={styles.main}>
         <ol>
-          <li>
-            Welcome to MarkitIt!.
-          </li>
+          <li>Welcome to MarkitIt!.</li>
           <li>From xc475</li>
         </ol>
 
         {!user && (
           <div className="text-center p-4 bg-yellow-100 text-yellow-800">
-            Events are not ranked. Please log in to see personalized recommendations.
-          </div>
-        )}
-        
-        {user && !vendorProfile && (
-          <div className="text-center p-4 bg-yellow-100 text-yellow-800">
-            Events are not ranked as vendor profile not found. Create a profile to see personalized recommendations.
+            Events are not ranked. Please log in to see personalized
+            recommendations.
           </div>
         )}
 
-        
+        {user && !vendorProfile && (
+          <div className="text-center p-4 bg-yellow-100 text-yellow-800">
+            Events are not ranked as vendor profile not found. Create a profile
+            to see personalized recommendations.
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
           {/* {currentEvents.map((event) => (
             <EventCardHost 
@@ -124,12 +125,16 @@ export default function ApplicationHostProfile() {
 
         {/* Pagination */}
         <div className="flex justify-center mt-8">
-          {Array.from({ length: Math.ceil(filteredEvents.length / eventsPerPage) }).map((_, index) => (
+          {Array.from({
+            length: Math.ceil(filteredEvents.length / eventsPerPage),
+          }).map((_, index) => (
             <button
               key={index}
               onClick={() => paginate(index + 1)}
               className={`mx-1 px-4 py-2 rounded ${
-                currentPage === index + 1 ? 'bg-gray-800 text-white' : 'bg-gray-200'
+                currentPage === index + 1
+                  ? "bg-gray-800 text-white"
+                  : "bg-gray-200"
               }`}
             >
               {index + 1}
@@ -140,15 +145,12 @@ export default function ApplicationHostProfile() {
         <h2>Ranked Events</h2>
         <ul>
           {rankedEvents && rankedEvents.length > 0 ? (
-            rankedEvents.map(event => (
-              <li key={event.id}>{event.name}</li>
-            ))
+            rankedEvents.map((event) => <li key={event.id}>{event.name}</li>)
           ) : (
             <p>No ranked events found.</p>
           )}
         </ul>
       </main>
-          
     </div>
   );
 }

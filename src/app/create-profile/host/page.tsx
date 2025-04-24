@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -44,7 +44,7 @@ export default function HostProfilePage() {
     e.preventDefault();
 
     if (!user) {
-      alert('You must be logged in to create a host profile.');
+      alert("You must be logged in to create a host profile.");
       return;
     }
 
@@ -56,7 +56,7 @@ export default function HostProfilePage() {
       };
 
       // Save the host profile data to Firestore
-      await setDoc(doc(db, 'hostProfile', user.uid), hostProfileData);
+      await setDoc(doc(db, "hostProfile", user.uid), hostProfileData);
 
       alert('Host profile created successfully!');
 
@@ -68,8 +68,8 @@ export default function HostProfilePage() {
       await new Promise((resolve) => setTimeout(resolve, 500));
       router.push('/dashboard'); // Redirect to the dashboard
     } catch (error) {
-      console.error('Error creating host profile:', error);
-      alert('An error occurred while creating your profile. Please try again.');
+      console.error("Error creating host profile:", error);
+      alert("An error occurred while creating your profile. Please try again.");
     }
   };
 

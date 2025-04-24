@@ -1,9 +1,8 @@
 "use client";
 
-
 import { Autocomplete } from "@react-google-maps/api";
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { addDoc, collection,doc,setDoc } from "firebase/firestore";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useApplicationProfileContext } from "../../../context/CreateEventProfileContext";
@@ -20,8 +19,8 @@ import { categories } from '@/types/Categories';
 import { demographics } from '@/types/Demographics';
 
 interface Location {
-    city: string;
-    state: string;
+  city: string;
+  state: string;
 }
 
 const CreateApplicationProfile = () => {
@@ -51,9 +50,9 @@ const CreateApplicationProfile = () => {
 
   const [selectedFields, setSelectedFields] = useState<string[]>([
     // basic fields selected
-    'business-name',
-    'contact-email',
-    'contact-phone',
+    "business-name",
+    "contact-email",
+    "contact-phone",
   ]);
 
   const handleFieldToggle = (fieldId: string) => {
@@ -65,188 +64,217 @@ const CreateApplicationProfile = () => {
   };
 
   const addCustomQuestion = () => {
-    setCustomQuestions([...customQuestions, { title: '', description: '', isRequired: false }]);
+    setCustomQuestions([
+      ...customQuestions,
+      { title: "", description: "", isRequired: false },
+    ]);
   };
 
   const removeCustomQuestion = (indexToRemove: number) => {
     setCustomQuestions(
-      customQuestions.filter((_, index) => index !== indexToRemove)
+      customQuestions.filter((_, index) => index !== indexToRemove),
     );
   };
 
-  const handleUpdateQuestion = (index: number, data: { title: string; description: string; isRequired: boolean }) => {
+  const handleUpdateQuestion = (
+    index: number,
+    data: { title: string; description: string; isRequired: boolean },
+  ) => {
     console.log("Updating question at index:", index, "with data:", data);
     setCustomQuestions(customQuestions.map((q, i) => (i === index ? data : q)));
   };
 
   useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user) {
-          setUser(user);
-        } else {
-          setUser(null);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!user) {
+      console.error("User is not authenticated");
+      alert("You must be logged in to create an application.");
+      return;
+    }
+
+    try {
+      // Collect form data
+      const name = (document.getElementById("event-name") as HTMLInputElement)
+        .value;
+      const startDateInput = (
+        document.getElementById("start-date") as HTMLInputElement
+      ).value;
+      const startTimeInput = (
+        document.getElementById("start-time") as HTMLInputElement
+      ).value;
+      const endDateInput = (
+        document.getElementById("end-date") as HTMLInputElement
+      ).value;
+      const endTimeInput = (
+        document.getElementById("end-time") as HTMLInputElement
+      ).value;
+      const totalCost = parseFloat(
+        (document.getElementById("booth-cost") as HTMLInputElement).value,
+      );
+      const imageFile = (document.getElementById("image") as HTMLInputElement)
+        .files?.[0]; // Get the uploaded file
+      const location = handlePlaceChanged() || { city: "", state: "" };
+      const type = Array.from(
+        (document.getElementById("type") as HTMLSelectElement).selectedOptions,
+      ).map((option) => option.value);
+      const vendorFee = parseFloat(
+        (document.getElementById("vendorFee") as HTMLInputElement).value,
+      );
+      const attendeeType = Array.from(
+        (document.getElementById("attendeeType") as HTMLSelectElement)
+          .selectedOptions,
+      ).map((option) => option.value);
+      const headcount = parseInt(
+        (document.getElementById("headcount") as HTMLInputElement).value,
+        10,
+      );
+      const demographics = Array.from(
+        (document.getElementById("demographics") as HTMLSelectElement)
+          .selectedOptions,
+      ).map((option) => option.value);
+      const description = (
+        document.getElementById("description") as HTMLTextAreaElement
+      ).value;
+      const categories = Array.from(
+        (document.getElementById("categories") as HTMLSelectElement)
+          .selectedOptions,
+      ).map((option) => option.value);
+
+      // Validate required fields
+      if (!location.city || !location.state) {
+        alert("Please select a valid location.");
+        return;
+      }
+
+      // Combine date and time into a single Date object
+      const startDate = new Date(`${startDateInput}T${startTimeInput}:00`);
+      const endDate = new Date(`${endDateInput}T${endTimeInput}:00`);
+
+      // Validate required fields
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        alert("Please enter valid start and end dates/times.");
+        return;
+      }
+
+      if (startDate > endDate) {
+        alert("Start date/time cannot be after the end date/time.");
+        return;
+      }
+
+      // Upload the image to Firebase Storage (optional)
+      let imageUrl = "";
+      if (imageFile) {
+        const storage = getStorage(); // Initialize Firebase Storage
+        const storageRef = ref(storage); // Use the ref function from Firebase Storage
+        const fileRef = ref(storage, `event-images/${imageFile.name}`); // Create a reference to the file in Firebase Storage
+        // Upload the file to Firebase Storage
+        await uploadBytes(fileRef, imageFile);
+        imageUrl = await getDownloadURL(fileRef);
+      }
+
+      console.log("Custom question", customQuestions);
+      // Prepare the event data
+      const eventData = {
+        uid: user.uid,
+        name,
+        image: imageUrl, // Use the uploaded image URL
+        startDate,
+        endDate,
+        totalCost,
+        location,
+        type,
+        vendorFee,
+        attendeeType,
+        headcount,
+        demographics,
+        description,
+        categories,
+        // selectedFields, // Fields selected by the user
+        customQuestions, // Custom questions added by the user
+        createdAt: new Date().toISOString(),
+      };
+
+      // Add the event to the "events" collection
+      const eventDocRef = await addDoc(collection(db, "events"), eventData);
+      console.log("Event document written with ID: ", eventDocRef.id);
+
+      // Create a corresponding vendorApply document
+      const vendorApplyData = {
+        eventId: eventDocRef.id, // Use the event document ID
+        hostId: user.uid, // The host's user ID
+        vendorId: [], // Initialize with an empty array of vendors
+      };
+
+      const vendorApplyDocRef = doc(db, "vendorApply", eventDocRef.id); // Use the event ID as the document ID
+      await setDoc(vendorApplyDocRef, vendorApplyData);
+
+      console.log(
+        "VendorApply document created successfully:",
+        vendorApplyData,
+      );
+
+      // Redirect to the home page or a success page
+      alert("Application created successfully!");
+      router.push("/my-events");
+    } catch (error) {
+      console.error("Error creating application:", error);
+      alert(
+        "An error occurred while creating your application. Please try again.",
+      );
+    }
+  };
+
+  const handlePlaceChanged = (): Location | null => {
+    if (autocompleteRef.current) {
+      const place = autocompleteRef.current.getPlace();
+
+      if (!place || !place.address_components) {
+        alert("Please select a valid location from the suggestions.");
+        return { city: "", state: "" }; // Return an empty object to avoid undefined
+      }
+
+      let city = "";
+      let state = "";
+
+      // Extract city and state from the address components
+      place.address_components.forEach((component) => {
+        if (component.types.includes("locality")) {
+          city = component.long_name;
+        }
+        if (component.types.includes("administrative_area_level_1")) {
+          state = component.short_name;
         }
       });
-  
-      // Cleanup subscription on unmount
-      return () => unsubscribe();
-    }, []);
-  
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-      
-        if (!user) {
-          console.error("User is not authenticated");
-          alert("You must be logged in to create an application.");
-          return;
-        }
-      
-        try {
-          // Collect form data
-          const name = (document.getElementById("event-name") as HTMLInputElement).value;
-          const startDateInput = (document.getElementById("start-date") as HTMLInputElement).value;
-          const startTimeInput = (document.getElementById("start-time") as HTMLInputElement).value;
-          const endDateInput = (document.getElementById("end-date") as HTMLInputElement).value;
-          const endTimeInput = (document.getElementById("end-time") as HTMLInputElement).value;
-          const totalCost = parseFloat((document.getElementById("booth-cost") as HTMLInputElement).value);
-          const imageFile = (document.getElementById("image") as HTMLInputElement).files?.[0]; // Get the uploaded file
-          const location = handlePlaceChanged() || { city: "", state: "" };
-          const type = Array.from(
-            (document.getElementById("type") as HTMLSelectElement).selectedOptions
-          ).map((option) => option.value);
-          const vendorFee = parseFloat((document.getElementById("vendorFee") as HTMLInputElement).value);
-          const attendeeType = Array.from(
-            (document.getElementById("attendeeType") as HTMLSelectElement).selectedOptions
-          ).map((option) => option.value);
-          const headcount = parseInt((document.getElementById("headcount") as HTMLInputElement).value, 10);
-          const demographics = Array.from(
-            (document.getElementById("demographics") as HTMLSelectElement).selectedOptions
-          ).map((option) => option.value);
-          const description = (document.getElementById("description") as HTMLTextAreaElement).value;
-          const categories = Array.from(
-            (document.getElementById("categories") as HTMLSelectElement).selectedOptions
-          ).map((option) => option.value);
+      // Debugging: Log extracted city and state
+      console.log("Extracted City:", city);
+      console.log("Extracted State:", state);
 
-          // Validate required fields
-          if (!location.city || !location.state) {
-            alert("Please select a valid location.");
-            return;
-          }
+      if (!city || !state) {
+        alert("Could not extract city and state. Please try again.");
+        return { city: "", state: "" }; // Return an empty object to avoid undefined
+      }
 
-          // Combine date and time into a single Date object
-          const startDate = new Date(`${startDateInput}T${startTimeInput}:00`);
-          const endDate = new Date(`${endDateInput}T${endTimeInput}:00`);
-
-          // Validate required fields
-          if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-            alert("Please enter valid start and end dates/times.");
-            return;
-          }
-
-          if (startDate > endDate) {
-            alert("Start date/time cannot be after the end date/time.");
-            return;
-          }
-          
-          // Upload the image to Firebase Storage (optional)
-          let imageUrl = "";
-          if (imageFile) {
-            const storage = getStorage(); // Initialize Firebase Storage
-            const storageRef = ref(storage); // Use the ref function from Firebase Storage
-            const fileRef = ref(storage, `event-images/${imageFile.name}`); // Create a reference to the file in Firebase Storage
-            // Upload the file to Firebase Storage
-            await uploadBytes(fileRef, imageFile);
-            imageUrl = await getDownloadURL(fileRef);
-          }
-
-          
-          console.log("Custom question",customQuestions);
-          // Prepare the event data
-          const eventData = {
-            uid: user.uid,
-            name,
-            image:imageUrl, // Use the uploaded image URL
-            startDate,
-            endDate,
-            totalCost,
-            location,
-            type,
-            vendorFee,
-            attendeeType,
-            headcount,
-            demographics,
-            description,
-            categories,
-            // selectedFields, // Fields selected by the user
-            customQuestions, // Custom questions added by the user
-            createdAt: new Date().toISOString(),
-          };
-      
-          // Add the event to the "events" collection
-          const eventDocRef = await addDoc(collection(db, "events"), eventData);
-          console.log("Event document written with ID: ", eventDocRef.id);
-      
-          // Create a corresponding vendorApply document
-          const vendorApplyData = {
-            eventId: eventDocRef.id, // Use the event document ID
-            hostId: user.uid, // The host's user ID
-            vendorId: [], // Initialize with an empty array of vendors
-          };
-      
-          const vendorApplyDocRef = doc(db, "vendorApply", eventDocRef.id); // Use the event ID as the document ID
-          await setDoc(vendorApplyDocRef, vendorApplyData);
-      
-          console.log("VendorApply document created successfully:", vendorApplyData);
-      
-          // Redirect to the home page or a success page
-          alert("Application created successfully!");
-          router.push("/my-events");
-        } catch (error) {
-          console.error("Error creating application:", error);
-          alert("An error occurred while creating your application. Please try again.");
-        }
-    };
-
-    
-
-    const handlePlaceChanged = (): Location | null => {
-        if (autocompleteRef.current) {
-          const place = autocompleteRef.current.getPlace();
-      
-          if (!place || !place.address_components) {
-            alert("Please select a valid location from the suggestions.");
-            return { city: "", state: "" }; // Return an empty object to avoid undefined
-          }
-      
-          let city = "";
-          let state = "";
-      
-          // Extract city and state from the address components
-          place.address_components.forEach((component) => {
-            if (component.types.includes("locality")) {
-              city = component.long_name;
-            }
-            if (component.types.includes("administrative_area_level_1")) {
-              state = component.short_name;
-            }
-          });
-      
-          // Debugging: Log extracted city and state
-          console.log("Extracted City:", city);
-          console.log("Extracted State:", state);
-      
-          if (!city || !state) {
-            alert("Could not extract city and state. Please try again.");
-            return { city: "", state: "" }; // Return an empty object to avoid undefined
-          }
-      
-          return { city, state };
-        } else {
-          alert("Autocomplete is not loaded. Please try again.");
-          return { city: "", state: "" }; // Return an empty object to avoid undefined
-        }
-      };
+      return { city, state };
+    } else {
+      alert("Autocomplete is not loaded. Please try again.");
+      return { city: "", state: "" }; // Return an empty object to avoid undefined
+    }
+  };
 
   return (
     <main className={styles.main}>

@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
-import { theme } from '@/styles/theme';
-import { createCommunityChat } from '@/lib/firebaseChat';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import React, { useState, useRef } from "react";
+import { theme } from "@/styles/theme";
+import { createCommunityChat } from "@/lib/firebaseChat";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface CreateCommunityModalProps {
   userId: string;
@@ -14,9 +14,9 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const [communityName, setCommunityName] = useState('');
+  const [communityName, setCommunityName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,12 +24,12 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!communityName.trim()) {
-      setError('Please enter a community name');
+      setError("Please enter a community name");
       return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       let imageUrl = null;
@@ -38,7 +38,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
         const storage = getStorage();
         const storageRef = ref(
           storage,
-          `community-images/${Date.now()}-${imageFile.name}`
+          `community-images/${Date.now()}-${imageFile.name}`,
         );
 
         await uploadBytes(storageRef, imageFile);
@@ -48,8 +48,8 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
       await createCommunityChat(communityName, userId, [], imageUrl);
       onSuccess();
     } catch (err) {
-      console.error('Error creating community:', err);
-      setError('Failed to create community');
+      console.error("Error creating community:", err);
+      setError("Failed to create community");
     } finally {
       setLoading(false);
     }
@@ -59,19 +59,19 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
 
-      if (!file.type.startsWith('image/')) {
-        setError('Please select an image file');
+      if (!file.type.startsWith("image/")) {
+        setError("Please select an image file");
         return;
       }
 
       if (file.size > 10 * 1024 * 1024) {
-        setError('Image size should be less than 10MB');
+        setError("Image size should be less than 10MB");
         return;
       }
 
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
-      setError('');
+      setError("");
     }
   };
 
@@ -82,16 +82,16 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   return (
     <div
       style={{
-        position: 'fixed',
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 100,
       }}
     >
       <div
@@ -99,8 +99,8 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           backgroundColor: theme.colors.background.white,
           borderRadius: theme.borderRadius.lg,
           padding: theme.spacing.xl,
-          width: '400px',
-          maxWidth: '90%',
+          width: "400px",
+          maxWidth: "90%",
         }}
       >
         <h2
@@ -117,7 +117,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           <div style={{ marginBottom: theme.spacing.lg }}>
             <label
               style={{
-                display: 'block',
+                display: "block",
                 marginBottom: theme.spacing.sm,
                 color: theme.colors.text.primary,
               }}
@@ -125,17 +125,17 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
               Community Name
             </label>
             <input
-              type='text'
+              type="text"
               value={communityName}
               onChange={(e) => setCommunityName(e.target.value)}
-              placeholder='Enter community name'
+              placeholder="Enter community name"
               style={{
-                width: '100%',
+                width: "100%",
                 padding: theme.spacing.md,
                 borderRadius: theme.borderRadius.md,
-                border: '1px solid rgba(0,0,0,0.1)',
-                backgroundColor: '#f5f5f5',
-                color: 'black',
+                border: "1px solid rgba(0,0,0,0.1)",
+                backgroundColor: "#f5f5f5",
+                color: "black",
                 fontSize: theme.typography.fontSize.body,
                 fontFamily: theme.typography.fontFamily.primary,
               }}
@@ -145,7 +145,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           <div style={{ marginBottom: theme.spacing.lg }}>
             <label
               style={{
-                display: 'block',
+                display: "block",
                 marginBottom: theme.spacing.sm,
                 color: theme.colors.text.primary,
               }}
@@ -155,37 +155,37 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
 
             <div
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                height: '150px',
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "150px",
                 borderRadius: theme.borderRadius.md,
-                border: '1px dashed rgba(0,0,0,0.1)',
+                border: "1px dashed rgba(0,0,0,0.1)",
                 backgroundColor: theme.colors.background.main,
                 marginBottom: theme.spacing.md,
-                cursor: 'pointer',
-                overflow: 'hidden',
+                cursor: "pointer",
+                overflow: "hidden",
               }}
               onClick={handleClickUpload}
             >
               {imagePreview ? (
                 <img
                   src={imagePreview}
-                  alt='Community preview'
+                  alt="Community preview"
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
                   }}
                 />
               ) : (
-                <div style={{ textAlign: 'center' }}>
+                <div style={{ textAlign: "center" }}>
                   <div
                     style={{
                       marginBottom: theme.spacing.sm,
-                      fontSize: '24px',
+                      fontSize: "24px",
                       color: theme.colors.text.secondary,
                     }}
                   >
@@ -198,11 +198,11 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
               )}
 
               <input
-                type='file'
+                type="file"
                 ref={fileInputRef}
                 onChange={handleImageChange}
-                accept='image/*'
-                style={{ display: 'none' }}
+                accept="image/*"
+                style={{ display: "none" }}
               />
             </div>
 
@@ -219,7 +219,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           {error && (
             <div
               style={{
-                color: 'red',
+                color: "red",
                 marginBottom: theme.spacing.md,
               }}
             >
@@ -229,41 +229,41 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
 
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
+              display: "flex",
+              justifyContent: "flex-end",
               gap: theme.spacing.md,
             }}
           >
             <button
-              type='button'
+              type="button"
               onClick={onClose}
               style={{
                 padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
                 borderRadius: theme.borderRadius.md,
-                border: '1px solid rgba(0,0,0,0.1)',
+                border: "1px solid rgba(0,0,0,0.1)",
                 backgroundColor: theme.colors.background.white,
                 color: theme.colors.text.primary,
-                cursor: 'pointer',
+                cursor: "pointer",
                 fontFamily: theme.typography.fontFamily.primary,
               }}
             >
               Cancel
             </button>
             <button
-              type='submit'
+              type="submit"
               disabled={loading}
               style={{
                 padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
                 borderRadius: theme.borderRadius.md,
-                border: 'none',
-                backgroundColor: '#F16261',
+                border: "none",
+                backgroundColor: "#F16261",
                 color: theme.colors.background.white,
-                cursor: loading ? 'default' : 'pointer',
+                cursor: loading ? "default" : "pointer",
                 opacity: loading ? 0.7 : 1,
                 fontFamily: theme.typography.fontFamily.primary,
               }}
             >
-              {loading ? 'Creating...' : 'Create Community'}
+              {loading ? "Creating..." : "Create Community"}
             </button>
           </div>
         </form>

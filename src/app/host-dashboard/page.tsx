@@ -1,7 +1,6 @@
-
 "use client";
-import { useEffect, useState } from 'react';
-import { auth } from '@/lib/firebase'; // Adjust the import based on your project structure
+import { useEffect, useState } from "react";
+import { auth } from "@/lib/firebase"; // Adjust the import based on your project structure
 
 const VendorDashboard = () => {
   const [userName, setUserName] = useState<string | null>(null); // State to store the user's name
@@ -28,12 +27,14 @@ const VendorDashboard = () => {
     <div className="min-h-screen bg-gray-100 text-black">
       <main className="p-8">
         <h2 className="text-2xl font-semibold mb-4">
-          {userName ? `Welcome to your dashboard, ${userName}!` : 'Please sign in.'}
+          {userName
+            ? `Welcome to your dashboard, ${userName}!`
+            : "Please sign in."}
         </h2>
-        <p className="mb-4">Here you can manage your host profile, view applications, and more.</p>
-        <nav className="space-y-2">
-          {/* Navigation links can go here */}
-        </nav>
+        <p className="mb-4">
+          Here you can manage your host profile, view applications, and more.
+        </p>
+        <nav className="space-y-2">{/* Navigation links can go here */}</nav>
       </main>
     </div>
   );

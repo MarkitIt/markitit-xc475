@@ -2,166 +2,127 @@
 
 import Link from "next/link";
 import "./tailwind.css";
-import { theme } from '@/styles/theme';
-import { EventSearchBar } from '@/components/EventSearchBar';
-import Image from 'next/image';
-import styles from './page.module.css';
+import { theme } from "@/styles/theme";
+import Image from "next/image";
 
 export default function Home() {
   return (
-    <main style={{
-      background: theme.colors.background.gradient,
-      minHeight: '100vh',
-      overflow: 'hidden',
-    }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginLeft: theme.spacing.xl,
-        marginBottom: '300px',
-      }}>
-        <div style={{
-          maxWidth: '600px',
-          position: 'absolute',
-          left: '15%',
-        }}>
-          <h1 style={{
-            fontFamily: theme.typography.fontFamily.primary,
-            fontSize: theme.typography.fontSize.title,
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.primary.coral,
-            marginBottom: theme.spacing.md,
-            lineHeight: 1.2,
-          }}>
-            Pop Up.
-          </h1>
-          <h1 style={{
-            fontFamily: theme.typography.fontFamily.primary,
-            fontSize: theme.typography.fontSize.title,
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.primary.darkBlue,
-            marginBottom: theme.spacing.md,
-            lineHeight: 1.2,
-          }}>
-            Stand Out.
-          </h1>
-          <h1 style={{
-            fontFamily: theme.typography.fontFamily.primary,
-            fontSize: theme.typography.fontSize.title,
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.background.white,
-            marginBottom: theme.spacing.xl,
-            lineHeight: 1.2,
-          }}>
-            Sell More.
-            <Image
-              src="/images/homeVector.png"
-              alt="Vendor Shop Display"
-              width={400}
-              height={100}
-              style={{
-                objectFit: 'contain',
-                borderRadius: theme.borderRadius.lg,
-                maxWidth: '100%',
-                height: 'auto',
-              }}
-            />
-          </h1>
-          
-          <p style={{
-            fontFamily: theme.typography.fontFamily.primary,
-            fontSize: theme.typography.fontSize.body,
-            color: theme.colors.text.secondary,
-            maxWidth: '450px',
-            lineHeight: 1.5,
-          }}>
-            a one-stop platform for finding top-tier events, managing applications, and connecting with a thriving vendor community.
+    <main className="landing-background">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+         marginTop: theme.spacing.lg,
+          padding: "0 4rem",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "800px",
+            position: "relative",
+          }}
+        >
+          <h1 className="landing-title coral">Pop Up.</h1>
+          <h1 className="landing-title dark-blue">Stand Out.</h1>
+          <h1 className="landing-title beige">Sell More.</h1>
+
+          <Image
+            src="/images/underline.png"
+            alt="Decorative underline"
+            width={500}
+            height={20}
+            className="title-underline-image"
+          />
+
+          <p className="landing-description">
+            a one-stop platform for finding events, managing applications, and
+            connecting with a thriving vendor community.
           </p>
         </div>
 
-        <div style={{
-          position: 'relative',
-          width: '1200px',
-          height: '800px',
-        }}>
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '110%',
-            transform: 'translate(-50%, -50%)',
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+        <div
+          style={{
+            position: "relative",
+            width: "650px",
+            height: "800px",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: "55%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Image
               src="/images/homeImage.png"
               alt="Vendor Shop Display"
               width={800}
               height={600}
               style={{
-                objectFit: 'contain',
+                objectFit: "contain",
                 borderRadius: theme.borderRadius.lg,
-                maxWidth: '100%',
-                height: 'auto',
-                marginTop: '300px', // Push the image down
+                maxWidth: "100%",
+                height: "auto",
               }}
             />
-            {/* <div style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              width: '200px',
-              height: '200px',
-              backgroundColor: theme.colors.primary.coral,
-              borderRadius: '50%',
-              opacity: 0.2,
-              zIndex: -1,
-            }} />
-            <div style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              width: '150px',
-              height: '150px',
-              backgroundColor: theme.colors.secondary.yellow,
-              borderRadius: '50%',
-              opacity: 0.2,
-              zIndex: -1,
-            }} /> */}
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                width: "200px",
+                height: "200px",
+                backgroundColor: theme.colors.primary.coral,
+                borderRadius: "50%",
+                opacity: 0.2,
+                zIndex: -1,
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                width: "150px",
+                height: "150px",
+                backgroundColor: theme.colors.secondary.yellow,
+                borderRadius: "50%",
+                opacity: 0.2,
+                zIndex: -1,
+              }}
+            />
           </div>
         </div>
         
       </div>
       <div style={{
           display: 'flex',
-          justifyContent: 'center', // Center horizontally
-          alignItems: 'center', // Center vertically
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
           marginTop: theme.spacing.sm,
-          marginBottom: '200px auto',
+          marginBottom: '50px',
+          padding: '0 20px',
         }}>
         <div style={{
-          maxWidth: '600px',
+          width: '100%',
           textAlign: 'center',
         }}>
-          <h1 style={{
-            fontFamily: theme.typography.fontFamily.primary,
-            fontSize: theme.typography.fontSize.title,
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.primary.darkBlue,
-            marginBottom: theme.spacing.md,
-            lineHeight: 1.2,
-          }}>
-            Discover Markiit
+          <h1 className="landing-title dark-blue">
+            Discover MarkitIt
           </h1>
           <p style={{
             fontFamily: theme.typography.fontFamily.primary,
             fontSize: theme.typography.fontSize.body,
             color: theme.colors.background.white,
-            maxWidth: '450px',
-            lineHeight: 1.5,
             margin: '0 auto',
             marginBottom: '0px',
           }}>
@@ -174,14 +135,17 @@ export default function Home() {
       {/* Curve*/}
       <div
         style={{
-          backgroundColor: theme.colors.primary.darkBlue, // Set the background to purple
-          width: "100vw", // Make the background span the full width
-          padding: theme.spacing.lg, // Add padding for spacing
+          backgroundColor: theme.colors.primary.darkBlue,
+          width: "100%",
+          padding: 0,
           textAlign: "left",
           position: "relative",
           overflow: "hidden", 
           height: "200px",
           clipPath: "url(#concaveClip)",
+          margin: 0,
+          left: 0,
+          right: 0,
         }}
       >
         
@@ -203,38 +167,24 @@ export default function Home() {
       {/* Features Section */}
       <div
         style={{
-          backgroundColor: theme.colors.primary.darkBlue, // Set the background to purple
-          width: "100vw", // Make the background span the full width
-          padding: theme.spacing.lg, // Add padding for spacing
+          backgroundColor: theme.colors.primary.darkBlue,
+          width: "100%",
+          padding: `${theme.spacing.xl} ${theme.spacing.lg}`,
           textAlign: "left",
           position: "relative",
-          overflow: "hidden", 
+          overflow: "visible",
+          margin: 0,
+          left: 0,
+          right: 0,
         }}
       >
-        {/* Concave Curve at Top */}
-        {/* <div style={{ position: "absolute", top: 0, left: 0, width: "100%" }}>
-          <svg
-            viewBox="0 0 1440 100"
-            preserveAspectRatio="none"
-            style={{
-              display: "block",
-              width: "100%",
-              height: "200px",
-              transform: "rotate(180deg)",
-            }}
-          >
-            <path
-              d="M0,100 C480,0 960,0 1440,100"
-              fill='white'
-              strokeWidth="100"
-            />
-          </svg>
-        </div> */}
+        {/* Content container */}
         <div
           style={{
             gap: theme.spacing.lg,
-            maxWidth: "750px", // Center the content within a container
-            margin: "0 auto", // Center the grid horizontally
+            width: "100%",
+            maxWidth: "1200px",
+            margin: "0 auto",
           }}
         >
           {[
@@ -292,9 +242,9 @@ export default function Home() {
                 <h3
                   style={{
                     fontFamily: theme.typography.fontFamily.primary,
-                    fontSize: theme.typography.fontSize.subtitle,
-                    fontWeight: theme.typography.fontWeight.semibold,
-                    color: theme.colors.primary.red,
+                    fontSize: theme.typography.fontSize.body,
+                    fontWeight: theme.typography.fontWeight.medium,
+                    color: theme.colors.primary.coral,
                     marginBottom: theme.spacing.xs,
                   }}
                 >
@@ -313,10 +263,10 @@ export default function Home() {
                       marginTop: theme.spacing.xs,
                       marginBottom: theme.spacing.sm,
                       fontSize: theme.typography.fontSize.body,
-                      backgroundColor: theme.colors.primary.red,
+                      backgroundColor: theme.colors.primary.coral,
                       color: theme.colors.background.white,
-                      padding: `${theme.spacing.xs} ${theme.spacing.lg}`,
-                      borderRadius: theme.borderRadius.md,
+                      padding: theme.spacing.xs + " " + theme.spacing.sm,
+                      borderRadius: theme.borderRadius.full,
                       border: "none",
                       cursor: "pointer",
                     }}
@@ -340,31 +290,6 @@ export default function Home() {
           ))}
         </div>
       </div>
-
-      {/* Placeholder Boxes */}
-      <section className="py-20 px-72 grid grid-cols-1 md:grid-cols-3 gap-40">
-        {[1, 2, 3].map((box, index) => (
-          <div
-            key={index}
-            className="bg-yellow-400 rounded-2xl shadow-lg relative overflow-hidden"
-            style={{
-              paddingTop: "100%", // Maintain a square aspect ratio
-            }}
-          >
-            <div
-              className="absolute inset-0"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {/* Content inside the box */}
-              <p className="text-white font-bold">Box {index + 1}</p>
-            </div>
-          </div>
-        ))}
-      </section>
     </main>
   );
 }

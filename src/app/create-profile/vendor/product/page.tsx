@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useVendor } from '@/context/VendorContext';
-import styles from '../../styles.module.css';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useVendor } from "@/context/VendorContext";
+import styles from "../../styles.module.css";
 
 export default function ProductPage() {
   const router = useRouter();
   const { vendor, updateVendor } = useVendor();
   const [priceMin, setPriceMin] = useState(0);
   const [priceMax, setPriceMax] = useState(150);
-  const [createOwnProducts, setCreateOwnProducts] = useState<'yes' | 'no' | null>(null);
+  const [createOwnProducts, setCreateOwnProducts] = useState<
+    "yes" | "no" | null
+  >(null);
   const [isExiting, setIsExiting] = useState(false);
 
   const handleNext = async () => {
@@ -18,19 +20,22 @@ export default function ProductPage() {
       ...vendor,
       priceRange: {
         min: priceMin,
-        max: priceMax
+        max: priceMax,
       },
-      createOwnProducts: createOwnProducts === 'yes'
+      createOwnProducts: createOwnProducts === "yes",
     });
 
     setIsExiting(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    router.push('/create-profile/vendor/budget');
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    router.push("/create-profile/vendor/budget");
   };
 
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'min' | 'max') => {
+  const handlePriceChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "min" | "max",
+  ) => {
     const value = parseInt(e.target.value);
-    if (type === 'min') {
+    if (type === "min") {
       setPriceMin(Math.min(value, priceMax - 0));
     } else {
       setPriceMax(Math.max(value, priceMin + 0));
@@ -38,7 +43,9 @@ export default function ProductPage() {
   };
 
   return (
-    <div className={`${styles.container} ${isExiting ? styles.slideOut : styles.slideIn}`}>
+    <div
+      className={`${styles.container} ${isExiting ? styles.slideOut : styles.slideIn}`}
+    >
       <div className={styles.stepIndicator}>
         <span className={styles.stepIcon}>▲</span>
         <span className={styles.stepIcon}>★</span>
@@ -52,7 +59,9 @@ export default function ProductPage() {
 
       <div className={styles.form}>
         <div className={styles.formGroup}>
-          <label className={styles.label}>What price range do you typically sell in?*</label>
+          <label className={styles.label}>
+            What price range do you typically sell in?*
+          </label>
           <div className={styles.priceRangeContainer}>
             <div className={styles.priceInputs}>
               <div>
@@ -60,7 +69,7 @@ export default function ProductPage() {
                 <input
                   type="number"
                   value={priceMin}
-                  onChange={(e) => handlePriceChange(e, 'min')}
+                  onChange={(e) => handlePriceChange(e, "min")}
                   min={0}
                   max={priceMax - 0}
                   className={styles.priceInput}
@@ -72,7 +81,7 @@ export default function ProductPage() {
                 <input
                   type="number"
                   value={priceMax}
-                  onChange={(e) => handlePriceChange(e, 'max')}
+                  onChange={(e) => handlePriceChange(e, "max")}
                   min={priceMin + 0}
                   max={300}
                   className={styles.priceInput}
@@ -85,7 +94,7 @@ export default function ProductPage() {
                 className={styles.sliderRange}
                 style={{
                   left: `${((priceMin - 0) / (300 - 0)) * 100}%`,
-                  right: `${100 - ((priceMax - 0) / (300 - 0)) * 100}%`
+                  right: `${100 - ((priceMax - 0) / (300 - 0)) * 100}%`,
                 }}
               />
               <input
@@ -93,7 +102,7 @@ export default function ProductPage() {
                 min={0}
                 max={300}
                 value={priceMin}
-                onChange={(e) => handlePriceChange(e, 'min')}
+                onChange={(e) => handlePriceChange(e, "min")}
                 className={styles.slider}
                 style={{ zIndex: 1 }}
               />
@@ -102,7 +111,7 @@ export default function ProductPage() {
                 min={0}
                 max={300}
                 value={priceMax}
-                onChange={(e) => handlePriceChange(e, 'max')}
+                onChange={(e) => handlePriceChange(e, "max")}
                 className={styles.slider}
                 style={{ zIndex: 2 }}
               />
@@ -111,18 +120,20 @@ export default function ProductPage() {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>Do you create your own products?*</label>
+          <label className={styles.label}>
+            Do you create your own products?*
+          </label>
           <div className={styles.pillButtonContainer}>
             <button
-              className={`${styles.pillButton} ${createOwnProducts === 'yes' ? styles.selected : ''}`}
-              onClick={() => setCreateOwnProducts('yes')}
+              className={`${styles.pillButton} ${createOwnProducts === "yes" ? styles.selected : ""}`}
+              onClick={() => setCreateOwnProducts("yes")}
               type="button"
             >
               Yes
             </button>
             <button
-              className={`${styles.pillButton} ${createOwnProducts === 'no' ? styles.selected : ''}`}
-              onClick={() => setCreateOwnProducts('no')}
+              className={`${styles.pillButton} ${createOwnProducts === "no" ? styles.selected : ""}`}
+              onClick={() => setCreateOwnProducts("no")}
               type="button"
             >
               No

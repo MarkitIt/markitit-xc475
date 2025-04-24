@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { theme } from '@/styles/theme';
-import ConversationList from './ConversationList';
-import MessageArea from './MessageArea';
-import { Conversation } from '@/lib/firebaseChat';
+import React, { useState } from "react";
+import { theme } from "@/styles/theme";
+import ConversationList from "./ConversationList";
+import MessageArea from "./MessageArea";
+import { Conversation } from "@/lib/firebaseChat";
 
 interface ChatInterfaceProps {
   userId: string;
-  activeTab: 'personal' | 'community';
-  setActiveTab: (tab: 'personal' | 'community') => void;
+  activeTab: "personal" | "community";
+  setActiveTab: (tab: "personal" | "community") => void;
 }
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
@@ -21,36 +21,36 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   return (
     <div
       style={{
-        display: 'flex',
-        justifyContent: 'center',
-        width: '100%',
-        backgroundColor: theme.colors.background.white,
-        position: 'relative',
+        display: "flex",
+        justifyContent: "center",
+        width: "100%",
+        backgroundColor: "transparent",
+        position: "relative",
         paddingTop: theme.spacing.xl,
-        overflow: 'hidden',
+        overflow: "hidden",
       }}
     >
       <div
         style={{
-          width: '1440px',
-          position: 'relative',
-          backgroundColor: theme.colors.background.white,
+          width: "1440px",
+          position: "relative",
+          backgroundColor: "transparent",
           paddingBottom: 0,
         }}
       >
         <div
           style={{
-            position: 'relative',
-            display: 'flex',
+            position: "relative",
+            display: "flex",
             gap: theme.spacing.xl,
-            justifyContent: 'center',
+            justifyContent: "center",
             padding: `0 ${theme.spacing.xl}`,
           }}
         >
           <div
             style={{
-              width: '436px',
-              position: 'static',
+              width: "436px",
+              position: "static",
             }}
           >
             <ConversationList
@@ -64,8 +64,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
           <div
             style={{
-              width: '541px',
-              position: 'relative',
+              width: "541px",
+              position: "relative",
             }}
           >
             <MessageArea conversation={selectedConversation} userId={userId} />

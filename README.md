@@ -34,16 +34,23 @@ Small businesses rely on pop-up shops for growth but face numerous challenges:
 ## Tech Stack
 
 ### Frontend
+
 - Next.js (React Framework) – Provides server-side rendering and static generation.
 - Tailwind CSS – Used for styling and responsive design.
+
 ### Backend
+
 - Firebase Firestore – NoSQL database for storing event listings, applications, and vendor data.
 - Firebase Authentication – Manages user sign-ins with Google OAuth and email/password.
 - Firebase Cloud Functions – Handles automated application submissions and API integrations.
+
 ### Event Aggregation & Payments
+
 - Eventbrite API & Web Scraping – Fetches pop-up events.
 - Stripe – Manages vendor payments and application fees.
+
 ### Hosting & Deployment
+
 - Frontend: Vercel (optimized for Next.js)
 - Backend: Firebase Cloud Functions
 
@@ -63,7 +70,6 @@ Before you begin, ensure you have the following installed:
 - Git – Version control system for managing the repository.
 - Vercel CLI – Used for deploying the frontend.
 
-
 ### Installation
 
 #### Clone the repository:
@@ -79,7 +85,6 @@ cd markitit
 npm install
 ```
 
-
 Access the application in your browser at http://localhost:3000.
 
 #### Environment Variables
@@ -87,7 +92,7 @@ Access the application in your browser at http://localhost:3000.
 Create a .env file in the root directory and add the following:
 
 ```
-NEXT_PUBLIC_FIREBASE_API_KEY= 
+NEXT_PUBLIC_FIREBASE_API_KEY=
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
 NEXT_PUBLIC_FIREBASE_DATABASE_URL=
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=
@@ -102,18 +107,22 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 ```
 npm run dev
 ```
-#### Pages Directory 
+
+#### Pages Directory
 
 ## Pages Directory
 
 ### Authentication
+
 - `/auth/login` - User login and signup page
 - `/auth/signup` - New user registration page
 
 ### Profile Creation
+
 - `/create-profile` - Initial role selection (Vendor or Host)
-  
+
 #### Vendor Profile Creation Flow
+
 - `/create-profile/vendor` - Basic business information
 - `/create-profile/vendor/type` - Select vendor type (Food or Market)
 - `/create-profile/vendor/category` - Business category selection
@@ -125,9 +134,11 @@ npm run dev
 - `/create-profile/vendor/review` - Review and complete profile
 
 #### Host Profile Creation Flow
+
 - `/create-profile/host` - Organization information and event preferences
 
 ### Dashboards
+
 - `/vendor-dashboard` - Vendor's main dashboard
   - View applications
   - Manage profile
@@ -138,6 +149,7 @@ npm run dev
   - Track event metrics
 
 ### Events
+
 - `/search-events` - Browse and search available events
 - `/event-profile/[id]` - Individual event details
 - `/event-profile/[id]/apply` - Vendor application for an event
@@ -145,27 +157,31 @@ npm run dev
 - `/my-applications` - List of event applications (for vendors)
 
 ### Community
+
 - `/community` - Community feed and interactions
 - `/notifications` - User notifications center
 
 ### Settings
+
 - `/settings` - User account and profile settings
   - Profile management
   - Account preferences
   - Notification settings
 
 ### Additional Pages
+
 - `/` - Home/Landing page
 - `/search-events` - Event discovery page
 
 ## Contributing
+
 - Clone the repository
 - Create a feature branch (git checkout -b feature-name)
 - Commit changes (git commit -m "Add feature")
 - Push to branch [category]/[short-description]-[your-initials]
--   Examples:
+- Examples:
 -     feature/add-login-ar
 -     bugfix/fix-chart-rendering-js
 -     chore/update-readme-js
 - Open a Pull Request
--   PR's must have 2 reviewers to merge
+- PR's must have 2 reviewers to merge

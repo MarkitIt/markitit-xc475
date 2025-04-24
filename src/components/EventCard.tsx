@@ -1,38 +1,66 @@
-import Link from 'next/link';
-import { Event } from '@/types/Event';
-import { theme } from '@/styles/theme';
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import "../app/tailwind.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { Event } from "@/types/Event";
+import { theme } from "@/styles/theme";
 
-interface EventProps {
+interface EventCardProps {
   event: Event;
+  index: number;
   rank?: number;
   showRank?: boolean;
   score?: number;
 }
 
-export function EventCard({ event, rank, showRank, score }: EventProps) {
+export const EventCard: React.FC<EventCardProps> = ({
+  event,
+  index,
+  rank,
+  showRank,
+  score,
+}) => {
   // Use the score from props if provided, otherwise use the score from the event
   const displayScore = score !== undefined ? score : event.score;
-  
+
   // Debug output for scores
-  console.log(`EventCard for ${event.name}: Raw API score=${displayScore}, Score breakdown:`, event.scoreBreakdown);
-  
+  console.log(
+    `EventCard for ${event.name}: Raw API score=${displayScore}, Score breakdown:`,
+    event.scoreBreakdown,
+  );
+
   // Calculate the properly formatted score - if over 100, divide by 100
-  const formattedScore = displayScore !== undefined && displayScore > 100 
-    ? (displayScore / 100) 
-    : displayScore;
-  
+  const formattedScore =
+    displayScore !== undefined && displayScore > 100
+      ? displayScore / 100
+      : displayScore;
+
   // Format date as startDate - endDate
   const formatDate = (timestamp: any) => {
     if (!timestamp) return null;
-    return new Date(timestamp.seconds * 1000).toLocaleDateString();
+    
+    const eventDate = new Date(timestamp.seconds * 1000);
+    // If year is 1970 (epoch default) or no year in the data, use current year
+    if (eventDate.getFullYear() === 1970 || !timestamp.seconds) {
+      const currentYear = new Date().getFullYear();
+      eventDate.setFullYear(currentYear);
+    }
+    
+    return eventDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    });
   };
-  
+
   // Format the date display
-  let dateDisplay = 'Date not available';
+  let dateDisplay = "Date not available";
   if (event.startDate && event.endDate) {
     const startFormatted = formatDate(event.startDate);
     const endFormatted = formatDate(event.endDate);
-    
+
     if (startFormatted === endFormatted) {
       // Single day event
       dateDisplay = startFormatted as string;
@@ -44,90 +72,47 @@ export function EventCard({ event, rank, showRank, score }: EventProps) {
     // Only start date available
     dateDisplay = formatDate(event.startDate) as string;
   }
-  
+
   return (
-    <Link href={`/event-profile/${event.id}`}>
-      <div style={{
-        borderRadius: theme.borderRadius.md,
-        overflow: 'hidden',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        backgroundColor: theme.colors.background.white,
-        position: 'relative',
-        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-        cursor: 'pointer',
-        height: '100%',
-      }}
-      className="hover:shadow-lg hover:transform hover:scale-102"
-      >
-        {showRank && displayScore !== undefined && (
-          <div style={{
-            position: 'absolute',
-            top: theme.spacing.sm,
-            right: theme.spacing.sm,
-            backgroundColor: theme.colors.primary.sand,
-            color: theme.colors.primary.black,
-            borderRadius: theme.borderRadius.full,
-            padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
-            fontWeight: theme.typography.fontWeight.semibold,
-            fontSize: '0.875rem',
-            zIndex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minWidth: '2.5rem',
-            height: '2rem',
-          }}>
-            {/* Display the score with one decimal place */}
-            {formattedScore?.toFixed(1)}%
-          </div>
-        )}
-        <div style={{ height: '12rem', backgroundColor: theme.colors.secondary.lightPink }}>
+    <Link href={`/event-profile/${encodeURIComponent(event.id)}`} className="card">
+      <div className="event-card">
+        <div className="image-container">
           {event.image ? (
-            <img
+            <Image
               src={event.image}
               alt={event.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              layout="fill"
+              objectFit="cover"
             />
           ) : (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-              backgroundColor: theme.colors.primary.beige,
-              color: theme.colors.primary.black,
-              fontFamily: theme.typography.fontFamily.primary,
-            }}>
-              <img
-                src="/default-popup.svg"
-                alt={event.name || "Event"}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+            <div className="image-placeholder">
+              <span className="text-secondary">No Image</span>
             </div>
           )}
         </div>
-
-        <div style={{ padding: theme.spacing.lg }}>
-          <h3 style={{
-            fontWeight: theme.typography.fontWeight.semibold,
-            fontSize: '1.125rem',
-            marginBottom: theme.spacing.sm,
-            color: theme.colors.text.primary,
-            fontFamily: theme.typography.fontFamily.primary,
-          }}>{event.name}</h3>
-          <p style={{
-            color: theme.colors.text.secondary,
-            fontSize: '1rem',
-            marginBottom: theme.spacing.xs,
-            fontFamily: theme.typography.fontFamily.primary,
-          }}>{`${event.location?.city || 'Unknown'}, ${event.location?.state || 'Unknown'}`}</p>
-          <p style={{
-            color: theme.colors.primary.coral,
-            fontSize: '0.875rem',
-            fontFamily: theme.typography.fontFamily.primary,
-          }}>{dateDisplay}</p>
+        <h3 className="event-title">{event.name}</h3>
+        <div className="rating-container">
+          {[...Array(5)].map((_, i) => (
+            <FontAwesomeIcon
+              key={i}
+              icon={faStar}
+              className={
+                i < (event.rating || 0) ? "star-active" : "star-inactive"
+              }
+              size="sm"
+            />
+          ))}
+        </div>
+        <div className="event-details">
+          <div className="event-date">
+            <FontAwesomeIcon icon={faCalendarAlt} className="icon-calendar" />
+            {dateDisplay}
+          </div>
+          <div className="event-location">
+            {event.location?.city}, {event.location?.state}
+          </div>
         </div>
       </div>
     </Link>
   );
-} 
+};

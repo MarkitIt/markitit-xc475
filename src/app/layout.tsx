@@ -9,6 +9,7 @@ import GoogleMapsLoader from "../components/GoogleMapsLoader";
 import { ApplicationProfileProvider } from "../context/CreateEventProfileContext";
 import { HostProvider } from "../context/HostContext";
 import { UserProvider } from "../context/UserContext";
+import GlobalBackground from "@/components/GlobalBackground";
 
 import "./globals.css";
 
@@ -38,7 +39,9 @@ export default function RootLayout({
               <HostProvider>
                 <ApplicationProfileProvider>
                   <Header />
-                  <VendorProvider>{children}</VendorProvider>
+                  <VendorProvider>
+                    <GlobalBackground>{children}</GlobalBackground>
+                  </VendorProvider>
                   <Footer />
                 </ApplicationProfileProvider>
               </HostProvider>

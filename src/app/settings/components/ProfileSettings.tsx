@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import styles from '../styles.module.css';
+import { useState } from "react";
+import styles from "../styles.module.css";
 
 interface ProfileSettingsProps {
   initialData?: {
@@ -9,10 +9,13 @@ interface ProfileSettingsProps {
   onSave: (data: { displayName: string; email: string }) => void;
 }
 
-export const ProfileSettings = ({ initialData, onSave }: ProfileSettingsProps) => {
+export const ProfileSettings = ({
+  initialData,
+  onSave,
+}: ProfileSettingsProps) => {
   const [formData, setFormData] = useState({
-    displayName: initialData?.displayName || '',
-    email: initialData?.email || '',
+    displayName: initialData?.displayName || "",
+    email: initialData?.email || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,7 +37,9 @@ export const ProfileSettings = ({ initialData, onSave }: ProfileSettingsProps) =
             placeholder="Your display name"
             className={styles.input}
             value={formData.displayName}
-            onChange={(e) => setFormData(prev => ({ ...prev, displayName: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, displayName: e.target.value }))
+            }
           />
         </div>
 
@@ -48,7 +53,9 @@ export const ProfileSettings = ({ initialData, onSave }: ProfileSettingsProps) =
             placeholder="Your email"
             className={styles.input}
             value={formData.email}
-            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, email: e.target.value }))
+            }
           />
         </div>
 
@@ -58,4 +65,4 @@ export const ProfileSettings = ({ initialData, onSave }: ProfileSettingsProps) =
       </form>
     </div>
   );
-}; 
+};

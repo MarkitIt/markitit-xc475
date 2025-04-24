@@ -13,7 +13,11 @@ const ActionItems = () => {
         {tasks.map((task) => (
           <li key={task.id} className="text-sm flex items-center space-x-2">
             <input type="checkbox" checked={task.completed} readOnly />
-            <span className={task.completed ? "line-through text-gray-400" : ""}>{task.task}</span>
+            <span
+              className={task.completed ? "line-through text-gray-400" : ""}
+            >
+              {task.task}
+            </span>
           </li>
         ))}
       </ul>

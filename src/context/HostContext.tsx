@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
 
 interface HostContextType {
   hostProfile: any | null;
@@ -9,7 +9,9 @@ interface HostContextType {
 
 const HostContext = createContext<HostContextType | undefined>(undefined);
 
-export const HostProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const HostProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [hostProfile, setHostProfile] = useState<any | null>(null);
 
   return (
@@ -22,7 +24,7 @@ export const HostProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useHostContext = () => {
   const context = useContext(HostContext);
   if (!context) {
-    throw new Error('useHostContext must be used within a HostProvider');
+    throw new Error("useHostContext must be used within a HostProvider");
   }
   return context;
 };

@@ -7,7 +7,7 @@ import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import styles from '../auth.module.css';
+import styles from "../auth.module.css";
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
@@ -21,11 +21,15 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
       const user = userCredential.user;
 
       // Store user details in Firestore
@@ -40,7 +44,7 @@ export default function SignupPage() {
       alert("Account created successfully!");
       router.push("/search-events");
     } catch (err) {
-      setError('Failed to create account');
+      setError("Failed to create account");
     }
   };
 
@@ -60,13 +64,13 @@ export default function SignupPage() {
         />
         <h1 className={styles.welcomeText}>Welcome!</h1>
       </div>
-      
+
       <div className={styles.rightPanel}>
         <form className={styles.form} onSubmit={handleSubmit}>
           <h2 className={styles.title}>SIGN UP</h2>
-          
+
           {error && <div className={styles.error}>{error}</div>}
-          
+
           <div className={styles.inputGroup}>
             <label className={styles.label}>Email Address</label>
             <input
@@ -151,7 +155,7 @@ export default function SignupPage() {
           </div>
 
           <div className={styles.authText}>
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link href="/auth/login" className={styles.authLink}>
               Log in here
             </Link>

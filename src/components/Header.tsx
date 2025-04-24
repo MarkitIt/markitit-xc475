@@ -3,16 +3,15 @@
 import { signOut } from "firebase/auth";
 import Link from "next/link";
 import React, { useEffect, useState, useRef } from "react";
-import { useUserContext } from '../context/UserContext';
+import { useUserContext } from "../context/UserContext";
 import { auth } from "../lib/firebase";
-import styles from './Header.module.css';
-import { EventSearchBar } from '@/components/EventSearchBar';
-import { useSearchContext } from "@/context/SearchContext";
-import { useRouter, usePathname } from "next/navigation"; 
-import Image from 'next/image';
+import styles from "./Header.module.css";
+import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Header() {
-  const { user, vendorProfile, hostProfile, getVendorProfile, getHostProfile } = useUserContext();
+  const { user, vendorProfile, hostProfile, getVendorProfile, getHostProfile } =
+    useUserContext();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter(); 
@@ -21,31 +20,38 @@ export default function Header() {
   const pathname = usePathname();
   const isActive = (path: string) => pathname === path;  // Check if the current route matches the path
 
-
   useEffect(() => {
     const loadProfile = async () => {
       if (!user) return;
-      
-      if (user.role === 'vendor') {
+
+      if (user.role === "vendor") {
         await getVendorProfile();
-      } else if (user.role === 'host') {
+      } else if (user.role === "host") {
         await getHostProfile();
       }
     };
-    
+
     loadProfile();
   }, [user, user?.role]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Close dropdown when route changes
+  useEffect(() => {
+    setDropdownOpen(false);
+  }, [pathname]);
 
   const handleLogout = async () => {
     try {
@@ -72,39 +78,56 @@ export default function Header() {
       );
     }
 
-    if (user.role && user.role !== 'none') {
+    if (user.role && user.role !== "none") {
       return (
         <div ref={dropdownRef} className={styles.profile}>
-          <button onClick={() => setDropdownOpen(!isDropdownOpen)} className={styles.profileButton}>
-            <Image src="/icons/profile.svg" alt="Profile" width={24} height={24} />
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setDropdownOpen(!isDropdownOpen);
+            }}
+            className={styles.profileButton}
+          >
+            <Image
+              src="/icons/profile.svg"
+              alt="Profile"
+              width={24}
+              height={24}
+            />
             <span>Profile</span>
           </button>
 
           {isDropdownOpen && (
             <div className={styles.dropdown}>
-              {user.role === 'host' ? (
+              <Link href="/profile" className={styles.dropdownLink}>
+                My Profile
+              </Link>
+              {user.role === "host" ? (
                 <>
-                  <Link href="/host-dashboard" className={styles.dropdownLink}>
-                    Dashboard
-                  </Link>
                   <Link href="/my-events" className={styles.dropdownLink}>
                     My Events
+                  </Link>
+                  <Link href="/host-dashboard" className={styles.dropdownLink}>
+                    Dashboard
                   </Link>
                 </>
               ) : (
                 <>
-                  <Link href="/vendor-dashboard" className={styles.dropdownLink}>
-                    Dashboard
-                  </Link>
                   <Link href="/my-applications" className={styles.dropdownLink}>
                     My Applications
+                  </Link>
+                  <Link href="/vendor-dashboard" className={styles.dropdownLink}>
+                    Dashboard
                   </Link>
                 </>
               )}
               <Link href="/settings" className={styles.dropdownLink}>
                 Settings
               </Link>
-              <button onClick={handleLogout} className={`${styles.dropdownLink} ${styles.logoutButton}`}>
+              <button
+                onClick={handleLogout}
+                className={styles.logoutButton}
+              >
                 Logout
               </button>
             </div>
@@ -115,7 +138,19 @@ export default function Header() {
 
     return (
       <div ref={dropdownRef} className={styles.profile}>
-        <button onClick={() => setDropdownOpen(!isDropdownOpen)} className={styles.profileButton}>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setDropdownOpen(!isDropdownOpen);
+          }}
+          className={styles.profileButton}
+        >
+          <Image
+            src="/icons/profile.svg"
+            alt="Profile"
+            width={24}
+            height={24}
+          />
           <span>Create Profile</span>
         </button>
 
@@ -124,7 +159,10 @@ export default function Header() {
             <Link href="/create-profile" className={styles.dropdownLink}>
               Create Profile
             </Link>
-            <button onClick={handleLogout} className={`${styles.dropdownLink} ${styles.logoutButton}`}>
+            <button
+              onClick={handleLogout}
+              className={styles.logoutButton}
+            >
               Logout
             </button>
           </div>
@@ -142,12 +180,11 @@ export default function Header() {
             alt="MarkitIt Logo"
             width={250}
             height={50}
-            style={{ objectFit: 'contain' }}
+            style={{ objectFit: "contain" }}
           />
         </Link>
-        {/* <EventSearchBar onSearch={handleSearch}/> */}
       </div>
-      
+
       <div className={styles.rightSection}>
         <Link href="/search-events" className={styles.navLink}>
           <Image
@@ -161,33 +198,27 @@ export default function Header() {
           />
           <span style={{ color: isActive("/search-events") ? "#f15152" : "inherit" }}>Home</span>
         </Link>
-        
+
         <Link href="/community" className={styles.navLink}>
           <Image
             src="/icons/community.svg"
             alt="Community"
             width={24}
             height={24}
-            style={{
-              filter: isActive("/community") ? "invert(28%) sepia(77%) saturate(747%) hue-rotate(340deg) brightness(91%) contrast(94%)" : "none",
-            }}
           />
-          <span style={{ color: isActive("/community") ? "#f15152" : "inherit" }}>Community</span>
+          <span>Community</span>
         </Link>
-        
+
         <Link href="/notifications" className={styles.navLink}>
           <Image
             src="/icons/bell.svg"
             alt="Notifications"
             width={24}
             height={24}
-            style={{
-              filter: isActive("/notifications") ? "invert(28%) sepia(77%) saturate(747%) hue-rotate(340deg) brightness(91%) contrast(94%)" : "none",
-            }}
           />
-          <span style={{ color: isActive("/notifications") ? "#f15152" : "inherit" }}>Notifications</span>
+          <span>Notifications</span>
         </Link>
-        
+
         {renderProfileSection()}
       </div>
     </header>

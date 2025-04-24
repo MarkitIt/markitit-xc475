@@ -8,14 +8,14 @@ import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import Image from "next/image";
 import Link from "next/link";
-import styles from '../auth.module.css';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import styles from "../auth.module.css";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const { getVendorProfile } = useUserContext();
   const [user, setUser] = useState<User | null>(null);
 
@@ -23,9 +23,9 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push('/search-events');
+      router.push("/search-events");
     } catch (err) {
-      setError('Invalid email or password');
+      setError("Invalid email or password");
     }
   };
 
@@ -52,13 +52,13 @@ export default function LoginPage() {
         />
         <h1 className={styles.welcomeText}>Welcome<br/>Back!</h1>
       </div>
-      
+
       <div className={styles.rightPanel}>
         <form className={styles.form} onSubmit={handleSubmit}>
           <h2 className={styles.title}>LOG IN</h2>
-          
+
           {error && <div className={styles.error}>{error}</div>}
-          
+
           <div className={styles.inputGroup}>
             <label className={styles.label}>Email Address</label>
             <input
@@ -132,7 +132,7 @@ export default function LoginPage() {
           </div>
 
           <div className={styles.authText}>
-            Don't have an account?{' '}
+            Don't have an account?{" "}
             <Link href="/auth/signup" className={styles.authLink}>
               Sign up here
             </Link>

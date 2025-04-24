@@ -1,6 +1,9 @@
-declare module 'string-similarity' {
+declare module "string-similarity" {
   export function compareTwoStrings(first: string, second: string): number;
-  export function findBestMatch(mainString: string, targetStrings: string[]): {
+  export function findBestMatch(
+    mainString: string,
+    targetStrings: string[],
+  ): {
     ratings: Array<{
       target: string;
       rating: number;
@@ -10,4 +13,4 @@ declare module 'string-similarity' {
       rating: number;
     };
   };
-} 
+}

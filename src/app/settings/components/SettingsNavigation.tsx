@@ -1,15 +1,18 @@
-import styles from '../styles.module.css';
+import styles from "../styles.module.css";
 
 interface SettingsNavigationProps {
   activeSection: string;
   onSectionChange: (section: string) => void;
 }
 
-export const SettingsNavigation = ({ activeSection, onSectionChange }: SettingsNavigationProps) => {
+export const SettingsNavigation = ({
+  activeSection,
+  onSectionChange,
+}: SettingsNavigationProps) => {
   const sections = [
-    { id: 'profile', label: 'Profile Settings' },
-    { id: 'account', label: 'Account Settings' },
-    { id: 'notifications', label: 'Notifications' },
+    { id: "profile", label: "Profile Settings" },
+    { id: "account", label: "Account Settings" },
+    { id: "notifications", label: "Notifications" },
   ];
 
   return (
@@ -19,7 +22,9 @@ export const SettingsNavigation = ({ activeSection, onSectionChange }: SettingsN
           key={section.id}
           onClick={() => onSectionChange(section.id)}
           className={`${styles.navButton} ${
-            activeSection === section.id ? styles.navButtonActive : styles.navButtonInactive
+            activeSection === section.id
+              ? styles.navButtonActive
+              : styles.navButtonInactive
           }`}
         >
           {section.label}
@@ -27,4 +32,4 @@ export const SettingsNavigation = ({ activeSection, onSectionChange }: SettingsN
       ))}
     </div>
   );
-}; 
+};
