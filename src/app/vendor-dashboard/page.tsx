@@ -8,6 +8,18 @@ const VendorDashboard = () => {
   const [chatResponse, setChatResponse] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const dummyVendorData = {
+    businessName: "Candle Kingdom",
+    city: "Boston",
+    travelPreference: "Only in my city",
+    travelRadius: 25,
+    budget: {
+      maxApplicationFee: 50,
+      maxVendorFee: 200,
+    },
+    description: "Handmade soy wax candles in glass jars.",
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     setChatResponse('');
@@ -15,10 +27,8 @@ const VendorDashboard = () => {
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: userInput }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: userInput, vendorData: dummyVendorData }),
       });
 
       const data = await res.json();
@@ -53,36 +63,38 @@ const VendorDashboard = () => {
         <div className="col-span-2">
           <div className="text-[#3a2e39] text-xl font-bold mb-2">Your Pop-Ups in March</div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-[#3a2e39] text-white rounded-[10px] border border-black">
-              <div>Sip & Shop</div>
-              <div>Date: Saturday, March 22</div>
-              <div>Time: 12:00PM - 5:00PM</div>
-              <div>Place: Time Out Market, Boston</div>
-            </div>
-            <div className="p-4 bg-[#3a2e39] text-white rounded-[10px] border border-black">
-              <div>FiberFest</div>
-              <div>Date: Sunday, March 23</div>
-              <div>Time: 10:00AM - 12:00PM</div>
-              <div>Place: Boston Public Market</div>
-            </div>
-            <div className="p-4 bg-[#3a2e39] text-white rounded-[10px] border border-black">
-              <div>Int. Woman’s Day Market</div>
-              <div>Date: Sunday, March 30</div>
-              <div>Time: 12:00PM - 5:00PM</div>
-              <div>Place: Time Out Market, Boston</div>
-            </div>
-            <div className="p-4 bg-[#3a2e39] text-white rounded-[10px] border border-black">
-              <div>Not-a-Normal Market</div>
-              <div>Date: Saturday, March 15</div>
-              <div>Time: 8:00AM - 12:00PM</div>
-              <div>Place: 660 Madison Avenue, New York</div>
-            </div>
+            {["Sip & Shop", "FiberFest", "Int. Woman’s Day Market", "Not-a-Normal Market"].map((name, i) => (
+              <div key={i} className="p-4 bg-[#3a2e39] text-white rounded-[10px] border border-black">
+                <div>{name}</div>
+                <div>Date: Placeholder</div>
+                <div>Time: Placeholder</div>
+                <div>Place: Placeholder</div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Financial Assistant (Chatbot) */}
+        {/* Financial Assistant */}
         <div className="p-4 bg-neutral-200/20 rounded-[10px] border border-black">
           <div className="text-[#3a2e39] text-xl font-bold mb-2">Financial Assistant</div>
+
+          {/* Prewritten questions */}
+          <div className="mb-2 flex gap-2 flex-wrap">
+            {[
+              "What's a good budget for a local event?",
+              "Can I afford a $75 vendor fee?",
+              "How should I choose between two events?",
+            ].map((q) => (
+              <button
+                key={q}
+                onClick={() => setUserInput(q)}
+                className="bg-gray-200 text-sm text-black px-3 py-1 rounded hover:bg-gray-300"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+
           <textarea
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
@@ -108,23 +120,23 @@ const VendorDashboard = () => {
           <div className="text-[#3a2e39] text-xl font-bold mb-2">Event Calendar</div>
           <div className="mt-2">March 2025</div>
           <div className="grid grid-cols-7 gap-2">
-            <div>Mon</div>
-            <div>Tues</div>
-            <div>Wed</div>
-            <div>Thu</div>
-            <div>Fri</div>
-            <div>Sat</div>
-            <div>Sun</div>
+            <div>Mon</div><div>Tues</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
           </div>
         </div>
 
         {/* Application Status */}
         <div className="p-4 bg-neutral-200/20 rounded-[10px] border border-black">
           <div className="text-[#3a2e39] text-xl font-bold mb-2">Application Status</div>
-          <div className="p-2 border border-black rounded mb-1">Hear Here - LLC Pop-Up Markets <span className="text-red-500">Declined</span></div>
-          <div className="p-2 border border-black rounded mb-1">Sip & Shop - Time Out Market <span className="text-green-500">Accepted</span></div>
-          <div className="p-2 border border-black rounded mb-1">FiberFest - Boston Public Market <span className="text-green-500">Accepted</span></div>
-          <div className="p-2 border border-black rounded mb-1">Boston’s Women’s Market <span className="text-yellow-500">Pending</span></div>
+          {[
+            { name: "Hear Here", status: "Declined", color: "red" },
+            { name: "Sip & Shop", status: "Accepted", color: "green" },
+            { name: "FiberFest", status: "Accepted", color: "green" },
+            { name: "Boston’s Women’s Market", status: "Pending", color: "yellow" },
+          ].map((app, i) => (
+            <div key={i} className="p-2 border border-black rounded mb-1">
+              {app.name} - Status: <span className={`text-${app.color}-500`}>{app.status}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
