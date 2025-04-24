@@ -51,7 +51,17 @@ export default function SignupPage() {
   return (
     <div className={styles.container}>
       <div className={styles.leftPanel}>
-        <div className={styles.logo}>DM</div>
+        <Image
+          src="/images/mLogo.png"
+          alt="Markitit Shortened Logo"
+          width={200}
+          height={100}
+          style={{
+            objectFit: 'contain',
+            maxWidth: '100%',
+            height: 'auto',
+          }}
+        />
         <h1 className={styles.welcomeText}>Welcome!</h1>
       </div>
 
@@ -104,12 +114,44 @@ export default function SignupPage() {
 
           <div className={styles.socialButtons}>
             <button type="button" className={styles.socialButton}>
-              f
+              <Image
+                src="/images/facebookLogo.png"
+                alt="Facebook Logo"
+                width={100}
+                height={50}
+                style={{
+                  objectFit: 'contain',
+                  maxWidth: '100%',
+                  height: 'auto',
+                }}
+              />
             </button>
             <button type="button" className={styles.socialButton}>
-              G
+              <Image
+                src="/images/googleLogo.png"
+                alt="Google Logo"
+                width={20}
+                height={10}
+                style={{
+                  objectFit: 'contain',
+                  maxWidth: '100%',
+                  height: 'auto',
+                }}
+              />
             </button>
-            <button type="button" className={styles.socialButton}></button>
+            <button type="button" className={styles.socialButton}>
+              <Image
+                src="/images/appleLogo.png"
+                alt="Apple Logo"
+                width={20}
+                height={10}
+                style={{
+                  objectFit: 'contain',
+                  maxWidth: '100%',
+                  height: 'auto',
+                }}
+              />
+            </button>
           </div>
 
           <div className={styles.authText}>

@@ -20,9 +20,25 @@ export function SearchBar({ onSearch }: SearchBarProps) {
   const [keywords, setKeywords] = useState("");
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Handle searchQuery changes
+  // useEffect(() => {
+  //   if (searchQuery &&  events.length > 0) {
+  //     setKeywords(searchQuery); // Set keywords to searchQuery
+  //     handleSubmitPre(searchQuery); // Trigger search with updated city
+
+  //   }
+  // }, [searchQuery,  setSearchQuery,events]);
+
+
+
+  // const handleSubmitPre = (query?: string) => {
+  //   onSearch(city, startDate, endDate, query || keywords); // Use query if provided, otherwise use keywords
+  // };
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     onSearch(city, startDate, endDate, keywords);
+    // setSearchQuery(''); 
   };
 
   return (

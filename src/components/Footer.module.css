@@ -1,0 +1,49 @@
+.footer {
+    background-color: var(--background-main); /* Use theme color */
+    padding: 2rem 1rem;
+    font-family: 'Manrope', sans-serif;
+    color: var(--text-primary); /* Use theme color */
+}
+
+.footerContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footerSection {
+    flex: 1;
+    min-width: 200px;
+}
+
+.logoSection {
+    text-align: center;
+}
+
+.logo {
+    max-width: 150px;
+    margin-bottom: 1rem;
+}
+
+.footerHeading {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary); /* Use theme color */
+}
+
+.footerLink {
+    display: block;
+    font-size: 1rem;
+    color: var(--text-secondary); /* Use theme color */
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    transition: color 0.2s;
+}
+
+.footerLink:hover {
+    color: var(--accent); /* Use theme color */
+}

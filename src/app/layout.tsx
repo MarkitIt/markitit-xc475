@@ -1,13 +1,14 @@
 "use client";
 
-import { Manrope } from "next/font/google";
-import { ApplicationProfileProvider } from "../context/CreateEventProfileContext";
-import { UserProvider } from "../context/UserContext";
-import { HostProvider } from "../context/HostContext";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/context/ThemeContext";
-import GoogleMapsLoader from "../components/GoogleMapsLoader";
 import { VendorProvider } from "@/context/VendorContext";
+import { Manrope } from "next/font/google";
+import GoogleMapsLoader from "../components/GoogleMapsLoader";
+import { ApplicationProfileProvider } from "../context/CreateEventProfileContext";
+import { HostProvider } from "../context/HostContext";
+import { UserProvider } from "../context/UserContext";
 import GlobalBackground from "@/components/GlobalBackground";
 
 import "./globals.css";
@@ -41,6 +42,7 @@ export default function RootLayout({
                   <VendorProvider>
                     <GlobalBackground>{children}</GlobalBackground>
                   </VendorProvider>
+                  <Footer />
                 </ApplicationProfileProvider>
               </HostProvider>
             </UserProvider>

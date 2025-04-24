@@ -22,7 +22,7 @@ import Image from "next/image";
 export default function EventProfilePage() {
   const router = useRouter();
   const params = useParams();
-  const idParam = params.id as string;
+  const idParam = decodeURIComponent(params.id as string);
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,45 +35,65 @@ export default function EventProfilePage() {
         setLoading(true);
         setError(null);
 
+        // More detailed debugging
+        console.log("Original URL parameter:", params.id);
+        console.log("Decoded parameter:", idParam);
         console.log("Attempting to fetch event with ID:", idParam);
 
-        // Check if the ID is numeric
-        if (/^\d+$/.test(idParam)) {
-          const numericId = parseInt(idParam);
+        // Fetch all events to check available IDs
+        const eventsRef = collection(db, "events");
+        const querySnapshot = await getDocs(eventsRef);
+        const allEvents = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        })) as Event[];
 
-          // Fetch all events
-          const eventsRef = collection(db, "events");
-          const querySnapshot = await getDocs(eventsRef);
-          const allEvents = querySnapshot.docs.map((doc) => ({
-            ...doc.data(),
-            id: doc.id,
-          })) as Event[];
+        console.log(`Found ${allEvents.length} events in total`);
+        // Log all document IDs for comparison
+        const allIds = allEvents.map(e => e.id);
+        console.log("All document IDs:", allIds);
+        
+        // Check if our exact ID exists in the list
+        console.log("ID exists in database?", allIds.includes(idParam));
+        
+        // Try to determine if there's a close match
+        const closeMatches = allIds.filter(id => id.includes(idParam) || idParam.includes(id));
+        console.log("Close matches:", closeMatches);
 
-          console.log(`Found ${allEvents.length} events in total`);
+        // Try to get by document ID
+        const docRef = doc(db, "events", idParam);
+        console.log("Querying Firestore with document ID:", idParam);
+        const docSnap = await getDoc(docRef);
 
-          // Get the event at the specified index (adjust for zero-based array)
-          const eventIndex = numericId - 1;
-          if (eventIndex >= 0 && eventIndex < allEvents.length) {
-            const selectedEvent = allEvents[eventIndex];
-            console.log("Found event by index:", selectedEvent);
-            setEvent(selectedEvent);
-          } else {
-            console.log(
-              `Event index out of range: ${eventIndex}, total events: ${allEvents.length}`,
-            );
-            setError(`Event #${numericId} not found`);
-          }
+        if (docSnap.exists()) {
+          const eventData = { ...docSnap.data(), id: docSnap.id } as Event;
+          console.log("Found event by document ID:", eventData);
+          setEvent(eventData);
         } else {
-          // Try to get by document ID
-          const docRef = doc(db, "events", idParam);
-          const docSnap = await getDoc(docRef);
-
-          if (docSnap.exists()) {
-            const eventData = { ...docSnap.data(), id: docSnap.id } as Event;
-            console.log("Found event by document ID:", eventData);
-            setEvent(eventData);
+          console.log("No event found with ID:", idParam);
+          
+          // Try to find an exact match in our fetched events
+          const exactMatch = allEvents.find(e => e.id === idParam);
+          if (exactMatch) {
+            console.log("Found exact match in fetched events:", exactMatch);
+            setEvent(exactMatch);
+            return;
+          }
+          
+          // Try to find by name or partial ID match
+          console.log("Trying to find by name or partial ID match...");
+          const partialMatch = allEvents.find(e => 
+            (e.id && e.id.includes(idParam)) || 
+            (idParam.includes(e.id)) ||
+            (e.name && e.name.includes(idParam)) ||
+            (idParam.includes(e.name || ""))
+          );
+          
+          if (partialMatch) {
+            console.log("Found partial match:", partialMatch);
+            setEvent(partialMatch);
           } else {
-            console.log("No event found with ID:", idParam);
+            console.log("No matches found at all");
             setError("Event not found");
           }
         }
@@ -122,16 +142,25 @@ export default function EventProfilePage() {
 
   const handleReviewsClick = () => {
     setActiveTab("Reviews");
-    router.push(`/event-profile/${idParam}/reviews`);
+    router.push(`/event-profile/${params.id}/reviews`);
   };
 
   const formatDate = (
     date: { seconds: number; nanoseconds: number } | undefined,
   ) => {
     if (!date) return "";
-    return new Date(date.seconds * 1000).toLocaleDateString("en-US", {
+    
+    const eventDate = new Date(date.seconds * 1000);
+    // If year is 1970 (epoch default) or no year in the data, use current year
+    if (eventDate.getFullYear() === 1970 || !date.seconds) {
+      const currentYear = new Date().getFullYear();
+      eventDate.setFullYear(currentYear);
+    }
+    
+    return eventDate.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
+      year: "numeric",
       hour: "numeric",
       minute: "numeric",
       hour12: true,
@@ -183,7 +212,7 @@ export default function EventProfilePage() {
           </div>
           {user && (
             <Link
-              href={`/event-profile/${idParam}/apply`}
+              href={`/event-profile/${params.id}/apply`}
               className="apply-button"
             >
               Apply

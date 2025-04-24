@@ -40,9 +40,18 @@ export const EventCard: React.FC<EventCardProps> = ({
   // Format date as startDate - endDate
   const formatDate = (timestamp: any) => {
     if (!timestamp) return null;
-    return new Date(timestamp.seconds * 1000).toLocaleDateString("en-US", {
+    
+    const eventDate = new Date(timestamp.seconds * 1000);
+    // If year is 1970 (epoch default) or no year in the data, use current year
+    if (eventDate.getFullYear() === 1970 || !timestamp.seconds) {
+      const currentYear = new Date().getFullYear();
+      eventDate.setFullYear(currentYear);
+    }
+    
+    return eventDate.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
+      year: "numeric"
     });
   };
 
@@ -65,7 +74,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   }
 
   return (
-    <Link href={`/event-profile/${index + 1}`} className="card">
+    <Link href={`/event-profile/${encodeURIComponent(event.id)}`} className="card">
       <div className="event-card">
         <div className="image-container">
           {event.image ? (

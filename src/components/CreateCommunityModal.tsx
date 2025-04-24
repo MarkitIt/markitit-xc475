@@ -91,7 +91,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        zIndex: 1000,
+        zIndex: 100,
       }}
     >
       <div

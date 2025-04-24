@@ -74,9 +74,12 @@
 .landing-background {
   background: linear-gradient(180deg, #f3e5e2 0%, rgb(233, 86, 73) 100%);
   min-height: 100vh;
-  padding: 2rem;
-  width: 100%;
+  width: 100vw;
+  margin: 0;
   position: relative;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 /* Basic Element Styles */
@@ -526,7 +529,6 @@ button:hover {
 
 /* Make sure absolute positioned elements are visible */
 div[style*="position: absolute"] {
-  z-index: 1000 !important;
   pointer-events: auto !important;
 }
 
