@@ -158,37 +158,46 @@ export default function EventProfilePage() {
     return <Bar data={data} options={options} />;
   };
 
-  if (loading) return <div className="min-h-screen flex justify-center items-center text-xl">Loading...</div>;
-  if (error) return <div className="min-h-screen flex justify-center items-center text-xl text-red-500">{error}</div>;
+  if (loading) return <div className="loading-message">Loading...</div>;
+  if (error) return <div className="error-message">{error}</div>;
   if (!event) return null;
 
   return (
-    <div className="event-profile-container p-4 max-w-4xl mx-auto">
-      <div className="flex justify-between items-start">
-        <div className="w-2/3">
-          <h1 className="text-2xl font-bold mb-2">{event.name}</h1>
-          <p className="text-gray-700 mb-4">{event.description}</p>
-          <p className="text-sm text-gray-500">{formatDate(event.startDate)} - {formatDate(event.endDate)}</p>
-          <p className="text-sm text-gray-500">{event.location?.city}, {event.location?.state}</p>
-        </div>
-        <div className="w-1/4">
-          {isClient && typeof event.score === "number" && !isNaN(event.score) && (
-            <CircularProgressbar
-              value={event.score}
-              text={`${Math.round(event.score)}%`}
-              maxValue={100}
-              styles={buildStyles({
-                textColor: "#000",
-                pathColor: "#34d399",
-                trailColor: "#e5e7eb",
-                textSize: "18px",
-              })}
-            />
-          )}
+    <div className="event-profile-container">
+      <div className="event-header">
+        <div className="event-header-content">
+          <div>
+            <h1 className="event-name">{event.name}</h1>
+            <p className="event-description">{event.description}</p>
+            <div className="event-info-item">
+              <span className="info-label">Date</span>
+              <span className="info-value">{formatDate(event.startDate)} - {formatDate(event.endDate)}</span>
+            </div>
+            <div className="event-info-item">
+              <span className="info-label">Location</span>
+              <span className="info-value">{event.location?.city}, {event.location?.state}</span>
+            </div>
+          </div>
+          <div className="score-container" style={{ width: "120px" }}>
+            {isClient && typeof event.score === "number" && !isNaN(event.score) && (
+              <CircularProgressbar
+                value={event.score}
+                text={`${Math.round(event.score)}%`}
+                maxValue={100}
+                styles={buildStyles({
+                  textColor: "var(--text-primary)",
+                  pathColor: "var(--primary-coral)",
+                  trailColor: "#e5e7eb",
+                  textSize: "18px",
+                })}
+              />
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="mt-10">
+      <div className="section-title">Score Breakdown</div>
+      <div className="event-details-section">
         {isClient && renderScoreBreakdownChart()}
       </div>
     </div>

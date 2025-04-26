@@ -15,8 +15,9 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "firebase-admin": "^11.8.0",
-    "firebase-functions": "^4.3.1",
+    "@google/generative-ai": "^0.24.0",
+    "firebase-admin": "^11.11.1",
+    "firebase-functions": "^4.9.0",
     "luxon": "^3.3.0"
   },
   "devDependencies": {
