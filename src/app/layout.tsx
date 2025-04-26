@@ -5,11 +5,12 @@ import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { VendorProvider } from "@/context/VendorContext";
 import { Manrope } from "next/font/google";
-import GoogleMapsLoader from "../components/GoogleMapsLoader";
+import GoogleMapsWrapper from "../components/GoogleMapsWrapper";
 import { ApplicationProfileProvider } from "../context/CreateEventProfileContext";
 import { HostProvider } from "../context/HostContext";
 import { UserProvider } from "../context/UserContext";
 import GlobalBackground from "@/components/GlobalBackground";
+import { SessionProvider } from "next-auth/react";
 
 import "./globals.css";
 
@@ -33,21 +34,23 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <ThemeProvider>
-          <GoogleMapsLoader>
-            <UserProvider>
-              <HostProvider>
-                <ApplicationProfileProvider>
-                  <Header />
-                  <VendorProvider>
-                    <GlobalBackground>{children}</GlobalBackground>
-                  </VendorProvider>
-                  <Footer />
-                </ApplicationProfileProvider>
-              </HostProvider>
-            </UserProvider>
-          </GoogleMapsLoader>
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider>
+            <GoogleMapsWrapper>
+              <UserProvider>
+                <HostProvider>
+                  <ApplicationProfileProvider>
+                    <Header />
+                    <VendorProvider>
+                      <GlobalBackground>{children}</GlobalBackground>
+                    </VendorProvider>
+                    <Footer />
+                  </ApplicationProfileProvider>
+                </HostProvider>
+              </UserProvider>
+            </GoogleMapsWrapper>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

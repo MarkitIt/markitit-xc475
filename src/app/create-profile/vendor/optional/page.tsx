@@ -1,63 +1,119 @@
 "use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useVendor } from "@/context/VendorContext";
 import styles from "../../styles.module.css";
 
-export default function OptionalPage() {
+export default function Optional() {
+  const [eventPriorityFactors, setEventPriorityFactors] = useState<string[]>([]);
+  const [additionalInfo, setAdditionalInfo] = useState("");
+  const { data: session, status } = useSession();
   const router = useRouter();
   const { vendor, updateVendor } = useVendor();
   const [isExiting, setIsExiting] = useState(false);
-  const [additionalInfo, setAdditionalInfo] = useState("");
 
-  const handleNext = async () => {
-    updateVendor({
-      additionalInfo: additionalInfo.trim(),
+  const priorityOptions = [
+    "Expected Attendance & Event Size",
+    "Costs",
+    "Location",
+    "Event Duration",
+    "Target Audience",
+    "Positive Host Reviews",
+    "Vendor Count (Competition)",
+    "Marketing Support",
+  ];
+
+  // Synchronize form data with vendor context
+  useEffect(() => {
+    if (vendor) {
+      setEventPriorityFactors(vendor.eventPriorityFactors || []);
+      setAdditionalInfo(vendor.additionalInfo || "");
+    }
+  }, [vendor]);
+
+  const handlePriorityChange = (option: string) => {
+    setEventPriorityFactors((prev) => {
+      if (prev.includes(option)) {
+        return prev.filter((item) => item !== option);
+      } else {
+        return [...prev, option];
+      }
     });
+  };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (eventPriorityFactors.length === 0) {
+      alert("Please select at least one priority factor.");
+      return;
+    }
+
+    const formData = {
+      eventPriorityFactors,
+      additionalInfo,
+    };
+
+    updateVendor(formData);
     setIsExiting(true);
     await new Promise((resolve) => setTimeout(resolve, 500));
     router.push("/create-profile/vendor/review");
   };
 
   return (
-    <div
-      className={`${styles.container} ${isExiting ? styles.slideOut : styles.slideIn}`}
-    >
-      <div className={styles.stepIndicator}>
-        <span className={styles.stepIcon}>▲</span>
-        <span className={styles.stepIcon}>★</span>
-        <span className={styles.stepIcon}>⌂</span>
-        <span className={styles.stepIcon}>●</span>
-        <span className={styles.stepIcon}>⟶</span>
-        <span className={`${styles.stepIcon} ${styles.active}`}>✓</span>
-      </div>
+    <div className={styles.contentContainer}>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <h1 className={styles.title}>Optional Information</h1>
+        <p className={styles.subtitle}>
+          Share additional details to help us better understand your needs
+        </p>
 
-      <p className={styles.stepText}>Optional Step 08/08</p>
-      <h1 className={styles.title}>Additional Information</h1>
-      <p className={styles.subtitle}>
-        Anything else we missed? Feel free to add anything you want us or event
-        hosts to know.
-      </p>
-
-      <div className={styles.form}>
+        {/* Priority Factors Section */}
         <div className={styles.formGroup}>
+          <h2 className={styles.sectionTitle}>
+            What factors do you prioritize when selecting events?
+          </h2>
+          <div className={styles.checkboxGrid}>
+            {priorityOptions.map((option) => (
+              <div key={option} className={styles.checkboxItem}>
+                <input
+                  type="checkbox"
+                  id={option.replace(/\s+/g, "-").toLowerCase()}
+                  checked={eventPriorityFactors.includes(option)}
+                  onChange={() => handlePriorityChange(option)}
+                  className={styles.checkbox}
+                />
+                <label htmlFor={option.replace(/\s+/g, "-").toLowerCase()}>
+                  {option}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Additional Information Section */}
+        <div className={styles.formGroup}>
+          <label htmlFor="additionalInfo" className={styles.label}>
+            Additional Information
+          </label>
           <textarea
+            id="additionalInfo"
             className={styles.textarea}
+            placeholder="Share anything else you'd like us to know about your business or preferences"
             value={additionalInfo}
             onChange={(e) => setAdditionalInfo(e.target.value)}
-            placeholder="Share any additional details about your business..."
-            rows={6}
+            rows={5}
           />
         </div>
 
+        {/* Submit Button */}
         <div className={styles.buttonContainer}>
-          <button className={styles.nextButton} onClick={handleNext}>
-            Finish
+          <button type="submit" className={styles.submitButton}>
+            Next Step
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

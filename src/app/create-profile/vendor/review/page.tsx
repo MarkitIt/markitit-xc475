@@ -146,6 +146,11 @@ export default function ReviewPage() {
         </div>
 
         <div className={styles.formGroup}>
+          <label className={styles.label}>Business Address</label>
+          <div className={styles.reviewText}>{vendor.businessAddress}</div>
+        </div>
+
+        <div className={styles.formGroup}>
           <label className={styles.label}>Category/Industry</label>
           <div className={styles.reviewText}>{vendor.type}</div>
           <div className={styles.reviewText}>
@@ -159,7 +164,7 @@ export default function ReviewPage() {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>Business Adjectives</label>
+          <label className={styles.label}>Business Audience</label>
           <div className={styles.pillContainer}>
             {vendor.demographic?.map((adj, index) => (
               <span key={index} className={styles.reviewPill}>
@@ -278,6 +283,9 @@ export default function ReviewPage() {
 
         <div className={styles.formGroup}>
           <label className={styles.label}>Additional Information</label>
+          <div className={styles.reviewText}>
+            {vendor.eventPriorityFactors || "No priority factors provided"}
+          </div>
           <div className={styles.reviewText}>
             {vendor.additionalInfo || "No additional information provided"}
           </div>
