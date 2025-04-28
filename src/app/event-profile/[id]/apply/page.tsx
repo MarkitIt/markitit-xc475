@@ -115,6 +115,7 @@ const EventApplyProfile = () => {
         alert("You must be logged in to apply.");
         return;
       }
+      
 
       console.log("Current user ID:", user.uid);
       setDebugInfo(`Checking for vendor profile with ID: ${user.uid}`);
@@ -122,6 +123,7 @@ const EventApplyProfile = () => {
       // Fetch the user's data from the Firestore `users` collection
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
+
 
       if (!userDocSnap.exists()) {
         setDebugInfo(`User document not found for ID: ${user.uid}`);
@@ -201,22 +203,29 @@ const EventApplyProfile = () => {
 
       // Update the existing document by appending the new vendor data
       const vendorData = {
-        email: userData.email, // User's email
-        firstName: userData.firstName, // User's first name
-        lastName: userData.lastName, // User's last name
-        businessName: vendorProfileData.businessName, // Vendor's business name
-        description: vendorProfileData.description, // Vendor's description
-        streetAddress: vendorProfileData.streetAddress, // Vendor's street address
-        city: vendorProfileData.city, // Vendor's city
-        stateProvince: vendorProfileData.stateProvince, // Vendor's state
-        zipPostalCode: vendorProfileData.zipPostalCode, // Vendor's zip code
-        country: vendorProfileData.country, // Vendor's country
-        phone: vendorProfileData.phone, // Vendor's phone number
-        categories: vendorProfileData.selectedCategories, // Vendor's categories
-        pastPopup: vendorProfileData.selectedPastPopups, // Vendor's past popup experience
-        answers, // User's answers to the custom questions
-        status: "PENDING", // Default status
+        email: userData.email || "N/A", // Default to "N/A" if undefined
+        firstName: userData.firstName || "N/A",
+        lastName: userData.lastName || "N/A",
+        businessName: vendorProfileData.businessName || "N/A",
+        description: vendorProfileData.description || "N/A",
+        streetAddress: vendorProfileData.streetAddress || "N/A",
+        city: vendorProfileData.city || "N/A",
+        stateProvince: vendorProfileData.stateProvince || "N/A",
+        zipPostalCode: vendorProfileData.zipPostalCode || "N/A",
+        country: vendorProfileData.country || "N/A",
+        phone: vendorProfileData.phone || "N/A",
+        categories: vendorProfileData.selectedCategories || [],
+        pastPopup: vendorProfileData.selectedPastPopups || [],
+        answers: answers || {},
+        status: "PENDING",
       };
+
+      if (Object.values(vendorData).some((value) => value === undefined)) {
+        console.error("Invalid vendorData:", vendorData);
+        alert("Some required fields are missing. Please try again.");
+        setLoading(false);
+        return;
+      }      
 
       await updateDoc(vendorApplyDocRef, {
         vendorId: arrayUnion(vendorData), // Append the new vendor data to the `vendorId` array
@@ -229,6 +238,12 @@ const EventApplyProfile = () => {
       const eventName = eventDocSnap.exists() ? eventDocSnap.data().name : null; // Get the event name from the document
       if (!eventName) {
         alert("Event name not found.");
+        return;
+      }
+
+      if (!eventId || !appliedAt || !eventName) {
+        console.error("Invalid data for arrayUnion:", { eventId, appliedAt, eventName });
+        alert("Some required fields are missing. Please try again.");
         return;
       }
 

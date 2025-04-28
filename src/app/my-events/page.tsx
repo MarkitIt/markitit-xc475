@@ -11,6 +11,7 @@ import styles from "../page.module.css";
 import "../tailwind.css";
 import "leaflet/dist/leaflet.css";
 import { useUserContext } from "@/context/UserContext";
+import Link from "next/link";
 
 import { theme } from "@/styles/theme";
 
@@ -136,9 +137,13 @@ export default function ApplicationHostProfile() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-        {currentEvents.map((event) => (
-          <EventCardHost key={event.id} event={event} />
-        ))}
+      {currentEvents.map((event) => (
+        <Link key={event.id} href={`my-events/${event.id}/vendor-manage`} passHref>
+          <div style={{ cursor: "pointer" }}>
+            <EventCardHost event={event} />
+          </div>
+        </Link>
+      ))}
       </div>
 
       {/* Pagination */}
