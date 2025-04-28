@@ -85,8 +85,8 @@ export default function EventProfilePage() {
             if (!nameQuerySnapshot.empty) {
               const docData = nameQuerySnapshot.docs[0].data();
               setEvent({ ...docData, id: nameQuerySnapshot.docs[0].id } as Event);
-            } else {
-              setError("Event not found");
+        } else {
+          setError("Event not found");
             }
           }
         }
@@ -177,21 +177,21 @@ export default function EventProfilePage() {
               <span className="info-label">Location</span>
               <span className="info-value">{event.location?.city}, {event.location?.state}</span>
             </div>
-          </div>
+        </div>
           <div className="score-container" style={{ width: "120px" }}>
-            {isClient && typeof event.score === "number" && !isNaN(event.score) && (
-              <CircularProgressbar
-                value={event.score}
-                text={`${Math.round(event.score)}%`}
-                maxValue={100}
-                styles={buildStyles({
+          {isClient && typeof event.score === "number" && !isNaN(event.score) && (
+            <CircularProgressbar
+              value={event.score}
+              text={`${Math.round(event.score)}%`}
+              maxValue={100}
+              styles={buildStyles({
                   textColor: "var(--text-primary)",
                   pathColor: "var(--primary-coral)",
-                  trailColor: "#e5e7eb",
-                  textSize: "18px",
-                })}
-              />
-            )}
+                trailColor: "#e5e7eb",
+                textSize: "18px",
+              })}
+            />
+          )}
           </div>
         </div>
       </div>
