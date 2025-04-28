@@ -4,128 +4,50 @@ import Link from "next/link";
 import "./tailwind.css";
 import { theme } from "@/styles/theme";
 import Image from "next/image";
+import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <main className="landing-background">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-         marginTop: theme.spacing.lg,
-          padding: "0 4rem",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "800px",
-            position: "relative",
-          }}
-        >
-          <h1 className="landing-title coral">Pop Up.</h1>
-          <h1 className="landing-title dark-blue">Stand Out.</h1>
-          <h1 className="landing-title beige">Sell More.</h1>
+    <main className={styles.landingBackground}>
+      <div className={styles.heroSection}>
+        <div className={styles.heroText}>
+          <h1 className={`${styles.landingTitle} ${styles.coral}`}>Pop Up.</h1>
+          <h1 className={`${styles.landingTitle} ${styles.darkBlue}`}>Stand Out.</h1>
+          <h1 className={`${styles.landingTitle} ${styles.beige}`}>Sell More.</h1>
 
           <Image
             src="/images/underline.png"
             alt="Decorative underline"
             width={500}
             height={20}
-            className="title-underline-image"
+            className={styles.titleUnderlineImage}
           />
 
-          <p className="landing-description">
+          <p className={styles.landingDescription}>
             a one-stop platform for finding events, managing applications, and
             connecting with a thriving vendor community.
           </p>
         </div>
 
-        <div
-          style={{
-            position: "relative",
-            width: "650px",
-            height: "800px",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              top: "55%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
+        <div className={styles.heroImageContainer}>
+          <div className={styles.heroImageWrapper}>
             <Image
               src="/images/homeImage.png"
               alt="Vendor Shop Display"
               width={800}
               height={600}
-              style={{
-                objectFit: "contain",
-                borderRadius: theme.borderRadius.lg,
-                maxWidth: "100%",
-                height: "auto",
-              }}
+              className={styles.heroImage}
             />
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                width: "200px",
-                height: "200px",
-                backgroundColor: theme.colors.primary.coral,
-                borderRadius: "50%",
-                opacity: 0.2,
-                zIndex: -1,
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                width: "150px",
-                height: "150px",
-                backgroundColor: theme.colors.secondary.yellow,
-                borderRadius: "50%",
-                opacity: 0.2,
-                zIndex: -1,
-              }}
-            />
+            <div className={`${styles.circle} ${styles.topRightCircle}`} />
+            <div className={`${styles.circle} ${styles.bottomLeftCircle}`} />
           </div>
         </div>
         
       </div>
-      <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100%',
-          marginTop: theme.spacing.sm,
-          marginBottom: '50px',
-          padding: '0 20px',
-        }}>
-        <div style={{
-          width: '100%',
-          textAlign: 'center',
-        }}>
-          <h1 className="landing-title dark-blue">
-            Discover MarkitIt
-          </h1>
-          <p style={{
-            fontFamily: theme.typography.fontFamily.primary,
-            fontSize: theme.typography.fontSize.body,
-            color: theme.colors.background.white,
-            margin: '0 auto',
-            marginBottom: '0px',
-          }}>
+      <div className={styles.discoverSection}>
+        <div className={styles.discoverText}>
+          <h1 className={styles.landingTitle}>Discover MarkitIt</h1>
+          <p className={styles.discoverDescription}>
             These features make our platform
           </p>
         </div>
@@ -133,21 +55,7 @@ export default function Home() {
       </div>
 
       {/* Curve*/}
-      <div
-        style={{
-          backgroundColor: theme.colors.primary.darkBlue,
-          width: "100%",
-          padding: 0,
-          textAlign: "left",
-          position: "relative",
-          overflow: "hidden", 
-          height: "200px",
-          clipPath: "url(#concaveClip)",
-          margin: 0,
-          left: 0,
-          right: 0,
-        }}
-      >
+      <div className={styles.curveSection}>
         
       <svg width="0" height="0">
         <defs>
@@ -165,28 +73,9 @@ export default function Home() {
 
       </div>
       {/* Features Section */}
-      <div
-        style={{
-          backgroundColor: theme.colors.primary.darkBlue,
-          width: "100%",
-          padding: `${theme.spacing.xl} ${theme.spacing.lg}`,
-          textAlign: "left",
-          position: "relative",
-          overflow: "visible",
-          margin: 0,
-          left: 0,
-          right: 0,
-        }}
-      >
+      <div className={styles.featuresSection}>
         {/* Content container */}
-        <div
-          style={{
-            gap: theme.spacing.lg,
-            width: "100%",
-            maxWidth: "1200px",
-            margin: "0 auto",
-          }}
-        >
+        <div className={styles.featuresContainer}>
           {[
             {
               title: "Event Matching",
@@ -211,12 +100,7 @@ export default function Home() {
           ].map((feature, index) => (
             <div
               key={index}
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                marginBottom: '70px',
-                gap: theme.spacing.sm,
-              }}
+              className={styles.feature}
             >
               <div
                 style={{
@@ -229,61 +113,15 @@ export default function Home() {
                   alt={`${feature.title} Icon`}
                   width={100}
                   height={100}
-                  style={{
-                    objectFit: "contain",
-                    borderRadius: theme.borderRadius.lg,
-                    maxWidth: "100%",
-                    height: "auto",
-                  }}
+                  className={styles.featureImage}
                 />
               </div>
 
               <div>
-                <h3
-                  style={{
-                    fontFamily: theme.typography.fontFamily.primary,
-                    fontSize: theme.typography.fontSize.body,
-                    fontWeight: theme.typography.fontWeight.medium,
-                    color: theme.colors.primary.coral,
-                    marginBottom: theme.spacing.xs,
-                  }}
-                >
-                  {feature.title}
-                </h3>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: theme.spacing.md,
-                  }}
-                >
-                  <button
-                    style={{
-                      marginTop: theme.spacing.xs,
-                      marginBottom: theme.spacing.sm,
-                      fontSize: theme.typography.fontSize.body,
-                      backgroundColor: theme.colors.primary.coral,
-                      color: theme.colors.background.white,
-                      padding: theme.spacing.xs + " " + theme.spacing.sm,
-                      borderRadius: theme.borderRadius.full,
-                      border: "none",
-                      cursor: "pointer",
-                    }}
-                  >
-                    EXPLORE
-                  </button>
-                  <p
-                    style={{
-                      fontFamily: theme.typography.fontFamily.primary,
-                      fontSize: theme.typography.fontSize.body,
-                      color: theme.colors.background.white,
-                      lineHeight: 1.5,
-                      margin: 0,
-                    }}
-                  >
-                    {feature.desc}
-                  </p>
+                <h3 className={styles.featureTitle}>{feature.title}</h3>
+                <div className={styles.featureContent}>
+                  <button className={styles.exploreButton}>EXPLORE</button>
+                  <p className={styles.featureDescription}>{feature.desc}</p>
                 </div>
               </div>
             </div>
