@@ -2,12 +2,24 @@
 
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState, ReactNode } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import { 
+  doc, 
+  getDoc, 
+  addDoc, 
+  updateDoc, 
+  arrayUnion, 
+  collection, 
+  Timestamp,
+  DocumentReference,
+  query,
+  where,
+  getDocs
+} from "firebase/firestore";
 import Link from "next/link";
 import { db } from "../../../lib/firebase";
 import "../../tailwind.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faInfoCircle, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { useUserContext } from "@/context/UserContext";
 import Image from "next/image";
 import {
@@ -25,6 +37,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { fetchEventRankings } from "@/utils/fetchEventRankings";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -43,6 +56,14 @@ const Pill = ({ children, color = "#f3f4f6" }: { children: ReactNode; color?: st
   }}>{children}</span>
 );
 
+const PRIORITY_MAP: Record<string, string> = {
+  "Expected Attendance & Event Size": "eventSizeScore",
+  "Location": "locationScore",
+  "Costs": "budgetScore",
+  "Target Audience": "demographicsScore",
+  "Vendor Count (Competition)": "eventSizeScore",
+};
+
 export default function EventProfilePage() {
   const router = useRouter();
   const params = useParams();
@@ -56,8 +77,11 @@ export default function EventProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"Event" | "Reviews">("Event");
-  const { user } = useUserContext();
+  const { user, vendorProfile } = useUserContext();
   const [isClient, setIsClient] = useState(false);
+  const [userScoreBreakdown, setUserScoreBreakdown] = useState<any | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [applicationStatus, setApplicationStatus] = useState<null | "PENDING" | "ACCEPTED" | "REJECTED">(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -84,6 +108,50 @@ export default function EventProfilePage() {
     };
     if (idParam) fetchEvent();
   }, [idParam]);
+
+  // Fetch user-specific score breakdown from rankEvents
+  useEffect(() => {
+    const fetchUserScore = async () => {
+      if (!user || !event?.id) return;
+      try {
+        const rankingResponse = await fetchEventRankings(user.uid);
+        if (rankingResponse && rankingResponse.data && rankingResponse.data.rankedEvents) {
+          const found = rankingResponse.data.rankedEvents.find((e: any) => e.id === event.id);
+          if (found && found.scoreBreakdown) {
+            setUserScoreBreakdown(found.scoreBreakdown);
+          }
+        }
+      } catch (err) {
+        setUserScoreBreakdown(null);
+      }
+    };
+    fetchUserScore();
+  }, [user, event?.id]);
+
+  // Fetch application status for this event and vendor
+  useEffect(() => {
+    const fetchApplicationStatus = async () => {
+      if (!user || !event?.id) return;
+      try {
+        const eventRef = doc(db, "eventsFormatted", event.id);
+        const q = query(
+          collection(db, "applications"),
+          where("eventId", "==", eventRef),
+          where("vendorId", "==", user.uid)
+        );
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          const appDoc = querySnapshot.docs[0];
+          setApplicationStatus(appDoc.data().status);
+        } else {
+          setApplicationStatus(null);
+        }
+      } catch (err) {
+        setApplicationStatus(null);
+      }
+    };
+    fetchApplicationStatus();
+  }, [user, event?.id]);
 
   const formatDate = (date: { seconds: number; nanoseconds: number } | undefined) => {
     if (!date) return "";
@@ -145,21 +213,201 @@ export default function EventProfilePage() {
     return <Bar data={data} options={options} />;
   };
 
+  // Max points for each score type (should match backend logic)
+  const maxPoints: Record<string, number> = {
+    eventTypeScore: 15,
+    locationScore: 20,
+    budgetScore: 20,
+    demographicsScore: 15,
+    eventSizeScore: 10,
+    scheduleScore: 10,
+    vendorCategoryScore: 10,
+    // pastEventScore, headcountScore, categoryScore, vendorsNeededScore, descriptionScore are not shown
+  };
+
+  const userPriorityKeys = (vendorProfile?.eventPriorityFactors || [])
+    .map((factor: string) => PRIORITY_MAP[factor])
+    .filter(Boolean);
+
+  // Function to handle one-click application for verified hosts
+  const handleVerifiedApply = async () => {
+    if (!user || !vendorProfile || !event?.id || !event?.hostProfile) {
+      alert("Error: Missing required information to apply.");
+      return;
+    }
+    if (!(event.hostProfile instanceof DocumentReference)) {
+        alert("Error: Invalid host profile data.");
+        return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const eventRef = doc(db, "eventsFormatted", event.id);
+      const vendorProfileRef = doc(db, "vendorProfile", vendorProfile.id); // Assuming vendorProfile has an 'id' field
+      const hostProfileRef = event.hostProfile as DocumentReference; // Already a ref
+
+      // 1. Create application document
+      const applicationData = {
+        eventId: eventRef,
+        hostProfile: hostProfileRef,
+        vendorProfile: vendorProfileRef,
+        status: "PENDING",
+        createdAt: Timestamp.now(),
+        vendorId: user.uid
+      };
+      const newApplicationRef = await addDoc(collection(db, "applications"), applicationData);
+
+      // 2. Update vendor profile
+      await updateDoc(vendorProfileRef, {
+        applications: arrayUnion(newApplicationRef)
+      });
+
+      // 3. Update host profile
+      await updateDoc(hostProfileRef, {
+        applications: arrayUnion(newApplicationRef)
+      });
+
+      setApplicationStatus("PENDING"); // Update UI immediately
+      alert("Application submitted successfully!");
+      // Optionally, redirect the user or update UI state
+      // router.push('/my-applications'); 
+
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      alert("Failed to submit application. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Button rendering logic for verified host
+  let buttonText = "Apply Now";
+  let buttonColor = "var(--primary-coral, #f87171)";
+  let disabled = false;
+  if (applicationStatus === "PENDING") {
+    buttonText = "Applied!";
+    buttonColor = "#d1d5db"; // gray
+    disabled = true;
+  } else if (applicationStatus === "ACCEPTED") {
+    buttonText = "Accepted!";
+    buttonColor = "#22c55e"; // green
+    disabled = true;
+  } else if (applicationStatus === "REJECTED") {
+    buttonText = "Rejected";
+    buttonColor = "#f87171"; // red
+    disabled = true;
+  } else if (isSubmitting) {
+    buttonText = "Applying...";
+    buttonColor = "#fbbf24";
+    disabled = true;
+  }
+
   if (loading) return <div className="loading-message">Loading...</div>;
   if (error) return <div className="error-message">{error}</div>;
   if (!event) return null;
 
   return (
     <div style={{ maxWidth: 1200, margin: "2rem auto", padding: 0 }}>
-      {/* Top section: Image + Name/Description */}
+      {/* Top section: Image + Name/Description + Contact Button */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 32, alignItems: "flex-start", marginBottom: 32 }}>
         {/* Event Image */}
-        <div style={{ flex: "0 0 340px", minWidth: 280, maxWidth: 400, height: 260, borderRadius: 18, overflow: "hidden", background: "#f3f4f6", boxShadow: "0 2px 8px #0001", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ flex: "0 0 340px", minWidth: 280, maxWidth: 400, borderRadius: 18, overflow: "visible", background: "#f3f4f6", boxShadow: "0 2px 8px #0001", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", paddingBottom: 24 }}>
           {event.image ? (
-            <Image src={event.image} alt={event.name} width={400} height={260} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+            <Image src={event.image} alt={event.name} width={400} height={260} style={{ objectFit: "cover", width: "100%", height: 260, borderTopLeftRadius: 18, borderTopRightRadius: 18 }} />
           ) : (
             <span style={{ color: "#9ca3af", fontSize: 18 }}>No Image</span>
           )}
+          
+          {/* Application Buttons */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 18, width: "100%", padding: "0 20px", alignItems: "center" }}>
+            {event?.hostProfile ? (
+              <button
+                onClick={handleVerifiedApply}
+                disabled={disabled}
+                style={{
+                  background: buttonColor,
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: "10px 22px",
+                  fontWeight: 600,
+                  fontSize: 18,
+                  cursor: disabled ? "not-allowed" : "pointer",
+                  boxShadow: "0 2px 8px #f8717133",
+                  transition: "background 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  position: "relative",
+                  width: "100%"
+                }}
+                onMouseOver={e => !disabled && (e.currentTarget.style.background = "#fb7185")}
+                onMouseOut={e => !disabled && (e.currentTarget.style.background = "var(--primary-coral, #f87171)")}
+                title={
+                  applicationStatus === "PENDING" ? "You have already applied to this event."
+                  : applicationStatus === "ACCEPTED" ? "Your application was accepted!"
+                  : applicationStatus === "REJECTED" ? "Your application was rejected."
+                  : isSubmitting ? "Submitting..." : "This is a verified host, click for one-click apply."
+                }
+              >
+                <FontAwesomeIcon icon={faCheckCircle} />
+                {buttonText}
+                {applicationStatus === null && !isSubmitting && (
+                  <FontAwesomeIcon icon={faStar} style={{ color: "#fbbf24", position: "absolute", right: 12 }} />
+                )}
+              </button>
+            ) : (
+              <button
+                onClick={() => event?.applicationLink && window.open(event.applicationLink, '_blank')}
+                style={{
+                  background: event?.applicationLink ? "var(--primary-coral, #f87171)" : "#e5e7eb",
+                  color: event?.applicationLink ? "#fff" : "#9ca3af",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: "10px 22px",
+                  fontWeight: 600,
+                  fontSize: 18,
+                  cursor: event?.applicationLink ? "pointer" : "not-allowed",
+                  boxShadow: "0 2px 8px #0001",
+                  transition: "background 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  width: "100%"
+                }}
+                onMouseOver={e => event?.applicationLink && (e.currentTarget.style.background = "#fb7185")}
+                onMouseOut={e => event?.applicationLink && (e.currentTarget.style.background = "var(--primary-coral, #f87171)")}
+                title={event?.applicationLink ? "Apply through external link" : "Organizer did not provide application link"}
+                disabled={!event?.applicationLink}
+              >
+                <FontAwesomeIcon icon={faCheckCircle} />
+                Apply Now
+              </button>
+            )}
+            
+            {/* Contact Organizer Button */}
+            <button
+              onClick={() => router.push("/community")}
+              style={{
+                background: "#f3f4f6",
+                color: "#374151",
+                border: "1px solid #e5e7eb",
+                borderRadius: 8,
+                padding: "10px 22px",
+                fontWeight: 600,
+                fontSize: 18,
+                cursor: "pointer",
+                transition: "background 0.2s",
+                width: "100%"
+              }}
+              onMouseOver={e => (e.currentTarget.style.background = "#e5e7eb")}
+              onMouseOut={e => (e.currentTarget.style.background = "#f3f4f6")}
+            >
+              Contact Organizer
+            </button>
+          </div>
         </div>
         {/* Name & Description */}
         <div style={{ flex: 1, minWidth: 260 }}>
@@ -206,24 +454,79 @@ export default function EventProfilePage() {
         </div>
       </div>
 
-      {/* Score Breakdown Section */}
-      {event.scoreBreakdown && (
-        <div style={{ margin: "2rem 0", padding: 32, background: "#f3f4f6", borderRadius: 16, boxShadow: "0 1px 4px #0001" }}>
-          <h2 style={{ fontSize: 22, fontWeight: 600, marginBottom: 16 }}>Score Breakdown</h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 24, marginBottom: 32 }}>
-            {Object.entries(event.scoreBreakdown)
-              .filter(([key]) => key !== "total")
-              .map(([key, value]) => (
-                <div key={key} style={{ minWidth: 180, marginBottom: 8 }}>
-                  <Pill color="#e0e7ff">{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</Pill>
-                  <div style={{ height: 8, background: "#e5e7eb", borderRadius: 4, margin: "6px 0" }}>
-                    <div style={{ width: `${Math.round(Number(value))}%`, height: 8, background: "#60a5fa", borderRadius: 4 }} />
-                  </div>
-                  <span style={{ fontSize: 14, color: "#374151" }}>{Math.round(Number(value))}</span>
-                </div>
-              ))}
+      {/* Why this score section - always show if userScoreBreakdown exists */}
+      {userScoreBreakdown && (
+        <div style={{ margin: "2rem 0", padding: 32, background: "#fff7f4", borderRadius: 16, boxShadow: "0 1px 4px #f8717111" }}>
+          <div style={{ display: "flex", alignItems: "center", marginBottom: 16 }}>
+            <h2 style={{ fontSize: 22, fontWeight: 600, color: "var(--primary-coral, #f87171)", textShadow: "0 2px 8px #fff8, 0 1px 0 #fff", margin: 0 }}>
+              Why this score?
+            </h2>
+            <span style={{ marginLeft: 10, position: "relative", display: "inline-block" }}>
+              <FontAwesomeIcon icon={faInfoCircle} style={{ color: "#fbbf24", cursor: "pointer" }} title="Scores marked with a star are your priority factors. These are weighted more heavily based on your vendor profile preferences." />
+            </span>
           </div>
-          {renderScoreBreakdownChart()}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+            gap: 18,
+            alignItems: "stretch",
+          }}>
+            {Object.entries(userScoreBreakdown)
+              .filter(([key]) => key !== "total" && key !== "pastEventScore" && key !== "vendorsNeededScore" && key !== "descriptionScore")
+              .sort((a, b) => Number(b[1]) - Number(a[1]))
+              .map(([key, value]) => {
+                const max = maxPoints[key] || 1;
+                const percent = Math.round((Number(value) / max) * 100);
+                const isPriority = userPriorityKeys.includes(key);
+                return (
+                  <div
+                    key={key}
+                    style={{
+                      background: "#fff",
+                      borderRadius: 10,
+                      boxShadow: isPriority ? "0 2px 8px #fbbf2444, 0 1px 4px #f8717111" : "0 1px 4px #f8717111",
+                      padding: 14,
+                      marginBottom: 8,
+                      border: isPriority ? "2px solid #fbbf24" : "1px solid #f3f4f6",
+                      minHeight: 120,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      position: "relative",
+                      boxSizing: "border-box",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", marginBottom: 4 }}>
+                      <Pill color="#fef3c7">{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</Pill>
+                      {isPriority && (
+                        <span style={{ marginLeft: 6, display: "flex", alignItems: "center" }}>
+                          <FontAwesomeIcon icon={faStar} style={{ color: "#fbbf24", fontSize: 18 }} title="Your Priority" />
+                          <span style={{ marginLeft: 4, color: "#fbbf24", fontWeight: 600, fontSize: 13 }}>Priority</span>
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: 18, color: "#f87171", marginBottom: 4 }}>{Math.round(Number(value))} / {max}</div>
+                    <div style={{ height: 7, background: "#fde68a", borderRadius: 4, margin: "4px 0" }}>
+                      <div style={{ width: `${percent}%`, height: 7, background: "#fbbf24", borderRadius: 4 }} />
+                    </div>
+                    <div style={{ fontSize: 13, color: "#374151", marginTop: 4 }}>
+                      {(() => {
+                        switch (key) {
+                          case "eventTypeScore": return "How well the event type matches your preferences.";
+                          case "locationScore": return "How well the location matches your preferred cities.";
+                          case "budgetScore": return "How well the booth fees fit your budget.";
+                          case "demographicsScore": return "How well the event's audience matches your target demographic.";
+                          case "eventSizeScore": return "How well the event size matches your preferred size.";
+                          case "scheduleScore": return "How well the event dates match your preferred days.";
+                          case "vendorCategoryScore": return "How well your vendor category matches the event.";
+                          default: return "";
+                        }
+                      })()}
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       )}
     </div>

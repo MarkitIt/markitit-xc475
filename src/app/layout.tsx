@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={manrope.className}>
       <head>
-        <title>MarkitIt - Pop Up. Stand Out. Sell More.</title>
+        <title>MarkitIt - Pop Up. Stand Out. Own Success.</title>
         <meta
           name="description"
           content="A one-stop platform for finding top-tier events, managing applications, and connecting with a thriving vendor community."

@@ -25,7 +25,7 @@ export default function Home() {
         >
           <h1 className="landing-title coral">Pop Up.</h1>
           <h1 className="landing-title dark-blue">Stand Out.</h1>
-          <h1 className="landing-title beige">Sell More.</h1>
+          <h1 className="landing-title white">Own Success.</h1>
 
           <Image
             src="/images/underline.png"

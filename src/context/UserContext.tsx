@@ -90,7 +90,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       const vendorProfileSnap = await getDoc(vendorProfileRef);
 
       if (vendorProfileSnap.exists()) {
-        setVendorProfile(vendorProfileSnap.data());
+        setVendorProfile({ id: vendorProfileSnap.id, ...vendorProfileSnap.data() });
       } else {
         setVendorProfile(null);
       }
@@ -108,7 +108,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       const hostProfileSnap = await getDoc(hostProfileRef);
 
       if (hostProfileSnap.exists()) {
-        setHostProfile(hostProfileSnap.data());
+        setHostProfile({ id: hostProfileSnap.id, ...hostProfileSnap.data() });
       } else {
         setHostProfile(null);
       }
