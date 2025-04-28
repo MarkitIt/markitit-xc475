@@ -13,6 +13,28 @@
           "application_link_page": "a[href*='participation-application']"
         },
         "needs_subpage": true
-      }
+      },
+      "markets_for_makers": {
+      "url": "https://www.marketsformakers.com/apply/",
+      "selectors": {
+        "event_container": ".market_single",
+        "event_name": ".market_name h3",
+        "event_date": ".market_date h4",
+        "event_location": ".market_location h4",
+        "application_link": ".market_more_info a"
+      },
+      "needs_subpage": false,
+      "dynamic_content": true
+    },
+    "popup_and_shopup": {
+      "url": "https://www.popupandshopup.net/",
+      "selectors": {
+        "event_container": ".wixui-dropdown",
+        "event_name": "option[selected]",
+        "application_link": "https://www.popupandshopup.net/"
+      },
+      "needs_subpage": false,
+      "dynamic_content": false
+    }
     }
   }
