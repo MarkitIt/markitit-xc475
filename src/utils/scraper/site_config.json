@@ -1,1 +1,18 @@
-{}
+{
+    "sites": {
+      "renegade_craft": {
+        "url": "https://www.renegadecraft.com/apply/",
+        "selectors": {
+          "city_container": ".grid-item-inner",
+          "city_name": "h3",
+          "event_container": "dl.accordion dt",
+          "event_date": "button",
+          "event_details": "dd",
+          "location": "dd p:first-child",
+          "fair_info_link": "dd p a[href*='/fair/']",
+          "application_link_page": "a[href*='participation-application']"
+        },
+        "needs_subpage": true
+      }
+    }
+  }
