@@ -17,11 +17,9 @@ export default function Optional() {
     "Expected Attendance & Event Size",
     "Costs",
     "Location",
-    "Event Duration",
     "Target Audience",
     "Positive Host Reviews",
     "Vendor Count (Competition)",
-    "Marketing Support",
   ];
 
   // Synchronize form data with vendor context

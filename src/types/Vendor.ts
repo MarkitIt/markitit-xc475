@@ -36,14 +36,11 @@ export interface Vendor {
   };
   demographic: string[];
   travelRadius?: number;
-  coordinates: { lat: number; lng: number };
   //p5
   budget?: {
     maxVendorFee?: number;
     totalCostEstimate?: number;
   };
-  idealCustomer?: string;
-  selectedPastPopups?: string[];
   //media - can be either File objects during upload or URLs after storage
   logo?: File | string;
   images?: Array<File | string>;

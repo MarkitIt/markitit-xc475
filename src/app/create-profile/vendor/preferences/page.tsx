@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useVendor } from "@/context/VendorContext";
 import styles from "../../styles.module.css";
+import { cities } from "@/types/cities";
 
 const eventTypes = [
   "College pop-ups",
@@ -14,42 +15,6 @@ const eventTypes = [
   "Other",
 ];
 
-const cities = [
-  "Atlanta",
-  "Austin",
-  "Baltimore",
-  "Boston",
-  "Charlotte",
-  "Chicago",
-  "Cleveland",
-  "Dallas",
-  "Denver",
-  "Detroit",
-  "Houston",
-  "Las Vegas",
-  "Los Angeles",
-  "Miami",
-  "Minneapolis",
-  "Nashville",
-  "New Orleans",
-  "New York City",
-  "Oakland",
-  "Orlando",
-  "Philadelphia",
-  "Phoenix",
-  "Pittsburgh",
-  "Portland",
-  "Raleigh",
-  "Richmond",
-  "San Antonio",
-  "San Diego",
-  "San Francisco",
-  "San Jose",
-  "Seattle",
-  "St. Louis",
-  "Tampa",
-  "Washington DC",
-];
 
 const daysOfWeek = [
   "Monday",

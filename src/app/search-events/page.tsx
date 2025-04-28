@@ -11,7 +11,7 @@ import { useUserContext } from "@/context/UserContext";
 import { fetchEventRankings } from "@/utils/fetchEventRankings";
 import styles from "./styles.module.css";
 import { Event } from "@/types/Event";
-import { parseEventDate, getCityState } from "@/utils/inferEventData";
+import { parseEventDate } from "@/utils/inferEventData";
 import { useRouter } from "next/navigation";
 import { theme } from "@/styles/theme";
 
@@ -67,7 +67,7 @@ export default function SearchEvents() {
           eventsList.sort((a: any, b: any) => b.score - a.score);
         } else {
           // Fetch from Firestore for non-vendor users
-          const querySnapshot = await getDocs(collection(db, "events"));
+          const querySnapshot = await getDocs(collection(db, "eventsFormatted"));
           eventsList = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
