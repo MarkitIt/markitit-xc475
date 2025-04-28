@@ -23,34 +23,39 @@ export const EventCard: React.FC<EventCardProps> = ({
   showRank,
   score,
 }) => {
+  console.log("EventCard startDate:", event.startDate, "endDate:", event.endDate);
   const displayScore = score !== undefined ? score : event.score;
   const formattedScore =
     displayScore !== undefined && displayScore > 100
       ? displayScore / 100
       : displayScore;
 
-  const formatDate = (timestamp: any) => {
-    if (!timestamp) return null;
-    const eventDate = new Date(timestamp.seconds * 1000);
-    if (eventDate.getFullYear() === 1970 || !timestamp.seconds) {
-      eventDate.setFullYear(new Date().getFullYear());
-    }
-    return eventDate.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
+      const formatDate = (date: { seconds: number; nanoseconds: number } | undefined) => {
+        if (!date) return "";
+        const eventDate = new Date(date.seconds * 1000);
+        return eventDate.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      };
 
   let dateDisplay = "Date not available";
   if (event.startDate && event.endDate) {
     const startFormatted = formatDate(event.startDate);
     const endFormatted = formatDate(event.endDate);
-    dateDisplay = startFormatted === endFormatted 
-      ? startFormatted || "Date not available" 
-      : `${startFormatted || "Date not available"} - ${endFormatted || "Date not available"}`;
+    dateDisplay =
+      startFormatted && endFormatted
+        ? startFormatted === endFormatted
+          ? startFormatted
+          : `${startFormatted} - ${endFormatted}`
+        : "Date not available";
   } else if (event.startDate) {
-    dateDisplay = formatDate(event.startDate) as string;
+    const startFormatted = formatDate(event.startDate);
+    dateDisplay = startFormatted || "Date not available";
+  } else if (event.endDate) {
+    const endFormatted = formatDate(event.endDate);
+    dateDisplay = endFormatted || "Date not available";
   }
 
   return (
@@ -104,7 +109,7 @@ export const EventCard: React.FC<EventCardProps> = ({
         <div className="event-details">
           <div className="event-date">
             <FontAwesomeIcon icon={faCalendarAlt} className="icon-calendar" />
-            {dateDisplay}
+            {formatDate(event.startDate)} - {formatDate(event.endDate)}
           </div>
           <div className="event-location">
             {event.location?.city}, {event.location?.state}

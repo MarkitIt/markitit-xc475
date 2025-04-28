@@ -17,7 +17,7 @@ interface EventFormatted {
   };
   image: string | null;
   description: string;
-  booth_fees: string; // e.g., "N/A", "$100", "$50 - $100"
+  booth_fees: Record<string, number> | string; // Updated to allow map or string fallback
   category_tags: string[]; // e.g., ["Art fair", "Outdoor festivals"]
   type: string; // e.g., "Market"
   demographic_guess: string[]; // e.g., ["Families", "Local Regulars"]
@@ -26,9 +26,14 @@ interface EventFormatted {
   estimated_headcount: number | null; // Assuming this exists, though not explicitly used
   headcount_min: number | null; // Assuming this exists, though not explicitly used
   headcount_max: number | null; // Assuming this exists, though not explicitly used
-  timestamp: Timestamp; // Use Firestore Timestamp
+  timestamp: Timestamp; // Using this as lastUpdated indicator
 }
 
+// Interface for vendor rankings cache
+interface VendorRankingCache {
+  lastRanked: Timestamp;
+  rankedEvents: (EventFormatted & { score: number; scoreBreakdown: ScoreBreakdown })[];
+}
 
 // Interface for the breakdown of scores
 interface ScoreBreakdown {
@@ -80,8 +85,6 @@ function parseBoothFee(feeString: string): { min: number; max: number } | null {
   return null; // Indicate unparseable fee
 }
 
-
-
 // --- Updated Scoring Function ---
 // Takes Vendor type (ensure it's defined correctly) and EventFormatted type
 const calculateEventScore = (vendor: Vendor, event: EventFormatted): ScoreBreakdown => {
@@ -100,11 +103,11 @@ const calculateEventScore = (vendor: Vendor, event: EventFormatted): ScoreBreakd
     const TOTAL_POSSIBLE_BASE = Object.values(MAX_POINTS).reduce((sum, p) => sum + p, 0);
 
     // --- Initialize Raw Scores ---
-    const rawBreakdown = {
-        eventTypeScore: 0,
-        locationScore: 0,
-        budgetScore: 0,
-        demographicsScore: 0,
+  const rawBreakdown = {
+    eventTypeScore: 0,
+    locationScore: 0,
+    budgetScore: 0,
+    demographicsScore: 0,
         eventSizeScore: 0,
         scheduleScore: 0,
         vendorCategoryScore: 0,
@@ -268,9 +271,9 @@ const calculateEventScore = (vendor: Vendor, event: EventFormatted): ScoreBreakd
     const weights = [1.5, 1.25, 1.1]; // Must match weights above
     const priorityMap: Record<string, keyof typeof rawBreakdown> = {
       "Expected Attendance & Event Size": "eventSizeScore",
-      "Location": "locationScore",
-      "Costs": "budgetScore",
-      "Target Audience": "demographicsScore",
+    "Location": "locationScore",
+    "Costs": "budgetScore",
+    "Target Audience": "demographicsScore",
       "Vendor Count (Competition)": "eventSizeScore",
     };
     const appliedWeights: Partial<Record<keyof typeof rawBreakdown, number>> = {};
@@ -314,76 +317,71 @@ const calculateEventScore = (vendor: Vendor, event: EventFormatted): ScoreBreakd
 // --- API Route Handler (POST) ---
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { vendorId } = body;
+    const { vendorId } = await request.json();
 
     if (!vendorId) {
-      console.log("RankEvents: Missing vendorId in request body.");
-      return NextResponse.json({ error: "Vendor ID required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Vendor ID is required" },
+        { status: 400 }
+      );
     }
 
-    console.log(`RankEvents: Fetching vendor profile for vendorId: ${vendorId}`);
-    const vendorSnap = await adminDb
-      .collection("vendorProfile")
-      .where("uid", "==", vendorId)
-      .get();
-
-    if (vendorSnap.empty) {
-      console.error(`RankEvents: Vendor not found for vendorId: ${vendorId}`);
-      return NextResponse.json({ error: "Vendor not found" }, { status: 404 });
+    // Get vendor document
+    const vendorDoc = await adminDb.collection("vendorProfile").doc(vendorId).get();
+    if (!vendorDoc.exists) {
+      return NextResponse.json(
+        { error: "Vendor not found" },
+        { status: 404 }
+      );
     }
-    const vendor = vendorSnap.docs[0].data() as Vendor;
-    console.log(`RankEvents: Vendor profile found for ${vendor.businessName || vendorId}`);
 
-    console.log("RankEvents: Fetching formatted events...");
-    const eventsSnap = await adminDb.collection("eventsFormatted").get();
-    const events: EventFormatted[] = eventsSnap.docs.map(doc => ({
+    const vendor = vendorDoc.data() as Vendor;
+
+    // Get all events
+    const eventsSnapshot = await adminDb.collection("eventsFormatted").get();
+    const events = eventsSnapshot.docs.map(doc => ({
       id: doc.id,
-      ...doc.data(),
-    } as EventFormatted));
-    console.log(`RankEvents: Found ${events.length} formatted events.`);
+      ...doc.data()
+    })) as EventFormatted[];
 
-    // --- Optional: Basic Pre-filtering (Recommended for Performance) ---
-    const potentiallyRelevantEvents = events.filter(event => {
-      if (Array.isArray(vendor.state) && vendor.state.length > 0 && event.location?.state) {
-        if (!vendor.state.some(s => typeof s === 'string' && s.toLowerCase() === event.location.state.toLowerCase())) {
-          return false;
-        }
-      }
-      const SIXTY_DAYS_AGO = Date.now() - 60 * 24 * 60 * 60 * 1000;
-      const endDateObj =
-        event.endDate instanceof Timestamp
-          ? event.endDate.toDate()
-          : event.endDate
-            ? new Date(event.endDate)
-            : null;
-
-      if (endDateObj && endDateObj.getTime() < SIXTY_DAYS_AGO) {
-        // return false;
-      }
-      return true;
-    });
-    console.log(`RankEvents: ${potentiallyRelevantEvents.length} potentially relevant events after basic filtering.`);
-
-    console.log(`RankEvents: Starting detailed scoring for ${potentiallyRelevantEvents.length} events...`);
-    // Use the filtered list for scoring
-    const ranked = potentiallyRelevantEvents.map(event => {
-      const breakdown = calculateEventScore(vendor, event);
-      return { ...event, score: breakdown.total, scoreBreakdown: breakdown };
+    // Calculate scores for each event
+    const rankedEvents = events.map(event => {
+      const scoreBreakdown = calculateEventScore(vendor, event);
+      return {
+        ...event,
+        score: scoreBreakdown.total,
+        scoreBreakdown,
+        // Ensure dates are in the correct format
+        startDate: event.startDate ? {
+          seconds: event.startDate.seconds,
+          nanoseconds: event.startDate.nanoseconds
+        } : null,
+        endDate: event.endDate ? {
+          seconds: event.endDate.seconds,
+          nanoseconds: event.endDate.nanoseconds
+        } : null
+      };
     });
 
-    // Sort by score descending
-    ranked.sort((a, b) => b.score - a.score);
-    console.log("RankEvents: Ranking complete.");
+    // Sort by score (highest first)
+    rankedEvents.sort((a, b) => b.score - a.score);
 
-    return NextResponse.json({ rankedEvents: ranked });
+    // Cache the results
+    const cacheDoc = adminDb.collection("vendorRankings").doc(vendorId);
+    await cacheDoc.set({
+      lastRanked: Timestamp.now(),
+      rankedEvents
+    });
 
+    return NextResponse.json({
+      rankedEvents
+    });
   } catch (error) {
-    console.error("Error in /api/rankEvents route:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown server error occurred";
-    // Provide more detail in server logs but keep client error message generic
-    console.error("Error details:", error);
-    return NextResponse.json({ error: "Internal Server Error", details: errorMessage }, { status: 500 });
+    console.error("Error ranking events:", error);
+    return NextResponse.json(
+      { error: "Failed to rank events" },
+      { status: 500 }
+    );
   }
 }
 
