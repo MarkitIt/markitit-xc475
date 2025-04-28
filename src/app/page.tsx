@@ -46,7 +46,7 @@ export default function Home() {
       </div>
       <div className={styles.discoverSection}>
         <div className={styles.discoverText}>
-          <h1 className={styles.landingTitle}>Discover MarkitIt</h1>
+          <h1 className={`${styles.landingTitle} ${styles.darkBlue}`}>Discover MarkitIt</h1>
           <p className={styles.discoverDescription}>
             These features make our platform
           </p>
@@ -81,33 +81,32 @@ export default function Home() {
               title: "Event Matching",
               desc: "Discover the best pop-ups for your brand with AI-powered event recommendations.",
               img: "/images/eventMatchingIcon.png",
+              link: "/search-events", 
             },
             {
               title: "Fast Applications",
               desc: "Apply to multiple events instantly with auto-filled details and status tracking.",
               img: "/images/fastApplicationIcon.png",
+              link: "/search-events", 
             },
             {
               title: "Financial Calculator",
               desc: "Plan smarter with cost breakdowns and ROI predictions to maximize your earnings.",
               img: "/images/financialCalculatorIcon.png",
+              link: "/vendor-dashboard", 
             },
             {
               title: "Host Rating",
               desc: "Avoid bad experiences with verified vendor reviews and a trust-based host vetting system.",
               img: "/images/hostRatingIcon.png",
+              link: "/search-events", 
             },
           ].map((feature, index) => (
             <div
               key={index}
               className={styles.feature}
             >
-              <div
-                style={{
-                  width: "120px", // Fixed width for the column
-                  flexShrink: 0, // Prevent the column from shrinking
-                }}
-              >
+              <div className={styles.featureImageContainer}>
                 <Image
                   src={feature.img}
                   alt={`${feature.title} Icon`}
@@ -120,7 +119,9 @@ export default function Home() {
               <div>
                 <h3 className={styles.featureTitle}>{feature.title}</h3>
                 <div className={styles.featureContent}>
-                  <button className={styles.exploreButton}>EXPLORE</button>
+                  <Link href={feature.link}>
+                    <button className={styles.exploreButton}>EXPLORE</button>
+                  </Link>
                   <p className={styles.featureDescription}>{feature.desc}</p>
                 </div>
               </div>

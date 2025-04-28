@@ -3,43 +3,36 @@
 @tailwind utilities;
 
 :root {
-  /* Colors */
-  --primary-black: #3a2e39;
-  --primary-green: #1e555c;
-  --primary-beige: #f4d8cd;
-  --primary-sand: #edb183;
-  --primary-pink: #e4b7b7;
-  --primary-dark-blue: #1b2559;
-  --primary-coral: #f15152;
+  /* Primary Colors */
+  --primary-black: #3A2E39;
+  --primary-green: #1E555C;
+  --primary-beige: #F4D8CD;
+  --primary-sand: #EDB183;
+  --primary-pink: #E4B7B7;
+  --primary-dark-blue: #1B2559;
+  --primary-coral: #E88D67;
 
-  --secondary-yellow: #f4d03f;
-  --secondary-light-pink: #fff1f1;
+  /* Secondary Colors */
+  --secondary-yellow: #F4D03F;
+  --secondary-light-pink: #FFF1F1;
 
-  --text-primary: #3a2e39;
-  --text-secondary: #64748b;
+  /* Text Colors */
+  --text-primary: #3A2E39;
+  --text-secondary: #64748B;
 
-  --background-main: #f3e5e2;
-  --background-white: #ffffff;
-  --background-gradient: linear-gradient(
-    180deg,
-    #f3e5e2 0%,
-    rgb(233, 86, 73) 100%
-  );
-  --background-gradient-soft: linear-gradient(
-    180deg,
-    #f6e2dd 0%,
-    #fde9e9 3%,
-    #ffffff 8%
-  );
+  /* Backgrounds */
+  --background-main: #F3E5E2;
+  --background-white: #FFFFFF;
+  --background-gradient: linear-gradient(180deg, #f3e5e2 0%, rgb(233, 86, 73) 100%);
 
   /* Typography */
-  --font-family-primary: "Manrope, sans-serif";
+  --font-family-primary: "Manrope", sans-serif;
+
   --font-size-title: 72px;
   --font-size-header: 24px;
   --font-size-body: 20px;
   --font-size-small: 14px;
 
-  /* Font Weights */
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;

@@ -417,7 +417,14 @@ a.secondary {
 
 
 .landingBackground {
-  background-color: #f8f9fa;
+  background: linear-gradient(180deg, #f3e5e2 0%, rgb(233, 86, 73) 100%);
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  position: relative;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .heroSection {
@@ -434,9 +441,15 @@ a.secondary {
 }
 
 .landingTitle {
-  font-size: 3rem;
-  font-weight: bold;
+  font-family: "Nunito", sans-serif;
+  font-size: 83px;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
+
 
 .coral {
   color: var(--primary-coral);
@@ -455,9 +468,14 @@ a.secondary {
 }
 
 .landingDescription {
-  font-size: 1.25rem;
-  margin-top: 1rem;
+  font-family: "Manrope", sans-serif;
+  font-size: var(--font-size-body);
+  color: var(--primary-dark-blue);
+  max-width: 600px;
+  line-height: 1.5;
+  margin-top: 20px;
 }
+
 
 .heroImageContainer {
   position: relative;
@@ -575,18 +593,11 @@ a.secondary {
   flex-shrink: 0;
 }
 
-.featureImage {
-  object-fit: contain;
-  border-radius: var(--border-radius-lg);
-  max-width: 100%;
-  height: auto;
-}
-
 .featureTitle {
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-medium);
-  color: var(--primary-coral);
+  font-family: var(--font-family-primary); 
+  font-size: var(--font-size-body); 
+  font-weight: var(--font-weight-medium); 
+  color: var(--primary-coral); 
   margin-bottom: var(--spacing-xs);
 }
 
@@ -594,7 +605,7 @@ a.secondary {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: var(--spacing-md); 
 }
 
 .exploreButton {
