@@ -16,6 +16,10 @@ import {
 } from "firebase/firestore";
 import Image from 'next/image';
 import styles from "./styles.module.css";
+import Sidebar from './components/Sidebar';
+import PopUpsSection from './components/PopUpsSection';
+import FinancialOverview from './components/FinancialOverview';
+import ApplicationStatus from './components/ApplicationStatus';
 
 // Define types for fetched data (adjust based on actual structure)
 interface Application {
@@ -169,50 +173,20 @@ const VendorDashboard = () => {
 
   return (
     <main className={`global-background ${styles.dashboardGrid}`}>
-      {/* Left Sidebar */}
-      <aside className={styles.sidebar}>
-        <div className={styles.profileCard}>
-          <div className={styles.profilePic}>
-            {/* Placeholder for profile picture */}
-            {user?.photoURL ? (
-               <Image src={user.photoURL} alt="Profile" width={80} height={80} style={{ borderRadius: '50%' }}/>
-             ) : (
-               <div className={styles.profilePicPlaceholder}></div>
-             )}
-          </div>
-          <h3 className={styles.profileName}>{vendorProfile?.contactName || "Vendor Name"}</h3>
-          <p className={styles.businessName}>{vendorProfile?.businessName || "Business Name"}</p>
-        </div>
-        <nav className={styles.sidebarNav}>
-          <a href="#" className={styles.navLink}>Upcoming Events</a>
-          <a href="#" className={styles.navLink}>My Applications</a>
-          <a href="#" className={styles.navLink}>Financial Overview</a>
-          <a href="#" className={styles.navLink}>Feed</a>
-        </nav>
-      </aside>
+      <Sidebar 
+        user={user}
+        vendorProfile={vendorProfile}
+      />
 
       {/* Main Content Area */}
       <section className={styles.mainContent}>
-        {/* Your Pop-Ups Section */}
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Your Pop-Ups in {currentMonthName}</h2>
-          {loadingEvents ? (
-            <p>Loading events...</p>
-          ) : acceptedEvents.length > 0 ? (
-            <div className={styles.eventsGrid}>
-              {acceptedEvents.map((event) => (
-                <div key={event.id} className={styles.eventCard}>
-                  <h4>{event.name}</h4>
-                  <p><strong>DATE:</strong> {formatDate(event.startDate)}</p>
-                  <p><strong>TIME:</strong> {formatTime(event.startDate)} - {formatTime(event.endDate)}</p>
-                  <p><strong>PLACE:</strong> {event.location?.city}, {event.location?.state}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className={styles.noDataMessage}>No accepted pop-ups this month.</p>
-          )}
-        </div>
+        <PopUpsSection
+          currentMonthName={currentMonthName}
+          loadingEvents={loadingEvents}
+          acceptedEvents={acceptedEvents}
+          formatDate={formatDate}
+          formatTime={formatTime}
+        />
 
         {/* Event Calendar Section */}
         <div className={styles.section}>
@@ -225,43 +199,12 @@ const VendorDashboard = () => {
 
       {/* Right Panel */}
       <aside className={styles.rightPanel}>
-        {/* Financial Overview Section */}
-        <div className={styles.financialCard}>
-          <h3 className={styles.rightPanelTitle}>Financial overview</h3>
-          <p>This Month</p>
-          <p>You have attended <strong>{vendorProfile?.applications?.length || 0}</strong> Pop Ups</p>
-          <div className={styles.financeDetails}>
-            <div className={styles.financeItem}>
-              <h4>Costs</h4>
-              <p className={styles.placeholderText}>$XXX.XX</p> {/* Placeholder */}
-            </div>
-            <div className={styles.financeItem}>
-              <h4>Revenue</h4>
-              <p className={styles.placeholderText}>$XXX.XX</p> {/* Placeholder */}
-            </div>
-          </div>
-        </div>
-
-        {/* Application Status Section */}
-        <div className={styles.applicationStatusCard}>
-          <h3 className={styles.rightPanelTitle}>Application Status</h3>
-           {loadingApplications ? (
-            <p>Loading applications...</p>
-          ) : recentApplications.length > 0 ? (
-             <ul className={styles.appList}>
-               {recentApplications.map((app) => (
-                 <li key={app.id} className={styles.appListItem}>
-                   <span>{app.eventName}</span>
-                   <span className={`${styles.statusPill} ${getStatusPillStyle(app.status)}`}>
-                     {app.status.charAt(0).toUpperCase() + app.status.slice(1).toLowerCase()}
-                   </span>
-                 </li>
-               ))}
-             </ul>
-           ) : (
-             <p>No recent applications found.</p>
-           )}
-        </div>
+        <FinancialOverview vendorProfile={vendorProfile} />
+        <ApplicationStatus
+          loadingApplications={loadingApplications}
+          recentApplications={recentApplications}
+          getStatusPillStyle={getStatusPillStyle}
+        />
       </aside>
     </main>
   );
