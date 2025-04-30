@@ -1,4 +1,4 @@
-import * as functions from "firebase-functions/v1";
+import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import {
   HarmCategory,
@@ -80,7 +80,10 @@ async function formatEvent(
 }
 
 export const batchFormatEvents = functions
-  .runWith({ timeoutSeconds: 540, memory: "2GB" })
+  .runWith({
+    timeoutSeconds: 540,
+    memory: "2GB"
+  })
   .https.onRequest(async (req: Request, res: Response) => {
     try {
       console.log("🚀 Starting batch event formatting...");
