@@ -207,16 +207,6 @@ export default function ReviewPage() {
           )}
         </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label}>Attended Pop-Ups</label>
-          <div className={styles.pillContainer}>
-            {vendor.selectedPastPopups?.map((popup, index) => (
-              <span key={index} className={styles.reviewPill}>
-                {popup}
-              </span>
-            ))}
-          </div>
-        </div>
 
         <div className={styles.formGroup}>
           <label className={styles.label}>Price Range</label>

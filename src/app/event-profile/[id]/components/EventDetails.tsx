@@ -1,10 +1,11 @@
+import React from 'react';
 import styles from '../styles.module.css';
 import { Pill } from './Pill';
 
 interface EventDetailsProps {
   event: any;
   formatDate: (date: { seconds: number; nanoseconds: number } | undefined) => string;
-  renderBoothFees: (fees: any) => JSX.Element;
+  renderBoothFees: (fees: any) => React.ReactElement;
 }
 
 export default function EventDetails({ event, formatDate, renderBoothFees }: EventDetailsProps) {
