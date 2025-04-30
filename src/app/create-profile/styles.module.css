@@ -49,9 +49,25 @@
   flex-direction: column;
   gap: 0.75rem;
   width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.formRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.formRow .formGroup {
+  flex: 1;
+  margin-bottom: 0;
 }
 
 .label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
   font-family: "Manrope", sans-serif;
   font-size: 18px;
   font-weight: 500;
@@ -220,23 +236,49 @@
 }
 
 .nextButton {
-  background-color: #f15152;
+  background-color: #FF4400;
   color: white;
-  padding: 12px 32px;
-  border-radius: 8px;
   border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s ease-in-out;
+  transition: background-color 0.3s ease;
+  min-width: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nextButton:hover {
+  background-color: #E03D00;
 }
 
 .nextButton:disabled {
-  opacity: 0.5;
+  background-color: #ccc;
   cursor: not-allowed;
 }
 
-.nextButton:not(:disabled):hover {
-  background-color: #e04142;
+.loadingSpinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .select {
@@ -426,6 +468,14 @@
   color: #64748b;
   margin-top: -1.5rem;
   margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-family: "Manrope", sans-serif;
+  font-size: 24px;
+  color: #3a2e39;
+  margin-bottom: 1rem;
+  font-weight: 500;
 }
 
 .sliderValue {

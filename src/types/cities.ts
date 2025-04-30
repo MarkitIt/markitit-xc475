@@ -1,0 +1,18 @@
+export const cities = [
+    "Atlanta",
+    "Baltimore",
+    "Boston",
+    "Chicago",
+    "Dallas",
+    "Houston",
+    "Los Angeles",
+    "Miami",
+    "New Orleans",
+    "New York City",
+    "Oakland",
+    "Philadelphia",
+    "Richmond",
+    "San Francisco",
+    "Seattle",
+    "Washington DC",
+  ];

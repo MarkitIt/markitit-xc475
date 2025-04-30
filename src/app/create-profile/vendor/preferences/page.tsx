@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useVendor } from "@/context/VendorContext";
 import styles from "../../styles.module.css";
+import { cities } from "@/types/cities";
 
 const eventTypes = [
   "College pop-ups",
@@ -14,42 +15,6 @@ const eventTypes = [
   "Other",
 ];
 
-const cities = [
-  "Atlanta",
-  "Austin",
-  "Baltimore",
-  "Boston",
-  "Charlotte",
-  "Chicago",
-  "Cleveland",
-  "Dallas",
-  "Denver",
-  "Detroit",
-  "Houston",
-  "Las Vegas",
-  "Los Angeles",
-  "Miami",
-  "Minneapolis",
-  "Nashville",
-  "New Orleans",
-  "New York City",
-  "Oakland",
-  "Orlando",
-  "Philadelphia",
-  "Phoenix",
-  "Pittsburgh",
-  "Portland",
-  "Raleigh",
-  "Richmond",
-  "San Antonio",
-  "San Diego",
-  "San Francisco",
-  "San Jose",
-  "Seattle",
-  "St. Louis",
-  "Tampa",
-  "Washington DC",
-];
 
 const daysOfWeek = [
   "Monday",
@@ -63,10 +28,10 @@ const daysOfWeek = [
 ];
 
 const eventSizes = [
-  { label: "Small (under 25 vendors)", value: "small" },
-  { label: "Medium (25–75 vendors)", value: "medium" },
-  { label: "Large (75–150 vendors)", value: "large" },
-  { label: "Mega Events (150+ vendors / festivals)", value: "mega" },
+  { label: "Small (under 25 vendors)", value: "small", min: 1, max: 25 },
+  { label: "Medium (25–75 vendors)", value: "medium", min: 25, max: 75 },
+  { label: "Large (75–150 vendors)", value: "large", min: 75, max: 150 },
+  { label: "Mega Events (150+ vendors / festivals)", value: "mega", min: 150, max: Infinity },
 ];
 
 const customerTypes = [
@@ -112,6 +77,8 @@ export default function PreferencesPage() {
   const [isExiting, setIsExiting] = useState(false);
 
   const handleNext = async () => {
+    const selectedEventSize = eventSizes.find((size) => size.value === eventSize);
+  
     updateVendor({
       ...vendor,
       eventPreference: selectedEventTypes,
@@ -122,10 +89,12 @@ export default function PreferencesPage() {
       schedule: {
         preferredDays: selectedDays,
       },
-      preferredEventSize: eventSize,
+      preferredEventSize: selectedEventSize
+        ? { min: selectedEventSize.min, max: selectedEventSize.max }
+        : undefined,
       demographic: selectedCustomers,
     });
-
+  
     setIsExiting(true);
     await new Promise((resolve) => setTimeout(resolve, 500));
     router.push("/create-profile/vendor/media");

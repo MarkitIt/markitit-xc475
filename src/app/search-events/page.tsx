@@ -11,9 +11,10 @@ import { useUserContext } from "@/context/UserContext";
 import { fetchEventRankings } from "@/utils/fetchEventRankings";
 import styles from "./styles.module.css";
 import { Event } from "@/types/Event";
-import { parseEventDate, getCityState } from "@/utils/inferEventData";
+import { parseEventDate } from "@/utils/inferEventData";
 import { useRouter } from "next/navigation";
 import { theme } from "@/styles/theme";
+import { cities as allowedCities } from "@/types/cities";
 
 export default function SearchEvents() {
   const { theme } = useTheme();
@@ -40,6 +41,16 @@ export default function SearchEvents() {
     indexOfLastEvent,
   );
 
+  const formatDate = (date: { seconds: number; nanoseconds: number } | undefined) => {
+    if (!date) return "";
+    const eventDate = new Date(date.seconds * 1000);
+    return eventDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
   // Fetching events from API if user has vendor profile, otherwise from Firestore
   useEffect(() => {
     async function fetchEvents() {
@@ -47,7 +58,7 @@ export default function SearchEvents() {
       setError(null);
 
       try {
-        let eventsList = [];
+        let eventsList: Event[] = [];
 
         if (user && vendorProfile) {
           // Fetch ranked events from API
@@ -61,24 +72,44 @@ export default function SearchEvents() {
           eventsList = rankingResponse.data.rankedEvents.map((event: any) => ({
             ...event,
             score: event.scoreBreakdown.total * 100, // Convert to percentage
-          }));
+            startDate: event.startDate ? {
+              seconds: event.startDate.seconds,
+              nanoseconds: event.startDate.nanoseconds
+            } : null,
+            endDate: event.endDate ? {
+              seconds: event.endDate.seconds,
+              nanoseconds: event.endDate.nanoseconds
+            } : null
+          })) as Event[];
 
           // Sort by score (highest first)
           eventsList.sort((a: any, b: any) => b.score - a.score);
         } else {
           // Fetch from Firestore for non-vendor users
-          const querySnapshot = await getDocs(collection(db, "events"));
+          const querySnapshot = await getDocs(collection(db, "eventsFormatted"));
           eventsList = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
-          }));
+          })) as Event[];
         }
 
+        console.log("Events from API/Firestore:", eventsList);
         setEvents(eventsList);
         setFilteredEvents(eventsList);
       } catch (err) {
-        console.error("Error fetching events: ", err);
-        setError("Failed to load events. Please try again later.");
+        console.error("Error fetching events:", err);
+        // If there's an error with the API, fall back to regular events
+        try {
+          const querySnapshot = await getDocs(collection(db, "eventsFormatted"));
+          const eventsList = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Event[];
+          setEvents(eventsList);
+          setFilteredEvents(eventsList);
+        } catch (fallbackErr) {
+          setError("Error loading events");
+        }
       } finally {
         setLoading(false);
       }
@@ -94,26 +125,25 @@ export default function SearchEvents() {
     endDate: string,
     keywords: string,
   ) => {
-    //setSearchQuery(query);
     setCurrentPage(1);
 
-    if (
-      !city.trim() &&
-      !startDate.trim() &&
-      !endDate.trim() &&
-      !keywords.trim()
-    ) {
-      setFilteredEvents(events);
-      return;
-    }
-
-    const formatDate = (timestamp: any) => {
-      if (!timestamp) return null;
-      return new Date(timestamp.seconds * 1000).toLocaleDateString("en-US"); // Format to mm/dd/yyyy
-    };
-
-    //const lowercaseQuery = query.toLowerCase();
+    const now = new Date();
     const filtered = events.filter((event) => {
+      // Only show events in allowed cities
+      if (!event.location || !allowedCities.includes(event.location.city)) return false;
+      // Only show events today or in the future
+      const getDate = (ts: any) =>
+        ts && typeof ts.seconds === "number"
+          ? new Date(ts.seconds * 1000)
+          : ts
+          ? new Date(ts)
+          : null;
+
+      const startDateObj = getDate(event.startDate);
+      const endDateObj = getDate(event.endDate);
+      const eventDate = endDateObj || startDateObj;
+      if (!eventDate || eventDate < now) return false;
+
       // Check city
       const cityMatch = city
         ? event.location?.city?.toLowerCase().includes(city.toLowerCase())
@@ -121,16 +151,12 @@ export default function SearchEvents() {
 
       // Check start date
       const startDateMatch = startDate
-        ? event.startDate?.seconds &&
-          formatDate(event.startDate) &&
-          new Date(formatDate(event.startDate)!) >= new Date(startDate)
+        ? startDateObj && startDateObj >= new Date(startDate)
         : true;
 
       // Check end date
       const endDateMatch = endDate
-        ? event.endDate?.seconds &&
-          formatDate(event.endDate) &&
-          new Date(formatDate(event.endDate)!) <= new Date(endDate)
+        ? endDateObj && endDateObj <= new Date(endDate)
         : true;
 
       // Check keywords in name or description
@@ -141,8 +167,6 @@ export default function SearchEvents() {
 
       return cityMatch && startDateMatch && endDateMatch && keywordsMatch;
     });
-    console.log(filtered);
-
     setFilteredEvents(filtered);
   };
 
@@ -247,12 +271,12 @@ export default function SearchEvents() {
               onPageChange={setCurrentPage}
             />
           )}
-
+{/* 
           {filteredEvents.length === 0 && (
             <div className="no-results-message">
               No events found matching your criteria.
             </div>
-          )}
+          )} */}
         </>
       )}
     </div>
