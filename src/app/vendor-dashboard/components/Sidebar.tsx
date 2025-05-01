@@ -11,14 +11,25 @@ export default function Sidebar({ user, vendorProfile }: SidebarProps) {
     <aside className={styles.sidebar}>
       <div className={styles.profileCard}>
         <div className={styles.profilePic}>
-          {user?.photoURL ? (
-            <Image src={user.photoURL} alt="Profile" width={80} height={80} style={{ borderRadius: '50%' }}/>
+          {vendorProfile?.logo ? (
+            <Image 
+              src={vendorProfile.logo} 
+              alt={`${vendorProfile.businessName} logo`} 
+              width={80} 
+              height={80} 
+              style={{ 
+                objectFit: 'cover',
+                borderRadius: '50%'
+              }}
+            />
           ) : (
-            <div className={styles.profilePicPlaceholder}></div>
+            <div className={styles.profilePicPlaceholder}>
+              {vendorProfile?.businessName?.charAt(0) || 'B'}
+            </div>
           )}
         </div>
-        <h3 className={styles.profileName}>{vendorProfile?.contactName || "Vendor Name"}</h3>
-        <p className={styles.businessName}>{vendorProfile?.businessName || "Business Name"}</p>
+        <h3 className={styles.profileName}>{vendorProfile?.businessName || "Business Name"}</h3>
+        <p className={styles.businessName}>{vendorProfile?.contactName || "Contact Name"}</p>
       </div>
       <nav className={styles.sidebarNav}>
         <a href="#" className={styles.navLink}>Upcoming Events</a>

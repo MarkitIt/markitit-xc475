@@ -6,6 +6,7 @@ const nextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       functions: false,
+      'firebase-functions': false,
     };
 
     return config;
@@ -23,7 +24,11 @@ const nextConfig = {
   transpilePackages: [],
   // Exclude specific directories from being watched or processed
   outputFileTracingExcludes: {
-    "*": ["node_modules/some-package"],
+    "*": [
+      "node_modules/some-package",
+      "functions/**/*",
+      "node_modules/firebase-functions/**/*"
+    ],
   },
 };
 

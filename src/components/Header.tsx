@@ -121,9 +121,6 @@ export default function Header() {
                   </Link>
                 </>
               )}
-              <Link href="/settings" className={styles.dropdownLink}>
-                Settings
-              </Link>
               <button
                 onClick={handleLogout}
                 className={styles.logoutButton}

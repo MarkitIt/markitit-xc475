@@ -32,18 +32,25 @@
   height: 80px;
   border-radius: 50%;
   margin: 0 auto var(--spacing-md, 16px);
-  background-color: var(--primary-coral, #f87171); /* Placeholder background */
+  background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  border: 2px solid var(--primary-coral-light, #ffe4e4);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .profilePicPlaceholder {
-  /* Add placeholder styles if needed, e.g., an icon */
   width: 100%;
   height: 100%;
-  background-color: #f3f4f6;
+  background-color: var(--primary-coral-lightest, #fff1f1);
+  color: var(--primary-coral, #f87171);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 600;
 }
 
 .profileName {
@@ -51,12 +58,14 @@
   font-weight: 600;
   color: var(--primary-coral, #f87171);
   margin-bottom: var(--spacing-xs, 4px);
+  line-height: 1.4;
 }
 
 .businessName {
   font-size: var(--font-size-sm, 0.875rem);
   color: var(--text-medium, #4b5563);
   margin-bottom: 0;
+  line-height: 1.4;
 }
 
 .sidebarNav {
@@ -275,4 +284,111 @@
 
 .applicationStatusCard p {
   color: var(--text-medium, #4b5563);
+}
+
+/* Calendar Styles */
+.calendar {
+  background-color: var(--background-secondary, #ffffff);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.calendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md, 16px);
+  background-color: var(--primary-coral-lightest, #fff1f1);
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.calendarHeader h3 {
+  font-size: var(--font-size-lg, 1.125rem);
+  font-weight: 600;
+  color: var(--primary-coral, #f87171);
+  margin: 0;
+}
+
+.calendarButton {
+  padding: 8px 12px;
+  background-color: white;
+  border: 1px solid var(--primary-coral-light, #ffe4e4);
+  border-radius: 8px;
+  color: var(--primary-coral, #f87171);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendarButton:hover {
+  background-color: var(--primary-coral-light, #ffe4e4);
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background-color: var(--border-color, #e5e7eb);
+  padding: 1px;
+}
+
+.weekDay {
+  background-color: var(--primary-coral-lightest, #fff1f1);
+  padding: 8px;
+  text-align: center;
+  font-weight: 500;
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--primary-coral, #f87171);
+}
+
+.calendarDay {
+  background-color: white;
+  min-height: 100px;
+  padding: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dayNumber {
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 500;
+  color: var(--text-primary, #374151);
+}
+
+.otherMonth .dayNumber {
+  color: var(--text-medium, #9ca3af);
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+  font-size: 0.75rem;
+}
+
+.eventItem {
+  padding: 2px 4px;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
+
+.statusACCEPTED {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.statusPENDING {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+.statusREJECTED {
+  background-color: #fee2e2;
+  color: #991b1b;
 }
