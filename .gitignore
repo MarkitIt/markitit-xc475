@@ -81,3 +81,5 @@ env/
 .venv/
 
 scripts/migration/node_modules/
+
+markitit-b2436-firebase-adminsdk-fbsvc-16e4c71909.json

@@ -181,6 +181,7 @@ export default function Header() {
             width={250}
             height={50}
             style={{ objectFit: "contain" }}
+            priority
           />
         </Link>
       </div>

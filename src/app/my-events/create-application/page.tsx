@@ -32,21 +32,7 @@ const CreateApplicationProfile = () => {
     { title: string; description: string; isRequired: boolean }[]
   >([]);
 
-  // Standard fields that can be selected
-  // const standardFields = [
-  //   { id: 'business-name', label: 'Business Name' },
-  //   { id: 'business-type', label: 'Business Type' },
-  //   { id: 'contact-name', label: 'Contact Name' },
-  //   { id: 'contact-email', label: 'Contact Email' },
-  //   { id: 'contact-phone', label: 'Contact Phone' },
-  //   { id: 'social-media', label: 'Social Media Links' },
-  //   { id: 'product-description', label: 'Product Description' },
-  //   { id: 'price-range', label: 'Price Range' },
-  //   { id: 'website', label: 'Website' },
-  //   { id: 'product-images', label: 'Product Images' },
-  //   { id: 'past-events', label: 'Past Events Experience' },
-  //   { id: 'space-requirements', label: 'Space Requirements' },
-  // ];
+
 
   const [selectedFields, setSelectedFields] = useState<string[]>([
     // basic fields selected

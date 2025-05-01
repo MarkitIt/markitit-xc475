@@ -1,424 +1,392 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/firebase"; // Import Firestore setup
-import { collection, getDocs, query, where } from "firebase/firestore";
-import stringSimilarity from "string-similarity";
-import {
-  getLatLongFromCityState,
-  getCityState,
-  parseEventDate,
-} from "@/utils/inferEventData";
-import { Event } from "@/types/Event";
-import { Vendor } from "@/types/Vendor";
+import { adminDb } from "@/lib/firebaseAdmin"; // Use Admin SDK
+import { Vendor } from "@/types/Vendor"; // Adjust path if needed
+import { Timestamp } from "firebase-admin/firestore";
 
-interface ScoreBreakdown {
-  eventTypeScore: number;
-  locationScore: number;
-  budgetScore: number;
-  demographicsScore: number;
-  pastEventScore: number;
-  headcountScore: number;
-  daysScore: number;
-  categoryScore: number;
-  descriptionScore: number;
-  total: number;
+// Define the structure for eventsFormatted documents
+interface EventFormatted {
+  id: string; // Document ID
+  originalEventId: string;
+  eventDataId: string | null;
+  name: string;
+  startDate: Timestamp | null; // Use Firestore Timestamp
+  endDate: Timestamp | null; // Use Firestore Timestamp
+  location: {
+    city: string;
+    state: string;
+  };
+  image: string | null;
+  description: string;
+  booth_fees: Record<string, number> | string; // Updated to allow map or string fallback
+  category_tags: string[]; // e.g., ["Art fair", "Outdoor festivals"]
+  type: string; // e.g., "Market"
+  demographic_guess: string[]; // e.g., ["Families", "Local Regulars"]
+  vendor_categories: string[]; // e.g., ["Jewelry", "Handmade Goods"]
+  num_vendors: number | null; // Numeric count
+  estimated_headcount: number | null; // Assuming this exists, though not explicitly used
+  headcount_min: number | null; // Assuming this exists, though not explicitly used
+  headcount_max: number | null; // Assuming this exists, though not explicitly used
+  timestamp: Timestamp; // Using this as lastUpdated indicator
 }
 
-const calculateDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number,
-): number => {
-  const toRadians = (degrees: number) => degrees * (Math.PI / 180);
-  const R = 3958.8; // Miles
+// Interface for vendor rankings cache
+interface VendorRankingCache {
+  lastRanked: Timestamp;
+  rankedEvents: (EventFormatted & { score: number; scoreBreakdown: ScoreBreakdown })[];
+}
 
-  const dLat = toRadians(lat2 - lat1);
-  const dLon = toRadians(lon2 - lon1);
+// Interface for the breakdown of scores
+interface ScoreBreakdown {
+  eventTypeScore: number; // Compares vendor.eventPreference and event.category_tags
+  locationScore: number; // Compares vendor.cities and event.location.city
+  budgetScore: number; // Compares vendor.budget.maxVendorFee and event.booth_fees
+  demographicsScore: number; // Compares vendor.demographic and event.demographic_guess
+  eventSizeScore: number; // Compares vendor.preferredEventSize and event.num_vendors
+  scheduleScore: number; // Compares vendor.schedule.preferredDays and event dates
+  vendorCategoryScore: number; // Compares vendor.categories and event.vendor_categories
+  total: number;
+  // Keep removed fields as 0 for structure compatibility if needed elsewhere
+  pastEventScore: number;
+  headcountScore: number;
+  categoryScore: number;
+  vendorsNeededScore: number;
+  descriptionScore: number;
+}
 
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRadians(lat1)) *
-      Math.cos(toRadians(lat2)) *
-      Math.sin(dLon / 2) ** 2;
+// --- Helper function to parse booth fees ---
+// Returns {min: number, max: number} or null if unparseable
+function parseBoothFee(feeString: string): { min: number; max: number } | null {
+  if (!feeString || typeof feeString !== 'string') return null; // Handle undefined/null/non-string input
 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-};
-
-// Calculate category score - Max 20 points
-const calculateCategoryScore = (vendor: any, event: any): number => {
-  let score = 0;
-
-  if (event.categories && vendor.categories) {
-    if (event.categories.includes("All")) {
-      score += 20;
-    } else if (
-      vendor.categories.some((category: string) =>
-        event.categories.includes(category),
-      )
-    ) {
-      score += 20;
-    }
+  const lowerCaseFee = feeString.toLowerCase();
+  if (lowerCaseFee === 'n/a' || lowerCaseFee === 'free') {
+    return { min: 0, max: 0 };
   }
 
-  return score;
-};
+  // Remove $, spaces, and commas for easier parsing
+  const cleanedFee = feeString.replace(/\$|\s|,/g, '');
 
-// Helper function to get weekday from Firestore timestamp
-const getWeekdayFromTimestamp = (timestamp: {
-  seconds: number;
-  nanoseconds: number;
-}): string => {
-  const date = new Date(timestamp.seconds * 1000);
-  return date.toLocaleString("en-US", { weekday: "long" });
-};
+  // Check for a range (e.g., 50-100)
+  const rangeMatch = cleanedFee.match(/^(\d+)-(\d+)$/);
+  if (rangeMatch) {
+    const min = parseInt(rangeMatch[1], 10);
+    const max = parseInt(rangeMatch[2], 10);
+    return { min: Math.min(min, max), max: Math.max(min, max) }; // Ensure min <= max
+  }
 
-const calculateEventScore = async (
-  vendor: any,
-  event: any,
-): Promise<ScoreBreakdown> => {
-  const breakdown: ScoreBreakdown = {
+  // Check for a single number (e.g., 100)
+  const numberMatch = cleanedFee.match(/^(\d+)$/);
+  if (numberMatch) {
+    const fee = parseInt(numberMatch[1], 10);
+    return { min: fee, max: fee };
+  }
+
+  console.warn(`Could not parse booth fee: "${feeString}"`);
+  return null; // Indicate unparseable fee
+}
+
+// --- Updated Scoring Function ---
+// Takes Vendor type (ensure it's defined correctly) and EventFormatted type
+const calculateEventScore = (vendor: Vendor, event: EventFormatted): ScoreBreakdown => {
+    // --- Define Max Points per Category ---
+    const MAX_POINTS = {
+        EVENT_TYPE: 15,
+        LOCATION: 20,
+        BUDGET: 20,
+        DEMOGRAPHICS: 15,
+        EVENT_SIZE: 10, // Covers both attendance/size and vendor count/competition
+        SCHEDULE: 10,
+        VENDOR_CATEGORY: 10,
+        // Add HOST_REVIEW later when data is available
+        // HOST_REVIEW: 5,
+    };
+    const TOTAL_POSSIBLE_BASE = Object.values(MAX_POINTS).reduce((sum, p) => sum + p, 0);
+
+    // --- Initialize Raw Scores ---
+  const rawBreakdown = {
     eventTypeScore: 0,
     locationScore: 0,
     budgetScore: 0,
     demographicsScore: 0,
-    pastEventScore: 0,
-    headcountScore: 0,
-    daysScore: 0,
-    categoryScore: 0,
-    descriptionScore: 0,
-    total: 0,
-  };
+        eventSizeScore: 0,
+        scheduleScore: 0,
+        vendorCategoryScore: 0,
+        // hostReviewScore: 0, // Add later
+    };
 
-  // Ensure both vendor preferences and event types exist
-  if (vendor.eventPreference?.length > 0 && event.type?.length > 0) {
-    let matchedTypes = vendor.eventPreference.filter((type: string) =>
-      event.type.includes(type),
-    ).length;
-    let totalPreferences = vendor.eventPreference.length;
+    // --- Scoring Logic (Same as before) ---
 
-    // Normalize score based on percentage of matches - Max 20 points
-    breakdown.eventTypeScore = (matchedTypes / totalPreferences) * 20;
-  } else {
-    breakdown.eventTypeScore = 0;
-  }
-
-  // Get coordinates from event location if available
-  let eventCoordinates = { lat: 0, lng: 0 };
-  if (event.location?.city && event.location?.state) {
-    eventCoordinates = (await getLatLongFromCityState(
-      event.location.city,
-      event.location.state,
-    )) || { lat: 0, lng: 0 };
-  }
-
-  // Travel distance match - Max 20 points
-  if (
-    typeof vendor.coordinates?.lat === "number" &&
-    typeof vendor.coordinates?.lng === "number" &&
-    typeof eventCoordinates?.lat === "number" &&
-    typeof eventCoordinates?.lng === "number" &&
-    eventCoordinates.lat !== 0 &&
-    eventCoordinates.lng !== 0
-  ) {
-    // Ensure longitude is handled correctly (negative for western hemisphere)
-    const vendorLng = vendor.coordinates.lng;
-    const eventLng = eventCoordinates.lng;
-
-    // Calculate distance
-    const distance = calculateDistance(
-      vendor.coordinates.lat,
-      vendorLng,
-      eventCoordinates.lat,
-      eventLng,
-    );
-
-    // More lenient distance scoring - Max 20 points
-    // 0 points at 200 miles or more (0.1 point per mile)
-    breakdown.locationScore = Math.max(0, 20 - distance * 0.1);
-  }
-
-  // Budget match - Max 15 points
-  if (
-    vendor.budget?.maxVendorFee &&
-    event.vendorFee &&
-    event.vendorFee <= vendor.budget.maxVendorFee
-  ) {
-    breakdown.budgetScore = 15;
-  }
-
-  // Demographic match - Max 15 points
-  if (
-    vendor.demographic?.some((demo: string) =>
-      event.demographics?.includes(demo),
-    )
-  ) {
-    breakdown.demographicsScore = 15;
-  }
-
-  // Past event preference - Max 5 points
-  if (
-    vendor.selectedPastPopups?.some(
-      (pastEvent: string) => event.name === pastEvent,
-    )
-  ) {
-    breakdown.pastEventScore = 5;
-  }
-
-  // Headcount match - Max 5 points
-  if (
-    vendor.preferredEventSize?.min &&
-    vendor.preferredEventSize?.max &&
-    event.headcount
-  ) {
-    const preferredMin = vendor.preferredEventSize.min;
-    const preferredMax = vendor.preferredEventSize.max;
-    const eventSize = event.headcount;
-
-    if (eventSize >= preferredMin && eventSize <= preferredMax) {
-      breakdown.headcountScore = 5;
-    } else {
-      const distanceToRange = Math.min(
-        Math.abs(eventSize - preferredMin),
-        Math.abs(eventSize - preferredMax),
-      );
-
-      if (distanceToRange <= 100) {
-        breakdown.headcountScore = 3;
-      } else if (distanceToRange <= 300) {
-        breakdown.headcountScore = 2;
-      } else if (distanceToRange <= 500) {
-        breakdown.headcountScore = 1;
-      }
-    }
-  }
-
-  // Preferred days match - Max 5 points NOT WORKING
-  if (
-    event.startDate &&
-    event.endDate &&
-    Array.isArray(vendor.schedule?.preferredDays)
-  ) {
-    const start = new Date(event.startDate.seconds * 1000);
-    const end = new Date(event.endDate.seconds * 1000);
-    const eventDays = new Set<string>();
-
-    // Loop through each day between start and end date
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      eventDays.add(d.toLocaleString("en-US", { weekday: "long" }));
+    // 1. Event Type Score (vendor.eventPreference vs event.category_tags)
+    if (Array.isArray(vendor.eventPreference) && vendor.eventPreference.length > 0 && Array.isArray(event.category_tags) && event.category_tags.length > 0) {
+        const vendorPrefsLower = vendor.eventPreference.map(p => typeof p === 'string' ? p.toLowerCase() : '');
+        const eventTagsLower = event.category_tags.map(t => typeof t === 'string' ? t.toLowerCase() : '');
+        const matches = vendorPrefsLower.filter(pref => pref && eventTagsLower.includes(pref));
+        rawBreakdown.eventTypeScore = (matches.length / vendorPrefsLower.length) * MAX_POINTS.EVENT_TYPE;
     }
 
-    // Debug logging
-    console.log("Vendor preferred days:", vendor.schedule.preferredDays);
-    console.log("Event days:", Array.from(eventDays));
-
-    // Normalize day formats for comparison (prevent case sensitivity issues)
-    const normalizedPreferredDays = vendor.schedule.preferredDays.map(
-      (day: string) => day.toLowerCase(),
-    );
-    const normalizedEventDays = Array.from(eventDays).map((day: string) =>
-      day.toLowerCase(),
-    );
-
-    console.log("Normalized vendor days:", normalizedPreferredDays);
-    console.log("Normalized event days:", normalizedEventDays);
-
-    // Count matching days (case insensitive)
-    const matches = normalizedPreferredDays.filter((day: string) =>
-      normalizedEventDays.includes(day),
-    ).length;
-
-    // Alternative approach if there are still issues - check partial matches
-    if (matches === 0) {
-      console.log("No exact matches found, checking partial matches...");
-      for (const vendorDay of normalizedPreferredDays) {
-        for (const eventDay of normalizedEventDays) {
-          if (eventDay.includes(vendorDay) || vendorDay.includes(eventDay)) {
-            console.log(
-              `Partial match found: ${vendorDay} matches with ${eventDay}`,
-            );
-          }
+    // 2. Location Score (vendor.cities vs event.location.city)
+    if (Array.isArray(vendor.cities) && vendor.cities.length > 0 && event.location?.city) {
+        const cityMatch = vendor.cities.some(city => typeof city === 'string' && city.toLowerCase() === event.location.city.toLowerCase());
+        if (cityMatch) {
+            rawBreakdown.locationScore = MAX_POINTS.LOCATION;
         }
+    }
+
+    // 3. Budget Score (vendor.budget.maxVendorFee vs event.booth_fees)
+    const vendorMaxFee = vendor.budget?.maxVendorFee;
+    let minBoothFee: number | null = null;
+    if (event.booth_fees && typeof event.booth_fees === 'object' && !Array.isArray(event.booth_fees)) {
+      const prices = Object.values(event.booth_fees).filter(v => typeof v === 'number');
+      if (prices.length > 0) {
+        minBoothFee = Math.min(...prices);
       }
     }
-
-    console.log("Matches found:", matches);
-    console.log("Total event days:", eventDays.size);
-
-    // Scale score based on match percentage
-    // Make sure we have at least some event days before division
-    if (eventDays.size > 0) {
-      breakdown.daysScore = (matches / eventDays.size) * 5;
+    if (typeof vendorMaxFee === 'number' && minBoothFee !== null) {
+      if (minBoothFee === 0) rawBreakdown.budgetScore = MAX_POINTS.BUDGET;
+      else if (vendorMaxFee >= minBoothFee) rawBreakdown.budgetScore = MAX_POINTS.BUDGET;
+      else {
+        const diff = minBoothFee - vendorMaxFee;
+        if (vendorMaxFee > 0) {
+          const overBudgetFactor = Math.min(1, diff / vendorMaxFee);
+          rawBreakdown.budgetScore = Math.max(0, MAX_POINTS.BUDGET * (1 - overBudgetFactor * 1.5));
+        } else rawBreakdown.budgetScore = MAX_POINTS.BUDGET * 0.5;
+      }
     } else {
-      breakdown.daysScore = 0;
+      // If booth_fees is missing or empty, assign a neutral score
+      rawBreakdown.budgetScore = MAX_POINTS.BUDGET * 0.5;
     }
-    console.log("Final days score:", breakdown.daysScore);
-  }
 
-  // Category score - Max 20 points
-  breakdown.categoryScore = calculateCategoryScore(vendor, event);
+    // 4. Demographics Score (vendor.demographic vs event.demographic_guess)
+     // Ensure vendor.demographic exists and is an array
+    if (Array.isArray(vendor.demographic) && vendor.demographic.length > 0 && Array.isArray(event.demographic_guess) && event.demographic_guess.length > 0) {
+        const vendorDemosLower = vendor.demographic.map(d => typeof d === 'string' ? d.toLowerCase() : '');
+        const eventGuessLower = event.demographic_guess.map(g => typeof g === 'string' ? g.toLowerCase() : '');
+        const overlap = vendorDemosLower.filter(demo => demo && eventGuessLower.includes(demo));
+        rawBreakdown.demographicsScore = (overlap.length / vendorDemosLower.length) * MAX_POINTS.DEMOGRAPHICS;
+    }
 
-  // Description similarity - Max 5 points
-  const vendorDescription = vendor.description ?? "";
-  const eventDescription = event.description ?? "";
-  const similarity = stringSimilarity.compareTwoStrings(
-    vendorDescription.toLowerCase(),
-    eventDescription.toLowerCase(),
-  );
-  breakdown.descriptionScore = Math.floor(similarity * 5);
 
-  // Calculate total
-  breakdown.total = Object.values(breakdown).reduce(
-    (sum, score) => (score === breakdown.total ? sum : sum + score),
-    0,
-  );
+    // 5. Event Size Score (vendor.preferredEventSize vs event.num_vendors)
+     // Ensure preferredEventSize exists and has min/max properties
+    const vendorSizeRange = vendor.preferredEventSize;
+    const eventNumVendors = event.num_vendors;
+    if (vendorSizeRange && typeof vendorSizeRange.min === 'number' && typeof vendorSizeRange.max === 'number' && typeof eventNumVendors === 'number' && eventNumVendors >= 0) {
+        if (eventNumVendors >= vendorSizeRange.min && eventNumVendors <= vendorSizeRange.max) {
+            rawBreakdown.eventSizeScore = MAX_POINTS.EVENT_SIZE; // Perfect match
+        } else {
+             // (Same detailed event size deviation logic as before)
+             let diff = 0;
+             if (eventNumVendors < vendorSizeRange.min) diff = vendorSizeRange.min - eventNumVendors;
+             else diff = vendorSizeRange.max === Infinity ? 0 : eventNumVendors - vendorSizeRange.max;
 
-  console.log(`Event ${event.name} - Score breakdown:`, breakdown);
-  console.log(`Total score: ${breakdown.total}`);
+             if (diff > 0) {
+                 let normalizationBase = 50;
+                 if (vendorSizeRange.max !== Infinity && vendorSizeRange.max > vendorSizeRange.min) normalizationBase = (vendorSizeRange.min + vendorSizeRange.max) / 2;
+                 else if (vendorSizeRange.min === 0) normalizationBase = 25;
+                 else if (vendorSizeRange.min > 150) normalizationBase = 200;
+                 const deviationFactor = Math.min(1, diff / Math.max(1, normalizationBase));
+                 rawBreakdown.eventSizeScore = Math.max(0, MAX_POINTS.EVENT_SIZE * (1 - deviationFactor));
+             } else rawBreakdown.eventSizeScore = MAX_POINTS.EVENT_SIZE;
+        }
+    } else rawBreakdown.eventSizeScore = MAX_POINTS.EVENT_SIZE * 0.5; // Neutral score
 
-  return breakdown;
+    // 6. Schedule Score (vendor.schedule.preferredDays vs event dates)
+    if (event.startDate && event.endDate && Array.isArray(vendor.schedule?.preferredDays) && vendor.schedule.preferredDays.length > 0) {
+        // (Same schedule logic as before)
+        const eventDays = new Set<string>();
+        const start =
+          event.startDate instanceof Timestamp
+            ? event.startDate.toDate()
+            : event.startDate
+              ? new Date(event.startDate)
+              : null;
+        const end =
+          event.endDate instanceof Timestamp
+            ? event.endDate.toDate()
+            : event.endDate
+              ? new Date(event.endDate)
+              : null;
+        if (start && end && end >= start) {
+            let currentDay = new Date(start); let dayCount = 0; const MAX_DAYS_TO_CHECK = 31;
+            while (currentDay <= end && dayCount < MAX_DAYS_TO_CHECK) {
+                eventDays.add(currentDay.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase());
+                currentDay.setDate(currentDay.getDate() + 1); dayCount++;
+            }
+        }
+        if (eventDays.size > 0) {
+            const preferredLower = vendor.schedule.preferredDays.map((d: string) => typeof d === 'string' ? d.toLowerCase() : '');
+            const matches = preferredLower.filter((d: string) => d && eventDays.has(d));
+            rawBreakdown.scheduleScore = (matches.length / preferredLower.length) * MAX_POINTS.SCHEDULE;
+        }
+    }
+
+    // 7. Vendor Category Score (vendor.categories vs event.vendor_categories)
+    if (Array.isArray(vendor.categories) && vendor.categories.length > 0 && Array.isArray(event.vendor_categories) && event.vendor_categories.length > 0) {
+         const vendorCatsLower = vendor.categories.map(c => typeof c === 'string' ? c.toLowerCase() : '');
+         const eventCatsLower = event.vendor_categories.map(ec => typeof ec === 'string' ? ec.toLowerCase() : '');
+         const matches = vendorCatsLower.filter(vendorCat => vendorCat && eventCatsLower.includes(vendorCat));
+         rawBreakdown.vendorCategoryScore = (matches.length / vendorCatsLower.length) * MAX_POINTS.VENDOR_CATEGORY;
+     }
+
+    // --- Apply Priority Factor Weights ---
+    const weightedScores = { ...rawBreakdown }; // Copy raw scores to apply weights
+
+    if (Array.isArray(vendor.eventPriorityFactors) && vendor.eventPriorityFactors.length > 0) {
+        // Define weights (adjust these multipliers as needed)
+        const weights = [1.5, 1.25, 1.1]; // Most important, 2nd, 3rd
+
+        // Map priority strings to score keys
+        const priorityMap: Record<string, keyof typeof rawBreakdown> = {
+            "Expected Attendance & Event Size": "eventSizeScore",
+            "Location": "locationScore",
+            "Costs": "budgetScore",
+            "Target Audience": "demographicsScore",
+            // "Positive Host Reviews": "hostReviewScore", // Add when available
+            "Vendor Count (Competition)": "eventSizeScore", // Also map to eventSizeScore
+             // Add mappings for any other priority factors if needed
+        };
+
+        vendor.eventPriorityFactors.forEach((factor, index) => {
+            if (index < weights.length) { // Only apply weights for top priorities
+                const scoreKey = priorityMap[factor];
+                if (scoreKey && typeof weightedScores[scoreKey] === 'number') {
+                    // Apply the weight multiplier
+                    weightedScores[scoreKey] *= weights[index];
+                     // Optional: Cap weighted score at MAX_POINTS * weight to prevent excessive boosting?
+                     // weightedScores[scoreKey] = Math.min(weightedScores[scoreKey], MAX_POINTS[scoreKey.replace('Score', '').toUpperCase()] * weights[index]);
+                    console.log(`Applied weight ${weights[index]} to ${factor} (${scoreKey}), new score: ${weightedScores[scoreKey]}`);
+                }
+            }
+        });
+    }
+
+    // --- Calculate Final Total Score ---
+    // Sum the *weighted* scores
+    const finalTotal = Object.values(weightedScores).reduce((sum, val) => sum + (val || 0), 0);
+
+    // Normalize the weighted total back to a 0-100 scale (Optional but recommended)
+    // Calculate the maximum possible weighted score based on priorities
+    let maxPossibleWeightedScore = 0;
+    const baseScoreKeys = Object.keys(MAX_POINTS) as Array<keyof typeof MAX_POINTS>;
+    const weights = [1.5, 1.25, 1.1]; // Must match weights above
+    const priorityMap: Record<string, keyof typeof rawBreakdown> = {
+      "Expected Attendance & Event Size": "eventSizeScore",
+    "Location": "locationScore",
+    "Costs": "budgetScore",
+    "Target Audience": "demographicsScore",
+      "Vendor Count (Competition)": "eventSizeScore",
+    };
+    const appliedWeights: Partial<Record<keyof typeof rawBreakdown, number>> = {};
+    if (Array.isArray(vendor.eventPriorityFactors)) {
+        vendor.eventPriorityFactors.forEach((factor, index) => {
+            if (index < weights.length) {
+                const scoreKey = priorityMap[factor];
+                if (scoreKey) {
+                    // Store the highest weight if a key is prioritized multiple times
+                    appliedWeights[scoreKey] = Math.max(appliedWeights[scoreKey] || 1, weights[index]);
+                }
+            }
+        });
+    }
+
+    baseScoreKeys.forEach(baseKey => {
+        const scoreKey = (baseKey.toLowerCase().replace(/_([a-z])/g, (g) => g[1].toUpperCase()) + 'Score') as keyof typeof rawBreakdown;
+        const weight = appliedWeights[scoreKey] || 1; // Default weight is 1
+        maxPossibleWeightedScore += MAX_POINTS[baseKey] * weight;
+    });
+
+
+    // Normalize finalTotal based on the max possible *weighted* score
+    const normalizedTotal = maxPossibleWeightedScore > 0 ? (finalTotal / maxPossibleWeightedScore) * 100 : 0;
+
+
+    // Return the detailed breakdown and the normalized total score
+    return {
+        ...weightedScores, // Return the weighted scores in the breakdown
+        total: Math.round(normalizedTotal), // Return the normalized score (0-100)
+        // Include other keys from ScoreBreakdown interface, setting them to 0
+        pastEventScore: 0,
+        headcountScore: 0,
+        categoryScore: 0,
+        vendorsNeededScore: 0,
+        descriptionScore: 0,
+     };
 };
 
+
+// --- API Route Handler (POST) ---
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { vendorId } = body;
+    const { vendorId } = await request.json();
 
     if (!vendorId) {
       return NextResponse.json(
         { error: "Vendor ID is required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
-    // Log vendor ID being used for ranking
-    console.log("🔍 Ranking events for vendor ID:", vendorId);
-
-    // Get vendor profile
-    const vendorRef = collection(db, "vendorProfile");
-    const vendorDoc = await getDocs(
-      query(vendorRef, where("uid", "==", vendorId)),
-    );
-
-    if (vendorDoc.empty) {
-      console.log("❌ No vendor profile found for vendorId:", vendorId);
-      return NextResponse.json({ error: "Vendor not found" }, { status: 404 });
+    // Get vendor document
+    const vendorDoc = await adminDb.collection("vendorProfile").doc(vendorId).get();
+    if (!vendorDoc.exists) {
+      return NextResponse.json(
+        { error: "Vendor not found" },
+        { status: 404 }
+      );
     }
 
-    console.log("✅ Vendor profile found for vendorId:", vendorId);
+    const vendor = vendorDoc.data() as Vendor;
 
-    // Get vendor profile data
-    const vendor = vendorDoc.docs[0].data() as Vendor;
+    // Get all events
+    const eventsSnapshot = await adminDb.collection("eventsFormatted").get();
+    const events = eventsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as EventFormatted[];
 
-    // Log vendor information for debugging
-    console.log("🧩 Vendor profile data:", {
-      uid: vendor.uid,
-      categories: vendor.categories,
-      coordinates: vendor.coordinates,
-      eventPreference: vendor.eventPreference,
-      schedule: vendor.schedule?.preferredDays,
+    // Calculate scores for each event
+    const rankedEvents = events.map(event => {
+      const scoreBreakdown = calculateEventScore(vendor, event);
+      return {
+        ...event,
+        score: scoreBreakdown.total,
+        scoreBreakdown,
+        // Ensure dates are in the correct format
+        startDate: event.startDate ? {
+          seconds: event.startDate.seconds,
+          nanoseconds: event.startDate.nanoseconds
+        } : null,
+        endDate: event.endDate ? {
+          seconds: event.endDate.seconds,
+          nanoseconds: event.endDate.nanoseconds
+        } : null
+      };
     });
 
-    // Get all events from Firestore
-    const eventsRef = collection(db, "events");
-    const eventsSnapshot = await getDocs(eventsRef);
-
-    if (eventsSnapshot.empty) {
-      return NextResponse.json({ rankedEvents: [] });
-    }
-
-    const events = await Promise.all(
-      eventsSnapshot.docs.map(async (doc) => {
-        const data = doc.data();
-
-        // Extract coordinates by parsing data.coordinates
-        let coordinates = { lat: 0, lng: 0 };
-
-        // Check if coordinates is an object with lat and lng nested properties
-        if (data.coordinates && typeof data.coordinates === "object") {
-          // Access lat and lng from the "coordinates" object
-          if ("lat" in data.coordinates && "lng" in data.coordinates) {
-            coordinates = {
-              lat: Number(data.coordinates.lat),
-              lng: Number(data.coordinates.lng),
-            };
-          }
-        }
-        // For flat structure (lat and lng directly in data)
-        else if ("lat" in data && "lng" in data) {
-          coordinates = {
-            lat: Number(data.lat),
-            lng: Number(data.lng),
-          };
-        }
-
-        // Handle date fields - prioritize existing dates or parse from detailed_date
-        let startDate = data.startDate;
-        let endDate = data.endDate;
-
-        // If there's a detailed_date and missing start/end dates, parse it
-        if (data.detailed_date && (!startDate || !endDate)) {
-          const parsedDates = parseEventDate(data.detailed_date);
-          startDate = parsedDates.startDate || startDate;
-          endDate = parsedDates.endDate || endDate;
-        }
-
-        return {
-          id: doc.id,
-          type: data.type,
-          vendorFee: data.vendorFee,
-          totalCost: data.totalCost,
-          attendeeType: data.attendeeType,
-          headcount: data.headcount,
-          demographics: data.demographics,
-          name: data.name,
-          startDate: startDate,
-          endDate: endDate,
-          description: data.description,
-          categories: data.categories,
-          location: data.location,
-          image: data.image || "",
-        } as Event;
-      }),
-    );
-
-    const rankedEvents = await Promise.all(
-      events.map(async (event) => {
-        const scoreBreakdown = await calculateEventScore(vendor, event);
-
-        // Make sure we're returning the raw score, not divided by anything
-        const rawScore = scoreBreakdown.total;
-        console.log(`Event ${event.name} raw score: ${rawScore}`);
-
-        return {
-          ...event,
-          score: rawScore,
-          scoreBreakdown: scoreBreakdown,
-        };
-      }),
-    );
-
-    // Sort by score in descending order
+    // Sort by score (highest first)
     rankedEvents.sort((a, b) => b.score - a.score);
 
-    console.log("Final ranked events with scores:");
-    rankedEvents.slice(0, 5).forEach((event) => {
-      console.log(`Event: ${event.name}, Final Score: ${event.score}`);
+    // Cache the results
+    const cacheDoc = adminDb.collection("vendorRankings").doc(vendorId);
+    await cacheDoc.set({
+      lastRanked: Timestamp.now(),
+      rankedEvents
     });
 
-    return NextResponse.json({ rankedEvents });
+    return NextResponse.json({
+      rankedEvents
+    });
   } catch (error) {
     console.error("Error ranking events:", error);
     return NextResponse.json(
       { error: "Failed to rank events" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
+// --- API Route Handler (GET) ---
 export async function GET() {
-  return NextResponse.json(
-    { message: "Use POST method to rank events" },
-    { status: 405 },
-  );
+  // Indicate that POST is the required method
+  return NextResponse.json({ message: "Method Not Allowed. Use POST with vendorId in body to rank events." }, { status: 405 });
 }

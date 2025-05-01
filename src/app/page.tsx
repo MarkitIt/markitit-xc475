@@ -13,7 +13,7 @@ export default function Home() {
         <div className={styles.heroText}>
           <h1 className={`${styles.landingTitle} ${styles.coral}`}>Pop Up.</h1>
           <h1 className={`${styles.landingTitle} ${styles.darkBlue}`}>Stand Out.</h1>
-          <h1 className={`${styles.landingTitle} ${styles.beige}`}>Sell More.</h1>
+          <h1 className={`${styles.landingTitle} ${styles.white}`}>Own Succes.</h1>
 
           <Image
             src="/images/underline.png"

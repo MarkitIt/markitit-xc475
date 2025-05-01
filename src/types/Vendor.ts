@@ -8,6 +8,10 @@ export interface Vendor {
   instagram?: string;
   facebook?: string;
   etsy?: string;
+  businessAddress?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
   //p2
   type: "food" | "market";
   //p3
@@ -26,22 +30,23 @@ export interface Vendor {
   schedule: {
     preferredDays: string[];
   };
-  preferredEventSize: string;
+  preferredEventSize: {
+    min: number;
+    max: number;
+  };
   demographic: string[];
   travelRadius?: number;
-  coordinates: { lat: number; lng: number };
   //p5
   budget?: {
     maxVendorFee?: number;
     totalCostEstimate?: number;
   };
-  idealCustomer?: string;
-  selectedPastPopups?: string[];
   //media - can be either File objects during upload or URLs after storage
   logo?: File | string;
   images?: Array<File | string>;
   //optional
   additionalInfo?: string;
+  eventPriorityFactors?: string[];
   //metadata
   createdAt?: Date;
   updatedAt?: Date;

@@ -72,6 +72,28 @@ export default function SignupPage() {
           {error && <div className={styles.error}>{error}</div>}
 
           <div className={styles.inputGroup}>
+            <label className={styles.label}>First Name</label>
+            <input
+              type="text"
+              className={styles.input}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Last Name</label>
+            <input
+              type="text"
+              className={styles.input}
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className={styles.inputGroup}>
             <label className={styles.label}>Email Address</label>
             <input
               type="email"

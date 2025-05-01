@@ -1,0 +1,260 @@
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0;
+}
+
+.topSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.imageContainer {
+  flex: 0 0 340px;
+  min-width: 280px;
+  max-width: 400px;
+  border-radius: 18px;
+  overflow: visible;
+  background: #f3f4f6;
+  box-shadow: 0 2px 8px #0001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding-bottom: 24px;
+}
+
+.eventImage {
+  object-fit: cover;
+  width: 100%;
+  height: 260px;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+}
+
+.noImage {
+  color: #9ca3af;
+  font-size: 18px;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 18px;
+  width: 100%;
+  padding: 0 20px;
+  align-items: center;
+}
+
+.applyButton {
+  background: var(--primary-coral, #f87171);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #f8717133;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  width: 100%;
+}
+
+.applyButton:disabled {
+  cursor: not-allowed;
+}
+
+.applyButton:hover:not(:disabled) {
+  background: #fb7185;
+}
+
+.starIcon {
+  color: #fbbf24;
+  position: absolute;
+  right: 12px;
+}
+
+.contactButton {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+}
+
+.contactButton:hover {
+  background: #e5e7eb;
+}
+
+.contentSection {
+  flex: 1;
+  min-width: 260px;
+}
+
+.eventTitle {
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: var(--primary-coral, #f87171);
+  text-shadow: 0 2px 8px #fff8, 0 1px 0 #fff;
+}
+
+.eventDescription {
+  font-size: 20px;
+  color: #374151;
+  margin-bottom: 18px;
+}
+
+.scoreContainer {
+  width: 120px;
+  margin: 1rem 0;
+}
+
+.detailsSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.card {
+  flex: 1;
+  min-width: 320px;
+  background: #f9fafb;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px #0001;
+  padding: 28px;
+  margin-bottom: 0;
+}
+
+.cardTitle {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: var(--primary-coral, #f87171);
+  text-shadow: 0 2px 8px #fff8, 0 1px 0 #fff;
+}
+
+.scoreBreakdown {
+  margin: 2rem 0;
+  padding: 32px;
+  background: #fff7f4;
+  border-radius: 16px;
+  box-shadow: 0 1px 4px #f8717111;
+}
+
+.scoreHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.scoreTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--primary-coral, #f87171);
+  text-shadow: 0 2px 8px #fff8, 0 1px 0 #fff;
+  margin: 0;
+}
+
+.infoIcon {
+  margin-left: 10px;
+  position: relative;
+  display: inline-block;
+  color: #fbbf24;
+  cursor: pointer;
+}
+
+.scoreGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+
+.scoreCard {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 8px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.scoreCard.priority {
+  box-shadow: 0 2px 8px #fbbf2444, 0 1px 4px #f8717111;
+  border: 2px solid #fbbf24;
+}
+
+.scoreCard:not(.priority) {
+  box-shadow: 0 1px 4px #f8717111;
+  border: 1px solid #f3f4f6;
+}
+
+.scoreHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.priorityLabel {
+  margin-left: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.priorityStar {
+  color: #fbbf24;
+  font-size: 18px;
+}
+
+.priorityText {
+  margin-left: 4px;
+  color: #fbbf24;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.scoreValue {
+  font-weight: 700;
+  font-size: 18px;
+  color: #f87171;
+  margin-bottom: 4px;
+}
+
+.progressBar {
+  height: 7px;
+  background: #fde68a;
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+.progressFill {
+  height: 7px;
+  background: #fbbf24;
+  border-radius: 4px;
+}
+
+.scoreDescription {
+  font-size: 13px;
+  color: #374151;
+  margin-top: 4px;
+} 

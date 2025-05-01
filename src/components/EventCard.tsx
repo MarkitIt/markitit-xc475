@@ -5,7 +5,8 @@ import "../app/tailwind.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { Event } from "@/types/Event";
-import { theme } from "@/styles/theme";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 interface EventCardProps {
   event: Event;
@@ -22,55 +23,39 @@ export const EventCard: React.FC<EventCardProps> = ({
   showRank,
   score,
 }) => {
-  // Use the score from props if provided, otherwise use the score from the event
+  console.log("EventCard startDate:", event.startDate, "endDate:", event.endDate);
   const displayScore = score !== undefined ? score : event.score;
-
-  // Debug output for scores
-  console.log(
-    `EventCard for ${event.name}: Raw API score=${displayScore}, Score breakdown:`,
-    event.scoreBreakdown,
-  );
-
-  // Calculate the properly formatted score - if over 100, divide by 100
   const formattedScore =
     displayScore !== undefined && displayScore > 100
       ? displayScore / 100
       : displayScore;
 
-  // Format date as startDate - endDate
-  const formatDate = (timestamp: any) => {
-    if (!timestamp) return null;
-    
-    const eventDate = new Date(timestamp.seconds * 1000);
-    // If year is 1970 (epoch default) or no year in the data, use current year
-    if (eventDate.getFullYear() === 1970 || !timestamp.seconds) {
-      const currentYear = new Date().getFullYear();
-      eventDate.setFullYear(currentYear);
-    }
-    
-    return eventDate.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric"
-    });
-  };
+      const formatDate = (date: { seconds: number; nanoseconds: number } | undefined) => {
+        if (!date) return "";
+        const eventDate = new Date(date.seconds * 1000);
+        return eventDate.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      };
 
-  // Format the date display
   let dateDisplay = "Date not available";
   if (event.startDate && event.endDate) {
     const startFormatted = formatDate(event.startDate);
     const endFormatted = formatDate(event.endDate);
-
-    if (startFormatted === endFormatted) {
-      // Single day event
-      dateDisplay = startFormatted as string;
-    } else {
-      // Multi-day event
-      dateDisplay = `${startFormatted} - ${endFormatted}`;
-    }
+    dateDisplay =
+      startFormatted && endFormatted
+        ? startFormatted === endFormatted
+          ? startFormatted
+          : `${startFormatted} - ${endFormatted}`
+        : "Date not available";
   } else if (event.startDate) {
-    // Only start date available
-    dateDisplay = formatDate(event.startDate) as string;
+    const startFormatted = formatDate(event.startDate);
+    dateDisplay = startFormatted || "Date not available";
+  } else if (event.endDate) {
+    const endFormatted = formatDate(event.endDate);
+    dateDisplay = endFormatted || "Date not available";
   }
 
   return (
@@ -90,23 +75,41 @@ export const EventCard: React.FC<EventCardProps> = ({
             </div>
           )}
         </div>
+
+        {formattedScore !== undefined && (
+          <div className="score-donut" style={{ width: "60px", height: "60px", margin: "0.5rem auto" }}>
+            <CircularProgressbar
+              value={formattedScore}
+              text={`${Math.round(formattedScore)}%`}
+              maxValue={100}
+              styles={buildStyles({
+                textColor: "#000",
+                pathColor: "#f87171",
+                trailColor: "#f3f4f6",
+                textSize: "16px",
+                pathTransitionDuration: 0.5,
+              })}
+            />
+          </div>
+        )}
+
         <h3 className="event-title">{event.name}</h3>
+
         <div className="rating-container">
           {[...Array(5)].map((_, i) => (
             <FontAwesomeIcon
               key={i}
               icon={faStar}
-              className={
-                i < (event.rating || 0) ? "star-active" : "star-inactive"
-              }
+              className={i < (event.rating || 0) ? "star-active" : "star-inactive"}
               size="sm"
             />
           ))}
         </div>
+
         <div className="event-details">
           <div className="event-date">
             <FontAwesomeIcon icon={faCalendarAlt} className="icon-calendar" />
-            {dateDisplay}
+            {formatDate(event.startDate)} - {formatDate(event.endDate)}
           </div>
           <div className="event-location">
             {event.location?.city}, {event.location?.state}

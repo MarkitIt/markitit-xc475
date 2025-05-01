@@ -1,6 +1,0 @@
-# Ignore root project's node_modules
-../node_modules
-# Ignore built files
-lib/
-# Ignore this directory's node_modules
-node_modules/ 
