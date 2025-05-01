@@ -20,13 +20,14 @@ import Sidebar from './components/Sidebar';
 import PopUpsSection from './components/PopUpsSection';
 import FinancialOverview from './components/FinancialOverview';
 import ApplicationStatus from './components/ApplicationStatus';
+import Calendar from './components/Calendar';
 
-// Define types for fetched data (adjust based on actual structure)
+// Define types for fetched data
 interface Application {
   id: string;
   eventId: DocumentReference;
   status: "PENDING" | "ACCEPTED" | "REJECTED";
-  eventName?: string; // Will be added after fetching event
+  eventName?: string;
 }
 
 interface Event {
@@ -34,14 +35,21 @@ interface Event {
   name: string;
   startDate: Timestamp;
   endDate: Timestamp;
-  location: { city: string; state: string }; // Assuming location structure
-  // Add other fields as needed
+  location: { city: string; state: string };
+}
+
+interface CalendarEvent {
+  id: string;
+  eventName: string;
+  startDate: Timestamp;
+  status: "PENDING" | "ACCEPTED" | "REJECTED";
 }
 
 const VendorDashboard = () => {
   const { user, vendorProfile } = useUserContext();
   const [acceptedEvents, setAcceptedEvents] = useState<Event[]>([]);
   const [recentApplications, setRecentApplications] = useState<Application[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [loadingApplications, setLoadingApplications] = useState(true);
   const [currentMonthName, setCurrentMonthName] = useState("");
@@ -50,6 +58,47 @@ const VendorDashboard = () => {
     const date = new Date();
     setCurrentMonthName(date.toLocaleString('default', { month: 'long' }));
   }, []);
+
+  // Fetch all events for the calendar
+  useEffect(() => {
+    const fetchCalendarEvents = async () => {
+      if (!user || !vendorProfile?.id) return;
+      
+      try {
+        const vendorProfileRef = doc(db, "vendorProfile", vendorProfile.id);
+        const q = query(
+          collection(db, "applications"),
+          where("vendorProfile", "==", vendorProfileRef)
+        );
+        
+        const querySnapshot = await getDocs(q);
+        const eventsPromises = querySnapshot.docs.map(async (appDoc) => {
+          const appData = appDoc.data();
+          if (appData.eventId instanceof DocumentReference) {
+            const eventSnap = await getDoc(appData.eventId);
+            if (eventSnap.exists()) {
+              const eventData = eventSnap.data();
+              return {
+                id: appDoc.id,
+                eventName: eventData.name,
+                startDate: eventData.startDate,
+                status: appData.status
+              };
+            }
+          }
+          return null;
+        });
+        
+        const events = (await Promise.all(eventsPromises)).filter(event => event !== null) as CalendarEvent[];
+        setCalendarEvents(events);
+      } catch (error) {
+        console.error("Error fetching calendar events:", error);
+        setCalendarEvents([]);
+      }
+    };
+    
+    fetchCalendarEvents();
+  }, [user, vendorProfile]);
 
   // Fetch accepted pop-ups for the current month
   useEffect(() => {
@@ -191,9 +240,7 @@ const VendorDashboard = () => {
         {/* Event Calendar Section */}
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Event Calendar</h2>
-          <div className={styles.calendarPlaceholder}>
-            Calendar Placeholder - Implementation Coming Soon
-          </div>
+          <Calendar events={calendarEvents} />
         </div>
       </section>
 
