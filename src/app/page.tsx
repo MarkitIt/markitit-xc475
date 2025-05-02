@@ -166,7 +166,7 @@ export default function Home() {
             <button className={styles.newsletterClose} onClick={() => setShowNewsletter(false)}>&times;</button>
             <h2 className={styles.newsletterTitle}>Subscribe to our Newsletter</h2>
             <p className={styles.newsletterDescription}>
-              Get the latest features, updates, and pop-up news delivered to your inbox!
+              Get the latest features, updates, and MarkitIt news delivered to your inbox!
             </p>
             <form className={styles.newsletterForm} onSubmit={handleNewsletterSubmit}>
               <input
