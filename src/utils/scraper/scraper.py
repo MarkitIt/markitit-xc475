@@ -960,6 +960,130 @@ def scrape_eventhub():
         return []
 
 
+def scrape_eventhub_details(event_url, headers):
+    try:
+        print(f"Scraping details for: {event_url}")
+        response = requests.get(event_url, headers=headers, timeout=15)
+        if response.status_code != 200:
+            print(
+                f"Failed to get EventHub details: {response.status_code} for {event_url}"
+            )
+            return {}
+
+        soup = BeautifulSoup(response.content, "html.parser")
+        details = {}
+
+        description_div = soup.find("div", {"id": "about"})
+        if description_div:
+            description_p = description_div.find(
+                "p", {"class": "font-normal text-lg mb-2 break-words"}
+            )
+            if description_p:
+                description_text = description_p.text.strip()
+                details["description"] = description_text
+
+                # Collect additional sections to append to description
+                # for gemini parsing
+                additional_sections = []
+
+                demographics_div = soup.find("div", {"id": "demographics"})
+                if demographics_div:
+                    additional_sections.append("\n\n**Demographics**")
+                    demographics_content = demographics_div.text.strip()
+                    additional_sections.append(demographics_content)
+
+                # marketing stat section
+                marketing_div = soup.find(
+                    "div",
+                    {"class": "px-2 py-3 mt-4 rounded-lg"},
+                    text=lambda t: t and "Marketing Statistics" in t,
+                )
+                if marketing_div:
+                    additional_sections.append("\n\n**Marketing Statistics**")
+                    marketing_content = marketing_div.text.strip()
+                    additional_sections.append(marketing_content)
+
+                # partners section
+                partners_div = soup.find(
+                    "div",
+                    {"class": "px-2 py-3 mt-4 rounded-lg"},
+                    text=lambda t: t and "Participating Partners" in t,
+                )
+                if partners_div:
+                    additional_sections.append("\n\n**Participating Partners**")
+                    partners_content = partners_div.text.strip()
+                    additional_sections.append(partners_content)
+
+                # special section
+                notes_div = soup.find("div", {"id": "special-notes"})
+                if notes_div:
+                    additional_sections.append("\n\n**Special Notes**")
+                    notes_content = notes_div.text.strip()
+                    additional_sections.append(notes_content)
+
+                # amenities section
+                amenities_div = soup.find("div", {"id": "amenities"})
+                if amenities_div:
+                    additional_sections.append("\n\n**Amenities**")
+                    amenities_content = amenities_div.text.strip()
+                    additional_sections.append(amenities_content)
+
+                # prohibited section
+                prohibited_div = soup.find("div", {"id": "prohibited"})
+                if prohibited_div:
+                    additional_sections.append("\n\n**Prohibited Categories**")
+                    prohibited_content = prohibited_div.text.strip()
+                    additional_sections.append(prohibited_content)
+
+                # combine into description
+                if additional_sections:
+                    details["description"] = description_text + "".join(
+                        additional_sections
+                    )
+
+        img_element = soup.find(
+            "img",
+            {
+                "class": "cursor-pointer block max-h-full w-full object-cover object-center p-0"
+            },
+        )
+        if img_element and img_element.has_attr("src"):
+            details["image"] = img_element["src"]
+
+        vendor_fees = []
+        fee_divs = soup.find_all(
+            "div",
+            {
+                "class": "flex flex-col px-2 py-1 mb-2 rounded wrap-text hover:bg-hub-grey"
+            },
+        )
+        for fee_div in fee_divs:
+            fee_span = fee_div.find(
+                "span", {"class": "flex-1 pr-5 text-base lg:text-sm xl:text-base"}
+            )
+            if fee_span:
+                vendor_fees.append(fee_span.text.strip())
+
+        if vendor_fees:
+            details["vendor_fee"] = ", ".join(vendor_fees)
+
+        schedule_div = soup.find("div", {"id": "schedule"})
+        if schedule_div:
+            date_span = schedule_div.find("span", {"class": "font-medium"})
+            time_span = schedule_div.find("span", {"class": "col-span-1"})
+
+            if date_span and time_span:
+                details["detailed_date"] = (
+                    f"{date_span.text.strip()} {time_span.text.strip()}"
+                )
+
+        return details
+
+    except Exception as e:
+        print(f"Error scraping EventHub details: {e}")
+        return {}
+
+
 # need event id for duplicate
 def make_event_id(event):
     return f"{event['name']}-{event['type'][0]}-{event['location']['city']}"
