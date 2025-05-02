@@ -5,8 +5,37 @@ import "./tailwind.css";
 import { theme } from "@/styles/theme";
 import Image from "next/image";
 import styles from "./page.module.css";
+import { useState, useEffect } from "react";
+import { db } from "@/lib/firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [showNewsletter, setShowNewsletter] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowNewsletter(true), 2500); // Show after 2.5s
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    try {
+      await addDoc(collection(db, "newsletter"), { email, createdAt: new Date() });
+      setSubmitted(true);
+      setEmail("");
+    } catch (err) {
+      setError("There was an error subscribing. Please try again later.");
+    }
+  };
+
   return (
     <main className={styles.landingBackground}>
       <div className={styles.heroSection}>
@@ -129,6 +158,39 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      {/* Newsletter Popup Modal */}
+      {showNewsletter && (
+        <div className={styles.newsletterModalOverlay}>
+          <div className={styles.newsletterModal}>
+            <button className={styles.newsletterClose} onClick={() => setShowNewsletter(false)}>&times;</button>
+            <h2 className={styles.newsletterTitle}>Subscribe to our Newsletter</h2>
+            <p className={styles.newsletterDescription}>
+              Get the latest features, updates, and pop-up news delivered to your inbox!
+            </p>
+            <form className={styles.newsletterForm} onSubmit={handleNewsletterSubmit}>
+              <input
+                type="email"
+                className={styles.newsletterInput}
+                placeholder="Enter your email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                disabled={submitted}
+                style={{ background: '#fff', color: '#000' }}
+              />
+              <button
+                type="submit"
+                className={styles.newsletterButton}
+                disabled={submitted}
+              >
+                {submitted ? "Subscribed!" : "Subscribe"}
+              </button>
+            </form>
+            {error && <div className={styles.newsletterError}>{error}</div>}
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -627,3 +627,126 @@ a.secondary {
   line-height: 1.5;
   margin: 0;
 }
+
+.newsletterSection {
+  width: 100%;
+  background: linear-gradient(90deg, #f3e5e2 0%, #ede9fe 100%);
+  padding: 3rem 0 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.newsletterContainer {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(44, 47, 107, 0.07);
+  padding: 2.5rem 2rem;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+}
+
+.newsletterTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2C2F6B;
+  margin-bottom: 1rem;
+  font-family: 'Manrope', sans-serif;
+}
+
+.newsletterDescription {
+  font-size: 1.1rem;
+  color: #3A2E39;
+  margin-bottom: 1.5rem;
+}
+
+.newsletterForm {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.newsletterInput {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #2C2F6B;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Manrope', sans-serif;
+}
+
+.newsletterButton {
+  background: #2C2F6B;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.newsletterButton:disabled {
+  background: #a5b4fc;
+  cursor: not-allowed;
+}
+
+.newsletterError {
+  color: #e53935;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.newsletterModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(44, 47, 107, 0.18);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 1000;
+}
+
+.newsletterModal {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(44, 47, 107, 0.18);
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 420px;
+  width: 100%;
+  margin-top: 7vh;
+  text-align: center;
+  position: relative;
+}
+
+.newsletterClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #2C2F6B;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.2s;
+}
+.newsletterClose:hover {
+  color: #e53935;
+}
+
+.newsletterInput {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #2C2F6B;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Manrope', sans-serif;
+  background: #fff;
+  color: #000;
+}

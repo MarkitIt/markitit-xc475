@@ -84,7 +84,7 @@ export const EventCard: React.FC<EventCardProps> = ({
               maxValue={100}
               styles={buildStyles({
                 textColor: "#000",
-                pathColor: "#2C2F6B",
+                pathColor: "#7C3AED",
                 trailColor: "#f3f4f6",
                 textSize: "16px",
                 pathTransitionDuration: 0.5,

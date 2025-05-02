@@ -513,7 +513,7 @@ export async function POST(request: Request) {
 
     // Get all events
     // Consider adding filtering here (e.g., future events, location proximity) for efficiency
-    const eventsSnapshot = await adminDb.collection("eventsFormatted").limit(30).get();
+    const eventsSnapshot = await adminDb.collection("eventsFormatted").limit(10).get();
     const events = eventsSnapshot.docs.map(doc => {
       const { id: _, ...data } = doc.data() as EventFormatted;
       return {
