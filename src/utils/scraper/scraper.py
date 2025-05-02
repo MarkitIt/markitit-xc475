@@ -768,19 +768,21 @@ def scrape_zapp():
 
 
 def scrape_eventhub():
-    # scraping as if using chrome
-    headers = {
-        "User-Agent": "Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3"
-    }
-
     events = []
 
-    base_url = "https://eventhub.net/marketplace"
-
     try:
-        print("Scraping EventHub")
+        print("Scraping EventHub using Selenium")
 
-        # Search locations, base on site, cant specify location
+        # Chrome without headless mode
+        options = Options()
+        # Non-headless mode for better reliability
+        # options.add_argument("--headless")
+        options.add_argument("--window-size=1920,1080")
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service, options=options)
+
+        processed_urls = set()
+
         regions = [
             "SOUTH - E",
             "SOUTH - W",
@@ -792,171 +794,255 @@ def scrape_eventhub():
         ]
         url_regions = "%2C".join([region.replace(" ", "%20") for region in regions])
 
-        # number of pages to scrape
+        # number of page scrape
         for page in range(1, 6):
+            base_url = "https://eventhub.net/marketplace"
             search_url = f"{base_url}?keyword=market&region={url_regions}&eventDateFrom=&eventDateTo=&attendance=&eventType=&currentPage={page}&pageSize=20&sort=name%3Aasc"
 
-            print(f"Scraping EventHub page {page}")
+            print(f"Scraping EventHub page {page}, URL: {search_url}")
 
-            response = requests.get(search_url, headers=headers, timeout=15)
+            try:
+                driver.get(search_url)
+                time.sleep(2)
+                event_items = []
 
-            if response.status_code != 200:
-                print(f"Failed to load EventHub page {page}: {response.status_code}")
-                continue
+                event_cards = driver.find_elements(
+                    By.CSS_SELECTOR, "a[href^='/events/']"
+                )
+                print(f"Found {len(event_cards)} event cards on page {page}")
 
-            soup = BeautifulSoup(response.content, "html.parser")
-
-            event_divs = soup.find_all("div", {"class": "mb-10"})
-
-            if not event_divs:
-                print(f"No events found on page {page} or reached the end of results")
-                break
-
-            for event_div in event_divs:
-                try:
-                    event_items = event_div.find_all(
-                        "a",
-                        {
-                            "class": "relative flex flex-col sm:flex-row items-center p-3 sm:p-2 mb-2 rounded-lg bg-hub-cardBg hover:bg-hub-hoverCardBg"
-                        },
-                    )
-
-                    for event_item in event_items:
-                        try:
-                            name_elem = event_item.find(
-                                "p",
-                                {
-                                    "class": "font-medium two-line-ellipsis text-base sm:text-xl"
-                                },
-                            )
-                            name = name_elem.text.strip() if name_elem else ""
-
-                            event_url = (
-                                f"https://eventhub.net{event_item['href']}"
-                                if event_item.has_attr("href")
-                                else None
-                            )
-
-                            date_elem = event_item.find(
-                                "div", {"class": "flex space-x-1 items-center"}
-                            )
-                            date = (
-                                date_elem.find("p", {"class": "text-sm"}).text.strip()
-                                if date_elem
-                                else ""
-                            )
-
-                            type_elem = event_item.find("span", {"class": "capitalize"})
-                            event_type = (
-                                type_elem.text.strip() if type_elem else "pop up"
-                            )
-
-                            location_container = event_item.find_all(
-                                "div", {"class": "flex items-center"}
-                            )
-                            location_text = ""
-                            for container in location_container:
-                                loc_span = container.find(
-                                    "span", {"class": "capitalize"}
-                                )
-                                if (
-                                    loc_span
-                                    and "TX" in loc_span.text
-                                    or "," in loc_span.text
-                                ):
-                                    location_text = loc_span.text.strip()
-                                    break
-
-                            if "," in location_text:
-                                city, state = location_text.split(",")
-                                location = {
-                                    "city": city.strip(),
-                                    "state": state.strip(),
-                                }
-                            else:
-                                parts = location_text.split()
-                                if len(parts) >= 2 and len(parts[-1]) <= 3:
-                                    location = {
-                                        "city": " ".join(parts[:-1]),
-                                        "state": parts[-1],
-                                    }
-                                else:
-                                    location = {"city": location_text, "state": ""}
-
-                            img_elem = event_item.find(
-                                "img",
-                                {
-                                    "class": "object-cover object-center w-full h-full square-box-content"
-                                },
-                            )
-                            image = (
-                                img_elem["src"]
-                                if img_elem and img_elem.has_attr("src")
-                                else ""
-                            )
-
-                            attendance_elem = event_item.find(
-                                "div", {"class": "flex items-center"}
-                            )
-                            attendance_span = (
-                                attendance_elem.find("span")
-                                if attendance_elem
-                                else None
-                            )
-                            attendance = (
-                                attendance_span.text.strip()
-                                if attendance_span
-                                else None
-                            )
-
-                            event_data = {
-                                "name": name,
-                                "description": "",
-                                "location": location,
-                                "type": [event_type, "pop up"],
-                                "date": date,
-                                "image": image,
-                                "vendorFee": None,
-                                "totalCost": None,
-                                "attendeeType": [],
-                                "headcount": attendance,
-                                "demographics": [],
-                                "startDate": {"seconds": 0, "nanoseconds": 0},
-                                "endDate": {"seconds": 0, "nanoseconds": 0},
-                                "score": None,
-                                "scoreBreakdown": None,
-                            }
-
-                            if event_url:
-                                time.sleep(random.uniform(1, 3))
-                                details = scrape_eventhub_details(event_url, headers)
-
-                                if details:
-                                    if "description" in details:
-                                        event_data["description"] = details[
-                                            "description"
-                                        ]
-                                    if "image" in details and not event_data["image"]:
-                                        event_data["image"] = details["image"]
-                                    if "vendor_fee" in details:
-                                        event_data["vendorFee"] = details["vendor_fee"]
-
-                            events.append(event_data)
-
-                        except Exception as e:
-                            print(f"Error processing event item: {e}")
+                for card in event_cards:
+                    try:
+                        href = card.get_attribute("href")
+                        if not href or href in processed_urls:
                             continue
 
-                except Exception as e:
-                    print(f"Error processing event div: {e}")
-                    continue
+                        event_info = {"url": href}
 
-            time.sleep(random.uniform(2, 4))
+                        try:
+                            name_elem = card.find_element(
+                                By.CSS_SELECTOR, "p.font-medium.two-line-ellipsis"
+                            )
+                            event_info["name"] = (
+                                name_elem.text.strip() if name_elem else ""
+                            )
+                        except:
+                            continue
 
+                        try:
+                            date_elem = card.find_element(
+                                By.CSS_SELECTOR,
+                                "div.flex.space-x-1.items-center p.text-sm",
+                            )
+                            event_info["date"] = date_elem.text.strip()
+                        except:
+                            event_info["date"] = ""
+
+                        event_info["location"] = {"city": "", "state": ""}
+                        try:
+                            grid_container = card.find_element(
+                                By.CSS_SELECTOR, "div.text-sm.grid"
+                            )
+
+                            location_spans = grid_container.find_elements(
+                                By.CSS_SELECTOR, "span.capitalize"
+                            )
+
+                            if location_spans and len(location_spans) > 0:
+                                location_text = location_spans[-1].text.strip()
+
+                                if "," in location_text:
+                                    city, state = location_text.split(",", 1)
+                                    event_info["location"] = {
+                                        "city": city.strip(),
+                                        "state": state.strip(),
+                                    }
+                                else:
+                                    parts = location_text.split()
+                                    if len(parts) >= 2 and len(parts[-1]) <= 3:
+                                        event_info["location"] = {
+                                            "city": " ".join(parts[:-1]),
+                                            "state": parts[-1],
+                                        }
+                                    else:
+                                        event_info["location"] = {
+                                            "city": location_text,
+                                            "state": "",
+                                        }
+                        except Exception as e:
+                            print(f"Error getting location: {e}")
+
+                        event_items.append(event_info)
+                        processed_urls.add(href)
+
+                    except Exception as e:
+                        print(f"Error processing event card: {e}")
+                        continue
+
+                print(f"Extracted info for {len(event_items)} events on page {page}")
+
+                for event_info in event_items:
+                    try:
+                        print(f"Processing event: {event_info['url']}")
+
+                        driver.get(event_info["url"])
+                        time.sleep(2)
+
+                        name = event_info["name"]
+                        date = event_info["date"]
+                        location = event_info["location"]
+
+                        image = ""
+                        try:
+                            img_elem = driver.find_element(
+                                By.CSS_SELECTOR, "img.cursor-pointer.block"
+                            )
+                            image = img_elem.get_attribute("src")
+                        except:
+                            try:
+                                img_elem = driver.find_element(
+                                    By.CSS_SELECTOR, "img.object-cover"
+                                )
+                                image = img_elem.get_attribute("src")
+                            except Exception as e:
+                                print(f"Could not find image for {name}: {e}")
+
+                        description = ""
+                        try:
+                            about_elem = driver.find_element(
+                                By.CSS_SELECTOR, "#about p.font-normal"
+                            )
+                            description = about_elem.text.strip()
+                        except Exception as e:
+                            print(f"Could not find description for {name}: {e}")
+
+                        additional_sections = []
+
+                        sections = {
+                            "Demographics": "#demographics",
+                            "Special Notes": "#special-notes",
+                            "Amenities": "#amenities",
+                            "Prohibited Categories": "#prohibited",
+                        }
+
+                        for section_name, selector in sections.items():
+                            try:
+                                section_elem = driver.find_element(
+                                    By.CSS_SELECTOR, selector
+                                )
+                                section_text = section_elem.text.strip()
+                                if section_text:
+                                    additional_sections.append(
+                                        f"\n\n**{section_name}**\n{section_text}"
+                                    )
+                            except:
+                                pass
+
+                        try:
+                            marketing_div = driver.find_element(
+                                By.XPATH,
+                                "//div[contains(@class, 'px-2') and contains(@class, 'py-3') and contains(@class, 'mt-4') and contains(@class, 'rounded-lg') and contains(text(), 'Marketing Statistics')]",
+                            )
+                            additional_sections.append(
+                                f"\n\n**Marketing Statistics**\n{marketing_div.text.strip()}"
+                            )
+                        except:
+                            pass
+
+                        try:
+                            partners_div = driver.find_element(
+                                By.XPATH,
+                                "//div[contains(@class, 'px-2') and contains(@class, 'py-3') and contains(@class, 'mt-4') and contains(@class, 'rounded-lg') and contains(text(), 'Participating Partners')]",
+                            )
+                            additional_sections.append(
+                                f"\n\n**Participating Partners**\n{partners_div.text.strip()}"
+                            )
+                        except:
+                            pass
+
+                        if description and additional_sections:
+                            description += "".join(additional_sections)
+
+                        vendor_fee = None
+                        try:
+                            fee_elems = driver.find_elements(
+                                By.CSS_SELECTOR,
+                                "div.flex.flex-col.px-2.py-1.mb-2.rounded.wrap-text span.flex-1",
+                            )
+                            if fee_elems:
+                                fees = [
+                                    fee.text.strip()
+                                    for fee in fee_elems
+                                    if fee.text.strip()
+                                ]
+                                if fees:
+                                    vendor_fee = ", ".join(fees)
+                        except:
+                            print(f"Could not find vendor fee for: {name}")
+
+                        event_type = "pop up"
+                        try:
+                            type_elems = driver.find_elements(
+                                By.CSS_SELECTOR, "span.capitalize"
+                            )
+                            for elem in type_elems:
+                                elem_text = elem.text.strip().lower()
+                                if (
+                                    elem_text
+                                    and elem_text != "pop up"
+                                    and elem_text != "popup"
+                                ):
+                                    event_type = elem_text
+                                    break
+                        except:
+                            pass
+
+                        event_data = {
+                            "name": name,
+                            "description": description,
+                            "location": location,
+                            "type": (
+                                ["pop up", event_type]
+                                if event_type != "pop up"
+                                else ["pop up"]
+                            ),
+                            "date": date,
+                            "image": image,
+                            "vendorFee": vendor_fee,
+                            "totalCost": None,
+                            "attendeeType": [],
+                            "headcount": None,
+                            "demographics": [],
+                            "startDate": {"seconds": 0, "nanoseconds": 0},
+                            "endDate": {"seconds": 0, "nanoseconds": 0},
+                            "score": None,
+                            "scoreBreakdown": None,
+                        }
+
+                        events.append(event_data)
+                        print(f"Successfully added event: {name}")
+
+                        time.sleep(random.uniform(1, 2))
+
+                    except Exception as e:
+                        print(f"Error processing event: {e}")
+                        continue
+
+            except Exception as e:
+                print(f"Error processing page {page}: {e}")
+
+            time.sleep(random.uniform(2, 3))
+
+        driver.quit()
+        print(f"Finished scraping EventHub. Found {len(events)} events.")
         return events
 
     except Exception as e:
-        print(f"Error scraping EventHub: {e}")
+        print(f"Error in EventHub scraper: {e}")
+        try:
+            driver.quit()
+        except:
+            pass
         return []
 
 
@@ -1089,6 +1175,7 @@ def make_event_id(event):
     return f"{event['name']}-{event['type'][0]}-{event['location']['city']}"
 
 
+#  python3 scraper.py
 if __name__ == "__main__":
     all_events = []
 
@@ -1226,9 +1313,3 @@ def sample_events_from_scrapers():
             print(f"Sample data saved to scrape_data.txt")
     except Exception as e:
         print(f"Error saving sample data to file: {e}")
-
-
-# to run sample data
-# python3 sample_scrapers.py
-if __name__ == "__main__":
-    sample_events_from_scrapers()
