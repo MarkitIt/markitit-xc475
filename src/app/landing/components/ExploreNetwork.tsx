@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useUserContext } from '@/context/UserContext';
-import { collection, query, where, getDocs, limit } from 'firebase/firestore';
+import { collection, query, getDocs, limit, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Link from 'next/link';
 import styles from '../styles.module.css';
@@ -15,49 +15,59 @@ interface Vendor {
 
 export default function ExploreNetwork() {
   const { vendorProfile } = useUserContext();
-  const [similarVendors, setSimilarVendors] = useState<Vendor[]>([]);
+  const [otherVendors, setOtherVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    const fetchSimilarVendors = async () => {
-      if (!vendorProfile?.city || !vendorProfile?.state) return;
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    const fetchOtherVendors = async () => {
+      if (!vendorProfile?.id || !isClient) return;
 
       try {
         const vendorsRef = collection(db, 'vendorProfile');
         const q = query(
           vendorsRef,
-          where('city', '==', vendorProfile.city),
-          where('state', '==', vendorProfile.state),
+          orderBy('businessName'),
           limit(4)
         );
 
         const querySnapshot = await getDocs(q);
         const vendors = querySnapshot.docs
-          .filter(doc => doc.id !== vendorProfile.id) // Exclude current vendor
+          .filter(doc => doc.id !== vendorProfile.id)
+          .slice(0, 3)
           .map(doc => ({
             id: doc.id,
             ...doc.data()
           })) as Vendor[];
 
-        setSimilarVendors(vendors);
+        setOtherVendors(vendors);
       } catch (error) {
-        console.error('Error fetching similar vendors:', error);
+        console.error('Error fetching other vendors:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSimilarVendors();
-  }, [vendorProfile]);
+    fetchOtherVendors();
+  }, [vendorProfile, isClient]);
 
-  if (loading) return <div className={styles.loading}>Loading network...</div>;
-  if (!similarVendors.length) return <div className={styles.noVendors}>No vendors found in your area</div>;
+  if (!isClient || loading) {
+    return <div className={styles.loading}>Loading network...</div>;
+  }
+
+  if (!otherVendors.length) {
+    return <div className={styles.noVendors}>No other vendors found</div>;
+  }
 
   return (
     <section className={styles.section}>
       <h2 className={styles.sectionTitle}>Explore the Network</h2>
       <div className={styles.vendorsGrid}>
-        {similarVendors.map((vendor) => (
+        {otherVendors.map((vendor) => (
           <Link href={`/vendor-profile/${vendor.id}`} key={vendor.id} className={styles.vendorCard}>
             <div className={styles.vendorContent}>
               <h3 className={styles.businessName}>{vendor.businessName}</h3>
@@ -74,6 +84,11 @@ export default function ExploreNetwork() {
             </div>
           </Link>
         ))}
+      </div>
+      <div style={{ marginTop: '1.5rem', textAlign: 'right' }}>
+        <Link href="/search-vendors" className={styles.readMoreButton}>
+          View More
+        </Link>
       </div>
     </section>
   );

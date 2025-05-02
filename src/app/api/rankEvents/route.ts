@@ -474,7 +474,7 @@ if (vendorPrefsLowerCategory.size > 0 && eventTagsLowerCategory.length > 0) {
 
 
     // --- Clamp the Score to Guarantee 0-100 Range ---
-    breakdown.total = Math.round(Math.max(0, Math.min(100, finalScore)));
+    breakdown.total = Math.round(Math.max(0, Math.min(100, finalScore + 15)));
 
     return breakdown; // Return the detailed breakdown including the final total score
 };
@@ -513,7 +513,7 @@ export async function POST(request: Request) {
 
     // Get all events
     // Consider adding filtering here (e.g., future events, location proximity) for efficiency
-    const eventsSnapshot = await adminDb.collection("eventsFormatted").get();
+    const eventsSnapshot = await adminDb.collection("eventsFormatted").limit(30).get();
     const events = eventsSnapshot.docs.map(doc => {
       const { id: _, ...data } = doc.data() as EventFormatted;
       return {

@@ -17,7 +17,7 @@ const formatFactorName = (key: string): string => {
     .replace(/^./, (str: string) => str.toUpperCase());
 };
 
-const getJustification = (key: keyof ScoreBreakdownType, event: EventFormatted, vendor: Vendor): string => {
+const getJustification = (key: keyof ScoreBreakdownType, event: EventFormatted, vendor: Vendor, scoreBreakdown: ScoreBreakdownType): string => {
   const vendorPrefsLower = new Set(vendor.eventPreference?.map((p: string) => p.toLowerCase().trim()).filter(Boolean) || []);
   const eventTagsLower = new Set(event.category_tags?.map((t: string) => t.toLowerCase().trim()).filter(Boolean) || []);
   const vendorCitiesLower = new Set(vendor.cities?.map((c: string) => c.toLowerCase().trim()).filter(Boolean) || []);
@@ -72,16 +72,11 @@ const getJustification = (key: keyof ScoreBreakdownType, event: EventFormatted, 
       if (vendorCatsLower.size > 0 && eventVendorCatsLower.size === 0) return "Event doesn't specify required vendor categories.";
       if (vendorCatsLower.size === 0 && eventVendorCatsLower.size > 0) return "Your product categories are not set.";
       return "No matching product categories found.";
-    case "categoryScoreRaw":
-      const matchingEventCats = Array.from(eventTagsLower).filter(tag => vendorPrefsLower.has(tag));
-      if (matchingEventCats.length > 0) return `Event category matched your preferences: ${matchingEventCats.join(', ')}.`;
-      return "Event category did not match your preferences.";
     case "headcountScoreRaw":
-      const vendorPrefHeadcountText = vendorPreferredSizeMin !== undefined && vendorPreferredSizeMax !== undefined
-        ? `${vendorPreferredSizeMin}-${vendorPreferredSizeMax === Infinity ? '+' : vendorPreferredSizeMax} attendees`
-        : "not specified";
-      if (eventHeadcount !== undefined && eventHeadcount !== null) return `Event estimated headcount: ${eventHeadcount}. Your preference: ${vendorPrefHeadcountText}.`;
-      return `Your preference: ${vendorPrefHeadcountText}. Event headcount unspecified.`;
+      if (scoreBreakdown[key] && scoreBreakdown[key] > 0) {
+        return "Event matches your headcount preferences.";
+      }
+      return "No matching headcount preferences.";
     default: return "Details for this score factor.";
   }
 };
@@ -98,7 +93,6 @@ export default function ScoreBreakdown({ event, vendor }: ScoreBreakdownProps) {
     "scheduleScoreRaw",
     "eventSizeScoreRaw",
     "eventTypeScoreRaw",
-    "categoryScoreRaw",
     "demographicsScoreRaw",
     "headcountScoreRaw",
     "productsScoreRaw",
@@ -112,7 +106,6 @@ export default function ScoreBreakdown({ event, vendor }: ScoreBreakdownProps) {
     eventSizeScoreRaw: "Number of Vendors",
     scheduleScoreRaw: "Schedule",
     productsScoreRaw: "Product Category Relevance",
-    categoryScoreRaw: "Event Category",
     headcountScoreRaw: "Estimated Headcount",
   };
 
@@ -137,7 +130,7 @@ export default function ScoreBreakdown({ event, vendor }: ScoreBreakdownProps) {
           const factorName = factorKeyToNameMap[key];
           const isPriority = factorName ? userPriorityFactors.includes(factorName) : false;
 
-          const justification = getJustification(key, event, vendor);
+          const justification = getJustification(key, event, vendor, scoreBreakdown);
 
           const formattedKeyName = formatFactorName(keyStr);
 

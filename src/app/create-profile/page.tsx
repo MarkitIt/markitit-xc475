@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { RoleCard } from "./components/RoleCard";
 import { useUserContext } from "@/context/UserContext";
 import { useState } from "react";
+import styles from './styles.module.css';
 
 const ROLES = [
   {
@@ -52,46 +53,13 @@ export default function CreateProfilePage() {
   }
 
   return (
-    <main
-      style={{
-        minHeight: "calc(100vh - 80px)",
-        padding: theme.spacing.xl,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "800px",
-          margin: "0 auto",
-          textAlign: "center",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: theme.typography.fontSize.title,
-            marginBottom: theme.spacing.xl,
-          }}
-        >
-          Choose Your Role
-        </h1>
-
+    <main className={styles.mainContainer}>
+      <div className={styles.centeredContainer}>
+        <h1 className={styles.title}>Choose Your Role</h1>
         {error && (
-          <div
-            style={{
-              color: theme.colors.primary.coral,
-              marginBottom: theme.spacing.xl,
-            }}
-          >
-            {error}
-          </div>
+          <div className={styles.error}>{error}</div>
         )}
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: theme.spacing.xl,
-          }}
-        >
+        <div className={styles.rolesGrid}>
           {ROLES.map((role) => (
             <RoleCard
               key={role.role}

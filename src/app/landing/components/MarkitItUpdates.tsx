@@ -13,21 +13,21 @@ const mockUpdates: Update[] = [
     id: '1',
     title: 'Enhanced Event Matching Algorithm',
     description: 'Our new matching system now considers more factors to find the perfect events for your business.',
-    date: '2024-05-15',
+    date: '2025-05-15',
     type: 'feature'
   },
   {
     id: '2',
     title: 'Mobile App Coming Soon',
     description: 'Stay tuned for our mobile app launch, making it easier to manage your events on the go.',
-    date: '2024-06-01',
+    date: '2025-06-01',
     type: 'announcement'
   },
   {
     id: '3',
     title: 'Improved Application Process',
     description: 'Streamlined application process with auto-fill capabilities and better status tracking.',
-    date: '2024-04-20',
+    date: '2025-04-20',
     type: 'improvement'
   }
 ];

@@ -6,9 +6,19 @@ import ExploreNetwork from './components/ExploreNetwork';
 import MarkitItUpdates from './components/MarkitItUpdates';
 import GuidesAndResources from './components/GuidesAndResources';
 import styles from './styles.module.css';
+import { useEffect, useState } from 'react';
 
 export default function LandingPage() {
   const { user, vendorProfile } = useUserContext();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return <div className={styles.loading}>Loading...</div>;
+  }
 
   if (!user || !vendorProfile) {
     return (
