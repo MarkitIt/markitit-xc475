@@ -1099,6 +1099,8 @@ if __name__ == "__main__":
     all_events.extend(eventbrite_events)
     zapp_events = scrape_zapp()
     all_events.extend(zapp_events)
+    eventhub_events = scrape_eventhub()
+    all_events.extend(eventhub_events)
 
     if all_events:
         try:
@@ -1135,28 +1137,98 @@ if __name__ == "__main__":
     else:
         print("no events found")
 
-    # print first item only
-    # TEST EVENTBRITE SCRAPER
-    # eventbrite_events = scrape_eventbrite()
 
-    # # Print the total number of events found
-    # print(f"\nTotal Eventbrite events found: {len(eventbrite_events)}")
+# Runs all scrapers and add to file to analyze
+def sample_events_from_scrapers():
+    all_samples = []
 
-    # # Print the first 15 events or all if less than 15
-    # print("\nFirst 15 Eventbrite events:")
-    # for i, event in enumerate(eventbrite_events[:15]):
-    #     print(f"\nEvent {i+1}:")
-    #     print(f"Name: {event['name']}")
-    #     print(f"Location: {event['location']['city']}, {event['location']['state']}")
-    #     print(f"Venue: {event['venue']}")
-    #     print(f"Date: {event['date']}")
-    #     print(f"Price: {event['price']}")
-    #     print(f"URL: {event['url']}")
+    try:
+        print("Collecting event samples from Eventeny...")
+        eventeny_events = scrape_eventeny()
+        eventeny_sample = random.sample(eventeny_events, min(4, len(eventeny_events)))
+        all_samples.append(("Eventeny", eventeny_sample))
+    except Exception as e:
+        print(f"Error sampling from Eventeny: {e}")
 
-    # TEST ZAPP
-    # zapp_events = scrape_zapp()
-    # for event in zapp_events[:10]:
-    #     print(f"\nName: {event['name']}")
-    #     print(f"Location: {event['location']['city']}, {event['location']['state']}")
-    #     print(f"Date: {event['date']}")
-    #     print(f"Price: {event.get('price', 'N/A')}")
+    try:
+        print("Collecting event samples from Eventbrite...")
+        eventbrite_events = scrape_eventbrite()
+        eventbrite_sample = random.sample(
+            eventbrite_events, min(4, len(eventbrite_events))
+        )
+        all_samples.append(("Eventbrite", eventbrite_sample))
+    except Exception as e:
+        print(f"Error sampling from Eventbrite: {e}")
+
+    try:
+        print("Collecting event samples from Zapp...")
+        zapp_events = scrape_zapp()
+        zapp_sample = random.sample(zapp_events, min(4, len(zapp_events)))
+        all_samples.append(("Zapp", zapp_sample))
+    except Exception as e:
+        print(f"Error sampling from Zapp: {e}")
+
+    try:
+        print("Collecting event samples from EventHub...")
+        eventhub_events = scrape_eventhub()
+        eventhub_sample = random.sample(eventhub_events, min(4, len(eventhub_events)))
+        all_samples.append(("EventHub", eventhub_sample))
+    except Exception as e:
+        print(f"Error sampling from EventHub: {e}")
+
+    try:
+        with open("scrape_data.txt", "w") as f:
+            f.write("EVENT SAMPLES FROM SCRAPERS\n")
+            f.write("==========================\n\n")
+
+            for source, events in all_samples:
+                f.write(f"SOURCE: {source}\n")
+                f.write(f"Number of events sampled: {len(events)}\n")
+                f.write("---------------------------\n\n")
+
+                for i, event in enumerate(events):
+                    f.write(f"EVENT {i+1}:\n")
+                    f.write(f"Name: {event.get('name', 'N/A')}\n")
+                    f.write(
+                        f"Location: {event.get('location', {}).get('city', 'N/A')}, {event.get('location', {}).get('state', 'N/A')}\n"
+                    )
+                    f.write(f"Date: {event.get('date', 'N/A')}\n")
+                    f.write(f"Type: {', '.join(event.get('type', ['N/A']))}\n")
+                    f.write(f"Image URL: {event.get('image', 'N/A')}\n")
+
+                    description = event.get("description", "N/A")
+                    if len(description) > 500:
+                        description = description[:497] + "..."
+                    f.write(f"Description: {description}\n")
+
+                    other_fields = []
+                    for key, value in event.items():
+                        if key not in [
+                            "name",
+                            "location",
+                            "date",
+                            "type",
+                            "image",
+                            "description",
+                        ]:
+                            if value:  # Only include non-empty values
+                                other_fields.append(f"{key}: {value}")
+
+                    if other_fields:
+                        f.write("Other Fields:\n")
+                        for field in other_fields:
+                            f.write(f"  {field}\n")
+
+                    f.write("\n----------\n\n")
+
+                f.write("\n==========================\n\n")
+
+            print(f"Sample data saved to scrape_data.txt")
+    except Exception as e:
+        print(f"Error saving sample data to file: {e}")
+
+
+# to run sample data
+# python3 sample_scrapers.py
+if __name__ == "__main__":
+    sample_events_from_scrapers()
