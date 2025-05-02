@@ -767,6 +767,199 @@ def scrape_zapp():
         return []
 
 
+def scrape_eventhub():
+    # scraping as if using chrome
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3"
+    }
+
+    events = []
+
+    base_url = "https://eventhub.net/marketplace"
+
+    try:
+        print("Scraping EventHub")
+
+        # Search locations, base on site, cant specify location
+        regions = [
+            "SOUTH - E",
+            "SOUTH - W",
+            "SOUTH - Atl",
+            "NEW ENGLAND",
+            "MIDWEST - W",
+            "MIDWEST - E",
+            "CALIFORNIA",
+        ]
+        url_regions = "%2C".join([region.replace(" ", "%20") for region in regions])
+
+        # number of pages to scrape
+        for page in range(1, 6):
+            search_url = f"{base_url}?keyword=market&region={url_regions}&eventDateFrom=&eventDateTo=&attendance=&eventType=&currentPage={page}&pageSize=20&sort=name%3Aasc"
+
+            print(f"Scraping EventHub page {page}")
+
+            response = requests.get(search_url, headers=headers, timeout=15)
+
+            if response.status_code != 200:
+                print(f"Failed to load EventHub page {page}: {response.status_code}")
+                continue
+
+            soup = BeautifulSoup(response.content, "html.parser")
+
+            event_divs = soup.find_all("div", {"class": "mb-10"})
+
+            if not event_divs:
+                print(f"No events found on page {page} or reached the end of results")
+                break
+
+            for event_div in event_divs:
+                try:
+                    event_items = event_div.find_all(
+                        "a",
+                        {
+                            "class": "relative flex flex-col sm:flex-row items-center p-3 sm:p-2 mb-2 rounded-lg bg-hub-cardBg hover:bg-hub-hoverCardBg"
+                        },
+                    )
+
+                    for event_item in event_items:
+                        try:
+                            name_elem = event_item.find(
+                                "p",
+                                {
+                                    "class": "font-medium two-line-ellipsis text-base sm:text-xl"
+                                },
+                            )
+                            name = name_elem.text.strip() if name_elem else ""
+
+                            event_url = (
+                                f"https://eventhub.net{event_item['href']}"
+                                if event_item.has_attr("href")
+                                else None
+                            )
+
+                            date_elem = event_item.find(
+                                "div", {"class": "flex space-x-1 items-center"}
+                            )
+                            date = (
+                                date_elem.find("p", {"class": "text-sm"}).text.strip()
+                                if date_elem
+                                else ""
+                            )
+
+                            type_elem = event_item.find("span", {"class": "capitalize"})
+                            event_type = (
+                                type_elem.text.strip() if type_elem else "pop up"
+                            )
+
+                            location_container = event_item.find_all(
+                                "div", {"class": "flex items-center"}
+                            )
+                            location_text = ""
+                            for container in location_container:
+                                loc_span = container.find(
+                                    "span", {"class": "capitalize"}
+                                )
+                                if (
+                                    loc_span
+                                    and "TX" in loc_span.text
+                                    or "," in loc_span.text
+                                ):
+                                    location_text = loc_span.text.strip()
+                                    break
+
+                            if "," in location_text:
+                                city, state = location_text.split(",")
+                                location = {
+                                    "city": city.strip(),
+                                    "state": state.strip(),
+                                }
+                            else:
+                                parts = location_text.split()
+                                if len(parts) >= 2 and len(parts[-1]) <= 3:
+                                    location = {
+                                        "city": " ".join(parts[:-1]),
+                                        "state": parts[-1],
+                                    }
+                                else:
+                                    location = {"city": location_text, "state": ""}
+
+                            img_elem = event_item.find(
+                                "img",
+                                {
+                                    "class": "object-cover object-center w-full h-full square-box-content"
+                                },
+                            )
+                            image = (
+                                img_elem["src"]
+                                if img_elem and img_elem.has_attr("src")
+                                else ""
+                            )
+
+                            attendance_elem = event_item.find(
+                                "div", {"class": "flex items-center"}
+                            )
+                            attendance_span = (
+                                attendance_elem.find("span")
+                                if attendance_elem
+                                else None
+                            )
+                            attendance = (
+                                attendance_span.text.strip()
+                                if attendance_span
+                                else None
+                            )
+
+                            event_data = {
+                                "name": name,
+                                "description": "",
+                                "location": location,
+                                "type": [event_type, "pop up"],
+                                "date": date,
+                                "image": image,
+                                "vendorFee": None,
+                                "totalCost": None,
+                                "attendeeType": [],
+                                "headcount": attendance,
+                                "demographics": [],
+                                "startDate": {"seconds": 0, "nanoseconds": 0},
+                                "endDate": {"seconds": 0, "nanoseconds": 0},
+                                "score": None,
+                                "scoreBreakdown": None,
+                            }
+
+                            if event_url:
+                                time.sleep(random.uniform(1, 3))
+                                details = scrape_eventhub_details(event_url, headers)
+
+                                if details:
+                                    if "description" in details:
+                                        event_data["description"] = details[
+                                            "description"
+                                        ]
+                                    if "image" in details and not event_data["image"]:
+                                        event_data["image"] = details["image"]
+                                    if "vendor_fee" in details:
+                                        event_data["vendorFee"] = details["vendor_fee"]
+
+                            events.append(event_data)
+
+                        except Exception as e:
+                            print(f"Error processing event item: {e}")
+                            continue
+
+                except Exception as e:
+                    print(f"Error processing event div: {e}")
+                    continue
+
+            time.sleep(random.uniform(2, 4))
+
+        return events
+
+    except Exception as e:
+        print(f"Error scraping EventHub: {e}")
+        return []
+
+
 # need event id for duplicate
 def make_event_id(event):
     return f"{event['name']}-{event['type'][0]}-{event['location']['city']}"
