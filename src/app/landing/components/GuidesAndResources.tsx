@@ -16,7 +16,7 @@ const mockBlogPosts: BlogPost[] = [
     excerpt: 'Learn the top strategies for making the most of your pop-up shop experience and increasing sales.',
     category: 'Business Tips',
     readTime: '5 min read',
-    date: '2024-04-10'
+    date: '2025-04-10'
   },
   {
     id: '2',
@@ -24,7 +24,7 @@ const mockBlogPosts: BlogPost[] = [
     excerpt: 'Discover how to create compelling applications that stand out to event organizers.',
     category: 'Applications',
     readTime: '4 min read',
-    date: '2024-04-05'
+    date: '2025-04-05'
   },
   {
     id: '3',
@@ -32,7 +32,7 @@ const mockBlogPosts: BlogPost[] = [
     excerpt: 'Tips for connecting with other vendors and creating valuable partnerships in the pop-up space.',
     category: 'Networking',
     readTime: '6 min read',
-    date: '2024-03-28'
+    date: '2025-03-28'
   }
 ];
 
