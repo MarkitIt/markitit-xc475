@@ -23,7 +23,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("/search-events");
+      router.push("/landing");
     } catch (err) {
       setError("Invalid email or password");
     }
