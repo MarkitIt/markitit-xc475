@@ -153,7 +153,7 @@ def scrape_eventeny():
                 except Exception as e:
                     print("Error: ", e)
 
-                time.sleep(random.uniform(2, 4))
+                time.sleep(random.uniform(1, 2))
 
         return events
 
@@ -343,7 +343,7 @@ def scrape_eventbrite():
 
                             if event_url:
                                 # random delays incase of flag
-                                time.sleep(random.uniform(1, 3))
+                                time.sleep(random.uniform(1, 2))
                                 details = scrape_eventbrite_details(event_url, headers)
 
                                 # Update with details
@@ -371,9 +371,9 @@ def scrape_eventbrite():
                             print(f"Error processing card: {e}")
 
                     # incase eventbrite flag
-                    time.sleep(random.uniform(1, 3))
+                    time.sleep(random.uniform(1, 2))
 
-            time.sleep(random.uniform(1, 3))
+            time.sleep(random.uniform(1, 2))
 
         return events
 
@@ -477,14 +477,14 @@ def scrape_zapp():
 
             try:
                 driver.get("https://www.zapplication.org/participating-events.php")
-                time.sleep(5)
+                time.sleep(2)
 
                 print(f"Searching Zapp for keyword: {keyword}")
                 search_box = driver.find_element(By.ID, "keywords")
                 search_box.clear()
                 search_box.send_keys(keyword)
                 search_box.send_keys(Keys.RETURN)
-                time.sleep(5)
+                time.sleep(3)
 
                 event_cards = driver.find_elements(
                     By.CSS_SELECTOR, "div[data-v-6ccc3a2c].card.mb-3"
@@ -1031,7 +1031,7 @@ def scrape_eventhub():
             except Exception as e:
                 print(f"Error processing page {page}: {e}")
 
-            time.sleep(random.uniform(2, 3))
+            time.sleep(random.uniform(1, 2))
 
         driver.quit()
         print(f"Finished scraping EventHub. Found {len(events)} events.")
