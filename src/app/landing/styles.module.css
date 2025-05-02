@@ -1,0 +1,373 @@
+.section {
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.section:hover {
+  transform: translateY(-2px);
+}
+
+.sectionTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sectionTitle::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 24px;
+  background: #3498db;
+  border-radius: 2px;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.container {
+  padding: 2rem;
+  min-height: 100vh;
+  background: transparent;
+}
+
+.welcomeSection {
+  margin: 2rem 0 4rem;
+  text-align: center;
+  padding: 3rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.welcomeTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  background: linear-gradient(90deg, #2c326e 0%, #7779b4d9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcomeSubtitle {
+  font-size: 1.25rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Updated Grid container styles for specific layout */
+.gridContainer {
+  display: grid;
+  /* Define columns: Adjust fr units as needed for relative widths */
+  grid-template-columns: 1fr 2fr 1fr; 
+  /* Define rows: auto height based on content */
+  grid-template-rows: auto auto;
+  /* Define layout areas */
+  grid-template-areas:
+    "updates opportunities guides"
+    "updates network     guides";
+  gap: 2rem; 
+  width: 100%; 
+}
+
+/* Assign grid areas to wrapper divs */
+.updatesArea {
+  grid-area: updates;
+}
+
+.opportunitiesArea {
+  grid-area: opportunities;
+}
+
+.networkArea {
+  grid-area: network;
+}
+
+.guidesArea {
+  grid-area: guides;
+}
+
+/* Opportunities Grid */
+.opportunitiesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.opportunityCard {
+  text-decoration: none;
+  color: inherit;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #eaeaea;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.opportunityCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  border-color: #3498db;
+}
+
+.eventName {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.eventLocation {
+  color: #666;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.eventDate {
+  color: #666;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scoreContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.scoreLabel {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.scoreValue {
+  font-weight: 700;
+  color: #2ecc71;
+  font-size: 1.1rem;
+}
+
+/* Vendors Grid */
+.vendorsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.vendorCard {
+  text-decoration: none;
+  color: inherit;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #eaeaea;
+  transition: all 0.3s ease;
+}
+
+.vendorCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  border-color: #3498db;
+}
+
+.businessName {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.categoryTag {
+  background: #e8f4fd;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #3498db;
+  font-weight: 500;
+}
+
+/* Loading & Empty States */
+.loading, .noVendors, .noEvents {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 2px dashed #eaeaea;
+  font-size: 1.1rem;
+}
+
+/* Updates Section */
+.updatesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.updateCard {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #eaeaea;
+  transition: all 0.3s ease;
+}
+
+.updateHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.updateType {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.feature {
+  background: #e8f4fd;
+  color: #3498db;
+}
+
+.improvement {
+  background: #edfbf3;
+  color: #2ecc71;
+}
+
+.announcement {
+  background: #fff5e6;
+  color: #f39c12;
+}
+
+.updateTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #2c3e50;
+}
+
+.updateDescription {
+  color: #666;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Blog Grid */
+.blogGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.blogCard {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #eaeaea;
+  transition: all 0.3s ease;
+}
+
+.blogCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  border-color: #3498db;
+}
+
+.blogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.blogCategory {
+  background: #e8f4fd;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #3498db;
+  font-weight: 500;
+}
+
+.blogReadTime {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.blogTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #2c3e50;
+}
+
+.blogExcerpt {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.blogFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.blogDate {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.readMoreButton {
+  background: none;
+  border: none;
+  color: #3498db;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.readMoreButton:hover {
+  background: #e8f4fd;
+}
+
+.location {
+  color: #000000;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+} 

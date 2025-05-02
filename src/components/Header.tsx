@@ -184,7 +184,7 @@ export default function Header() {
       </div>
 
       <div className={styles.rightSection}>
-        <Link href="/search-events" className={styles.navLink}>
+        <Link href="/landing" className={styles.navLink}>
           <Image
             src="/icons/home.svg"
             alt="Home"
@@ -194,7 +194,7 @@ export default function Header() {
               filter: isActive("/search-events") ? "invert(28%) sepia(77%) saturate(747%) hue-rotate(340deg) brightness(91%) contrast(94%)" : "none",
             }}
           />
-          <span style={{ color: isActive("/search-events") ? "#f15152" : "inherit" }}>Home</span>
+          <span style={{ color: isActive("/landing") ? "#f15152" : "inherit" }}>Home</span>
         </Link>
 
         <Link href="/community" className={styles.navLink}>

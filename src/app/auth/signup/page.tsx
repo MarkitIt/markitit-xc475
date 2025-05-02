@@ -42,7 +42,7 @@ export default function SignupPage() {
       });
 
       alert("Account created successfully!");
-      router.push("/search-events");
+      router.push("/landing");
     } catch (err) {
       setError("Failed to create account");
     }

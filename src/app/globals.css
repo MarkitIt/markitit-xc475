@@ -7,10 +7,9 @@
   --primary-black: #3A2E39;
   --primary-green: #1E555C;
   --primary-beige: #F4D8CD;
-  --primary-sand: #EDB183;
   --primary-pink: #E4B7B7;
   --primary-dark-blue: #1B2559;
-  --primary-coral: #E88D67;
+  --primary-coral: #F15152;
 
   /* Secondary Colors */
   --secondary-yellow: #F4D03F;
@@ -661,7 +660,7 @@ div[style*="position: absolute"] {
 
 .search-button {
   padding: 0.75rem 1.5rem;
-  background-color: var(--primary-sand);
+  background-color: var(--primary-coral);
   color: var(--primary-black);
   border: none;
   border-radius: var(--border-radius-md);

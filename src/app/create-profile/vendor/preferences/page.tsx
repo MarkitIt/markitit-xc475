@@ -5,16 +5,8 @@ import { useRouter } from "next/navigation";
 import { useVendor } from "@/context/VendorContext";
 import styles from "../../styles.module.css";
 import { cities } from "@/types/cities";
-
-const eventTypes = [
-  "College pop-ups",
-  "Indoor markets",
-  "Outdoor festivals",
-  "Holiday fairs",
-  "Private corporate events",
-  "Other",
-];
-
+import { eventTypes } from "@/types/EventTypes";
+import { attendeeTypes}  from "@/types/AttendeeTypes" ;
 
 const daysOfWeek = [
   "Monday",
@@ -34,31 +26,6 @@ const eventSizes = [
   { label: "Mega Events (150+ vendors / festivals)", value: "mega", min: 150, max: Infinity },
 ];
 
-const customerTypes = [
-  "Students / College Crowd",
-  "Families",
-  "Young Professionals",
-  "Tourists",
-  "Local Regulars",
-  "High-Income Shoppers",
-  "Budget-Conscious Shoppers",
-  "Trendsetters / Influencers",
-  "Art Collectors / Design Enthusiasts",
-  "Foodies / Culinary Explorers",
-  "Health & Wellness Enthusiasts",
-  "Eco-Conscious / Sustainable Shoppers",
-  "Spiritual / Holistic Audiences",
-  "Fashion-Focused Customers",
-  "Parents & Kids",
-  "Pet Owners",
-  "BIPOC Communities",
-  "LGBTQ+ Community",
-  "Elderly / Retired Shoppers",
-  "Remote Workers / Digital Nomads",
-  "Festival-Goers / Music Lovers",
-  "Travelers & Expats",
-  "Gift Shoppers / Holiday Buyers",
-];
 
 export default function PreferencesPage() {
   const router = useRouter();
@@ -293,7 +260,7 @@ export default function PreferencesPage() {
             What kind of customers do you usually attract?*
           </label>
           <div className={styles.checkboxGrid}>
-            {customerTypes.map((type) => (
+            {attendeeTypes.map((type) => (
               <label key={type} className={styles.checkboxLabel}>
                 <input
                   type="checkbox"

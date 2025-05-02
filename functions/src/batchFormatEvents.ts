@@ -180,6 +180,7 @@ export const batchFormatEvents = functions
               originalEventId: eventDocId,
               eventDataId: eventData.id || null,
               name: cleanEventName(name) || "",
+  
               startDate: eventData.startDate || null,
               endDate: eventData.endDate || null,
               location: {
@@ -198,6 +199,7 @@ export const batchFormatEvents = functions
               estimated_headcount,
               headcount_min,
               headcount_max,
+              application_fee: formattedData.application_fee || null,
 
               timestamp: admin.firestore.FieldValue.serverTimestamp(),
             }, { merge: true })

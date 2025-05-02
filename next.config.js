@@ -18,6 +18,9 @@ const nextConfig = {
       "firebasestorage.googleapis.com",
       "img.evbuc.com",
       "cdn.evbuc.com",
+      "eventlocker.s3.amazonaws.com",
+      "eventlocker.s3-accelerate.amazonaws.com",
+      "www.zapplication.org",
     ],
   },
   // Explicitly exclude functions directory from being processed

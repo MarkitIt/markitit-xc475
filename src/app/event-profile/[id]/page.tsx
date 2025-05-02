@@ -24,6 +24,8 @@ import styles from './styles.module.css';
 import EventHeader from './components/EventHeader';
 import EventDetails from './components/EventDetails';
 import ScoreBreakdown from './components/ScoreBreakdown';
+// Import necessary types
+import type { EventFormatted, ScoreBreakdown as ScoreBreakdownType } from "@/app/api/rankEvents/route"; // Adjust path if necessary
 
 const PRIORITY_MAP: Record<string, string> = {
   "Expected Attendance & Event Size": "eventSizeScore",
@@ -222,6 +224,12 @@ export default function EventProfilePage() {
     .map((factor: string) => PRIORITY_MAP[factor])
     .filter(Boolean);
 
+  // Combine event data with score breakdown for the component
+  // Ensure event and scoreBreakdown are not null and add type assertion if needed
+  const eventDataForComponent = event && userScoreBreakdown
+    ? { ...event, scoreBreakdown: userScoreBreakdown } as EventFormatted & { scoreBreakdown: ScoreBreakdownType } // Adjust types as needed
+    : null;
+
   return (
     <div className={styles.container}>
       <EventHeader
@@ -239,11 +247,11 @@ export default function EventProfilePage() {
         renderBoothFees={renderBoothFees}
       />
 
-      {userScoreBreakdown && (
+      {/* Pass the combined event data and vendor profile */}
+      {eventDataForComponent && vendorProfile && (
         <ScoreBreakdown
-          userScoreBreakdown={userScoreBreakdown}
-          maxPoints={maxPoints}
-          userPriorityKeys={userPriorityKeys}
+          event={eventDataForComponent}
+          vendor={vendorProfile}
         />
       )}
     </div>

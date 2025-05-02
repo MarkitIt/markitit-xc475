@@ -556,3 +556,30 @@
   transition: opacity 0.2s ease-in-out;
 }
 
+.mainContainer {
+  min-height: calc(100vh - 80px);
+  padding: 2.5rem; /* adjust as needed */
+}
+
+.centeredContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.title {
+  font-size: 2.5rem; /* adjust as needed */
+  margin-bottom: 2.5rem; /* adjust as needed */
+}
+
+.error {
+  color: #ff6f61; /* or your theme's coral */
+  margin-bottom: 2.5rem;
+}
+
+.rolesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2.5rem; /* adjust as needed */
+}
+

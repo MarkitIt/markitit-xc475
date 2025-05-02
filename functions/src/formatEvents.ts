@@ -164,6 +164,7 @@ export const onNewEventCreated = onDocumentCreated(
           estimated_headcount,
           headcount_min,
           headcount_max,
+          application_fee: formattedData.application_fee || null,
 
           timestamp: admin.firestore.FieldValue.serverTimestamp(),
         });
