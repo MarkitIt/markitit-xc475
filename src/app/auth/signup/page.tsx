@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { 
+  createUserWithEmailAndPassword, 
+  GoogleAuthProvider, 
+  signInWithPopup,
+  fetchSignInMethodsForEmail,
+  linkWithPopup
+} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
@@ -45,6 +51,45 @@ export default function SignupPage() {
       router.push("/landing");
     } catch (err) {
       setError("Failed to create account");
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      
+      // Check if this email is already registered with password
+      const methods = await fetchSignInMethodsForEmail(auth, result.user.email!);
+      
+      if (methods.includes('password')) {
+        // Email exists with password auth, link the Google account
+        await linkWithPopup(result.user, provider);
+        setError("Your Google account has been linked to your existing account");
+      } else {
+        // Store user details in Firestore for new accounts
+        try {
+          await setDoc(doc(db, "users", result.user.uid), {
+            firstName: result.user.displayName?.split(' ')[0] || '',
+            lastName: result.user.displayName?.split(' ').slice(1).join(' ') || '',
+            email: result.user.email,
+            uid: result.user.uid,
+            role: "",
+          });
+        } catch (firestoreError) {
+          console.error("Error storing user data:", firestoreError);
+          setError("Account created but failed to store user details. Please try again.");
+          return;
+        }
+      }
+      
+      router.push("/landing");
+    } catch (err: any) {
+      if (err.code === 'auth/account-exists-with-different-credential') {
+        setError("This email is already registered with a password. Please sign in with your password first, then link your Google account.");
+      } else {
+        setError("Failed to sign in with Google");
+      }
     }
   };
 
@@ -135,38 +180,16 @@ export default function SignupPage() {
           </div>
 
           <div className={styles.socialButtons}>
-            <button type="button" className={styles.socialButton}>
-              <Image
-                src="/images/facebookLogo.png"
-                alt="Facebook Logo"
-                width={100}
-                height={50}
-                style={{
-                  objectFit: 'contain',
-                  maxWidth: '100%',
-                  height: 'auto',
-                }}
-              />
-            </button>
-            <button type="button" className={styles.socialButton}>
+            <button 
+              type="button" 
+              className={styles.socialButton}
+              onClick={handleGoogleSignIn}
+            >
               <Image
                 src="/images/googleLogo.png"
                 alt="Google Logo"
-                width={20}
-                height={10}
-                style={{
-                  objectFit: 'contain',
-                  maxWidth: '100%',
-                  height: 'auto',
-                }}
-              />
-            </button>
-            <button type="button" className={styles.socialButton}>
-              <Image
-                src="/images/appleLogo.png"
-                alt="Apple Logo"
-                width={20}
-                height={10}
+                width={24}
+                height={24}
                 style={{
                   objectFit: 'contain',
                   maxWidth: '100%',
