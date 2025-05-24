@@ -11,6 +11,7 @@ import { HostProvider } from "../context/HostContext";
 import { UserProvider } from "../context/UserContext";
 import GlobalBackground from "@/components/GlobalBackground";
 import { SessionProvider } from "next-auth/react";
+import { usePathname } from 'next/navigation';
 
 import "./globals.css";
 
@@ -24,6 +25,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const showHeader = pathname !== '/newhome' && pathname !== '/';
+
   return (
     <html lang="en" className={manrope.className}>
       <head>
@@ -40,7 +44,7 @@ export default function RootLayout({
               <UserProvider>
                 <HostProvider>
                   <ApplicationProfileProvider>
-                    <Header />
+                    {showHeader && <Header />}
                     <VendorProvider>
                       <GlobalBackground>{children}</GlobalBackground>
                     </VendorProvider>
